@@ -4,7 +4,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import Login from "../pages/Login/login.vue";
 import Home from "../pages/Home/home.vue"
 import NotFount from "../pages/Noufount/notfount.vue"
-import seel_pwdVue from "../pages/seek_pwd/seel_pwd.vue";
+import seel_pwdVue from "../pages/seek_pwd/seel_pwd.vue"
+import WeChat_logVue from "@/pages/WeChat/WeChat_log.vue";
 //定义路由，每个路由都需要映射到一个组件。
 const routes = [
   //登录页面
@@ -30,8 +31,8 @@ const routes = [
   },
   //微信扫码登录
   {
-    path: '/sell',
-    component: seel_pwdVue
+    path: '/wechat',
+    component: WeChat_logVue
   },
   // 404页面
   {
