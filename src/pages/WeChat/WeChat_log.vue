@@ -15,7 +15,9 @@
     .box{
         width: 400px;
         height: 600px;
-
+    }
+    h1{
+        font-size: 40px;
     }
 </style>
     

@@ -10,19 +10,15 @@
               class="el-menu-vertical-demo"
               @open="handleOpen"
               @close="handleClose"
+              router
             >
-              
-              <el-menu-item index="2">
-                <el-icon><icon-menu /></el-icon>
-                <span>1</span>
-              </el-menu-item>
-              <el-menu-item index="3">
-                <el-icon><document /></el-icon>
-                <span>2</span>
-              </el-menu-item>
-              <el-menu-item index="4">
-                <el-icon><setting /></el-icon>
-                <span>3</span>
+              <el-menu-item
+                :index="item.url"
+                v-for="(item, index) in e"
+                :key="index"
+              >
+               <div :class="'icon iconfont ' + item.ico"></div>
+                <span>{{ item.name }}</span>
               </el-menu-item>
             </el-menu>
           </el-col>
@@ -42,15 +38,42 @@ import {
   Location,
   Setting,
 } from '@element-plus/icons-vue';
-const handleOpen = (key: string, keyPath: string[]) => {
+import { onMounted, reactive, toRefs } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const data = reactive({
+  e: {},
+  t: '',
+});
+// const tiao=()=>{
+//   console.log(data.t);
+
+//   router.push(data.t)
+//   console.log(1);
+
+// }
+const handleOpen = (key: string, keyPath: any) => {
   console.log(key, keyPath);
+  // data.t=keyPath
 };
 const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
 };
+
+onMounted(() => {
+  const q: any = sessionStorage.getItem('data');
+  console.log(JSON.parse(q));
+  const e = JSON.parse(q);
+  const w: any = e.filter((item: any) => {
+    return item.pid == 0;
+  });
+  data.e = w;
+  console.log(w);
+});
+const { e }: any = toRefs(data);
 </script>
 <style>
-.el-menu{
-  border-right:0cap;
+.el-menu {
+  border-right: 0cap;
 }
 </style>
