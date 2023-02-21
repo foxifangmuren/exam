@@ -4,21 +4,31 @@ import {createRouter,createWebHashHistory} from "vue-router";
 import Login from "../pages/Login/login.vue";
 import Home from "../pages/Home/home.vue"
 import NotFount from "../pages/Noufount/notfount.vue"
+import seel_pwdVue from "../pages/seek_pwd/seel_pwd.vue";
 //定义路由，每个路由都需要映射到一个组件。
 const routes = [
+  //登录页面
   { 
     path: '/', 
     redirect:"/login"
   },
+  // 登录页面
   {
     path:"/login",
     name:"login",
     component: Login 
   },
+  // 首页
   {
     path: '/Home',
     component: Home
   },
+  //忘记密码
+  {
+    path: '/sell',
+    component: seel_pwdVue
+  },
+  // 404页面
   {
     path: '/:pathMatch(.*)*',
     component: NotFount
