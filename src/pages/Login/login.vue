@@ -17,8 +17,12 @@ const params = {
 const log = async () => {
   const res: any = await login(params.usename, params.pass);
   console.log(res);
-  sessionStorage.setItem('token', res.data);
-  router.push('/Home');
+  sessionStorage.setItem('token', res.data.token);
+  // const w = JSON.stringify(res.data.menu);
+  // console.log(w);
+  sessionStorage.setItem('data', JSON.stringify(res.data.menu) );
+
+  router.push("Home")
 };
 </script>
 
