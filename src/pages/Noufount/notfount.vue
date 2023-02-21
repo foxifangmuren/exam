@@ -1,4 +1,3 @@
 <template>
-    <h1>404找不到页面</h1>
+  <el-empty  description="404 找不到页面" :image-size="600" />
 </template>
-    
