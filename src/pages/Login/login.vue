@@ -67,7 +67,9 @@ const log = async (formEl:any) => {
       // console.log('submit!')
       const res: any = await login(obj.form.usename, obj.form.pass);
       console.log(res);
-      sessionStorage.setItem('token', res.data);
+      sessionStorage.setItem('token', res.data.token);
+  sessionStorage.setItem('data', JSON.stringify(res.data.menu) );
+
       router.push('/Home');
     } else {
       console.log('error submit!', fields)
