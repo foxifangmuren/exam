@@ -1,18 +1,9 @@
-# Vue 3 + TypeScript + Vite
-
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Type Support For `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+# 使用技术点
+vue3+TS+vite Element.UI 防抖，图标
+# 项目背景
+客户需要开发一套学校内部的考试系统，用于学校内部规章制度的学习及考核。系统的主要功能包括：每个学员都可以进行每日答题与专项答题。根据答题结果，归类不同的题库以供学员查询学习。交卷后系统自动完成判卷并积分。与钉钉深度集成，包括实现考试系统与领云单点登录；每日自动推送考试待办任务，完成答题后标记完成待办；每月自动推送积分榜。个性化配置，题库、答题数量、每日答题次数、题目计分规则等支持随时调整。这是一套典型的兼具高复杂度与灵活性要求的系统，很难找到标准的商业软件来完全满足需求，定制开发又远超项目成本预期，而领云完美地胜任了这项工作。下面，我们一起来看一下如何用领云来实现这套考试系统。
+# 项目目录划分
+王伟亚：考试，部门，
+张晨晨：学生端列表，学生端设置，师资，登录
+刘子诺：班级，学员，角色
+张瑞振：阅卷，试卷，题库
