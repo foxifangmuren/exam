@@ -1,5 +1,5 @@
 //在vue-router引入createRouter和createWebHashHistory
-import {createRouter,createWebHashHistory} from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 //引入组件，及要跳转到的页面，也可以直接写在routes中的component里
 import Login from "../pages/Login/login.vue";
 import Home from "../pages/Home/home.vue"
@@ -8,15 +8,15 @@ import seel_pwdVue from "../pages/seek_pwd/seel_pwd.vue";
 //定义路由，每个路由都需要映射到一个组件。
 const routes = [
   //登录页面
-  { 
-    path: '/', 
-    redirect:"/login"
+  {
+    path: '/',
+    redirect: "/login"
   },
   // 登录页面
   {
-    path:"/login",
-    name:"login",
-    component: Login 
+    path: "/login",
+    name: "login",
+    component: Login
   },
   // 首页
   {
@@ -24,6 +24,11 @@ const routes = [
     component: Home
   },
   //忘记密码
+  {
+    path: '/sell',
+    component: seel_pwdVue
+  },
+  //微信扫码登录
   {
     path: '/sell',
     component: seel_pwdVue

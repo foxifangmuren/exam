@@ -2,7 +2,7 @@
   <div>
     <input type="text" v-model="params.usename" />
     <input type="text" v-model="params.pass" />
-    <button @click="log">登录</button>
+    <button @click="log">登录1</button>
   </div>
 </template>
 
