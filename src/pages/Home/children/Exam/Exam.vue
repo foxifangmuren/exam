@@ -7,29 +7,16 @@
         <p>关键字:</p>
         <el-input
           class="titl_input"
-          v-model="input"
+          v-model="form.query.key"
           placeholder="请输入题库名称"
           clearable
         />
-        <el-button type="primary" @click="query">搜索</el-button>
+        <el-button type="primary" @click="query" >搜索</el-button>
+        <el-button @click="drawer = true">1111</el-button>
       </div>
     </div>
     <!-- 表格 -->
-
-    <Table :tableData="tableData" :tableHeader="tableHeader"></Table>
-    <!-- <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#f5f7fa' }">
-      <el-table-column  />
-      <el-table-column  />
-      <el-table-column />
-      <el-table-column  />
-      <el-table-column />
-      <el-table-column />
-      <el-table-column " width="180">
-        <el-button key="primary" type="primary" link @click="goStudent()">阅卷</el-button >
-      </el-table-column>
-    </el-table> -->
-
-
+    <MyTable :tableData="form.tableData" :tableHeader="tableHeader" ></MyTable>
     <!-- 分页 -->
     <div class="demo-pagination-block">
       <el-pagination
@@ -49,56 +36,38 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref,reactive  } from "vue";
 import router from '@/router';
-import Table from "@/components/Table.vue"
-//搜索框
-const input = ref("");
+import {examList} from "@/api/exam"
+import { log } from "console";
+/***
+ * 列表请求
+ * 添加
+ * 删除
+ * 
+ */
+
+
 //查询功能--由于只有一个输入框，不需要监听输入查询
 const query=()=>{
-  console.log(input.value);
-  
+    getlist()
 }
 //表格数据--数组中又多少数据就有多少条数据
-const tableData = [
-     {
-        id: 3533,
-        title: "850",
-        info: "20",
-        addtime: "2023-02-22 08:46:00.0",
-        teacherid: 1828,
-        admin: "超级管理员",
-                begintime: null,
-                endtime: null,
-                currenttime: null,
-                studentStartTime: null,
-                stuEndTime: null,
-                limittime: 0,
-                qorder: 0,
-                aorder: 0,
-                num: 0,
-                pastnum: 0,
-                scores: 100.0,
-                pastscores: 60.0,
-                studentScores: 0.0,
-                subjectnum: 1,
-                isshow: 1,
-                answershow: 1,
-                studentcounts: 1,
-                incomplete: 1,
-                passCounts: 0,
-                unpassCounts: 0,
-                limits: null,
-                markteachers: null,
-                students: null,
-                databaseid: 0,
-                state: 1,
-                result: null,
-                studentIsComplete: 0,
-                isread: 2,
-                questions: null
-            },
-];
+const form = reactive({
+    query:{
+      key:"",
+      page:"",
+      psize:"",
+      isread:"1",
+    },
+    tableData:[]
+});
+const getlist=async()=>{
+  const sre=await examList(form.query)
+  console.log(sre);
+  form.tableData=sre.data.list
+}
+getlist()
 //分页
 const currentPage4 = ref(4);
 const pageSize4 = ref(100);
@@ -107,7 +76,8 @@ const background = ref(false);
 const disabled = ref(false);
 //分页操作
 const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
+  console.log(`${val} items per page`)
+  
 };
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
@@ -116,9 +86,7 @@ const handleCurrentChange = (val: number) => {
 const goStudent=()=>{
   router.push('/Exam_student');
 }
-
-
-
+//表格数据开头
 const tableHeader=[
   {
     prop:"title" ,
@@ -154,7 +122,6 @@ const tableHeader=[
       }
     ]
   },
-
 ]
 </script>
 
