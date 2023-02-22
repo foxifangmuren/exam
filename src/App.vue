@@ -5,8 +5,9 @@
 </template>
 
 <style scoped>
+
 div{
-  height:100vh
+  height: 100vh;
 }
 /* .logo {
   height: 6em;
