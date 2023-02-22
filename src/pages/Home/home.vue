@@ -3,7 +3,14 @@
     <div class="common-layout">
       <el-container>
         <!-- 左侧菜单 -->
-        <el-aside width="70px">
+        <el-aside width="70px" style="background-color: aqua">
+          <div class="block">
+            <img
+              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+              alt=""
+            />
+          </div>
+
           <el-col>
             <el-menu
               default-active="2"
@@ -17,7 +24,7 @@
                 v-for="(item, index) in e"
                 :key="index"
               >
-               <div :class="'icon iconfont ' + item.ico"></div>
+                <p :class="'icon iconfont ' + item.ico"></p>
                 <span>{{ item.name }}</span>
               </el-menu-item>
             </el-menu>
@@ -72,7 +79,41 @@ onMounted(() => {
 });
 const { e }: any = toRefs(data);
 </script>
-<style>
+<style lang="less" scoped>
+.block {
+  width: 75px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 40px;
+    height: 40px;
+  }
+}
+.el-menu-item {
+  display: flex;
+  // display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 65px;
+  span {
+    margin-top: -30px;
+  }
+}
+
+.el-menu {
+  background-color: #ebebeb !important;
+}
+.el-aside {
+  width: 75px;
+  height: 100vh;
+  background-color: #ebebeb !important;
+}
+.el-main {
+  height: 100vh;
+}
 .el-menu {
   border-right: 0cap;
 }
