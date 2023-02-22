@@ -5,7 +5,7 @@
     <!-- 表格行 -->
     <el-table-column v-for="item in tableHeader" :prop="item.prop" :label="item.label" :key="item.id">
       <!-- 建立插槽 -->
-      <template #default="scope">
+      <template #default="scoped">
         <!-- 按钮 按钮是个数组 -->
         <div v-if="item.type === 'buttons'">
           <!-- 循环按钮数组 -->
