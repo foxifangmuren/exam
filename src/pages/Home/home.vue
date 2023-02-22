@@ -3,7 +3,7 @@
     <div class="common-layout">
       <el-container>
         <!-- 左侧菜单 -->
-        <el-aside width="70px" style="background-color: aqua">
+        <el-aside width="70px">
           <el-col>
             <el-menu
               default-active="2"
