@@ -77,7 +77,7 @@
   }
   //开始考试按钮
   const begin = ()=>{
-    router.push({path:'/stuexam'})
+    router.push({path:'/stuexam',query:{testid:route.query.id}})
   }
   onMounted(() => {
     GetTest1()

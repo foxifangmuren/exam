@@ -8,3 +8,7 @@ export const getList = (params: any): Promise<AxiosResponse<any>> => {
 export const getTest = (params: any): Promise<AxiosResponse<any>> => {
   return get('/test/get',  params );
 };
+//获取考试题目 
+export const getteststart = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/test/start',  params );
+};
