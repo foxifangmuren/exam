@@ -42,6 +42,7 @@ const props = withDefaults(
     tableHeader: any[];
     tableData: any[];
   }>(),
+  
   {
     isTypeSelection: true,
     tableHeader: () => [],
