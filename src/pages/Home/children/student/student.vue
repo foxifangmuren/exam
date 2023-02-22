@@ -43,10 +43,10 @@
           <el-table-column property="classname" label="所在班级"/>
           <el-table-column property="username" label="账号" />
           <el-table-column property="addtime" label="添加时间"/>
-          <el-table-column label="操作" width="150">
-            <span class="zi">重置密码</span>
-            <span class="zi">修改</span>
-            <span class="zi">删除</span>
+          <el-table-column label="操作" width="150" #default="scope">
+            <span class="zi" style="cursor:pointer;">重置密码</span>
+            <span class="zi" style="cursor:pointer;">修改</span>
+            <span class="zi" style="cursor:pointer;" @click="del(scope.row.id)">删除</span>
           </el-table-column>
         </el-table>
       </div>
@@ -68,7 +68,8 @@
 <script setup lang="ts">
 import { log } from 'console';
 import { onMounted, reactive,ref, toRefs } from 'vue';
-import {departmentlist,studentlist,classeslist} from '../../../../api/admin'
+import {departmentlist,studentlist,classeslist,studentdel} from '../../../../api/admin'
+import { ElMessageBox,ElMessage,Action } from 'element-plus';
 const data = reactive({
   //表格数据
   tableData:[],
@@ -135,6 +136,32 @@ const studentList = async ()=>{
     data.tableData = res.data.list
     data.total = res.data.counts
   }
+}
+//删除接口
+const dell = async(ids:number)=>{
+  const res:any = await studentdel({id:ids})
+  // console.log('学生删除',res)
+  if (res.errCode === 10000) {
+    ElMessage.success("删除成功");
+    getclasseslist();
+  } else {
+    ElMessage.error(res.errMsg);
+  }
+
+}
+//删除
+const del = (ids:number)=>{
+  ElMessageBox.confirm('是否永久删除此文件', '提示', {
+    cancelButtText:"取消",
+    confirmButtonText:"确定",
+    type:"warning",
+  })
+  .then((res:any) => {
+    dell(ids)
+  })
+  .catch((error:any)=>{
+    ElMessage.error("已取消删除")
+  })
 }
 //查询
 const onSubmit = () => {

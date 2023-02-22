@@ -17,8 +17,8 @@
           
           <el-table-column property="name" label="学生姓名" />
           <el-table-column label="操作" width="120">
-            <span class="zi">编辑</span>
-            <span class="zi">删除</span>
+            <span class="zi" style="cursor:pointer;">编辑</span>
+            <span class="zi" style="cursor:pointer;">删除</span>
           </el-table-column>
         </el-table>
       </div>

@@ -26,11 +26,31 @@ export const departmentlist = (): Promise<AxiosResponse<any>> => {
 export const classeslist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/classes/list',params)
 }
-//学生列表  /student/list
+//班级添加
+export const classesadd = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/classes/add',params)
+}
+//班级删除  
+export const classesdel = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/classes/delete',params)
+}
+//学生列表 
 export const studentlist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/student/list',params)
 }
-//角色管理
+//删除学生
+export const studentdel = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/student/delete',params)
+}
+//角色管理列表
 export const rolelist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/role/list',params)
+}
+//师资列表
+export const teacherlist = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/teacher/list',params)
+}
+//删除师资/老师  
+export const teacherdel = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/teacher/delete',params)
 }
