@@ -5,6 +5,7 @@ import Login from '../pages/Login/login.vue';
 import Home from '../pages/Home/home.vue';
 import test from '../pages/Home/children/Text/Text.vue';
 import Exam from '../pages/Home/children/Exam/Exam.vue';
+import Exam_student from "../pages/Home/children/Exam/examstudent.vue"
 import role from '../pages/Home/children/role/role.vue';
 import student from '../pages/Home/children/student/student.vue';
 import classes from '../pages/Home/children/classes/classes.vue';
@@ -45,6 +46,11 @@ const routes:any = [
         path: '/exam',
         name: Exam,
         component: ()=>import('../pages/Home/children/Exam/Exam.vue'),
+      },
+      {
+        path:"/Exam_student",
+        name:Exam_student,
+        component:Exam_student
       },
       // "试卷"
       {
