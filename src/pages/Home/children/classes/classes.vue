@@ -31,7 +31,8 @@
           <el-table-column property="name" label="班级名称" />
           <el-table-column property="depname" label="部门"/>
           <el-table-column label="操作" width="120">
-            <span class="zi">修改</span><span class="zi">删除</span>
+            <span class="zi">修改</span>
+            <span class="zi">删除</span>
           </el-table-column>
         </el-table>
       </div>
@@ -155,7 +156,7 @@ onMounted(()=>{
 .zi{
   font-size: 6px;
   margin-right: 10px;
-  /* color: #; */
+  color: rgb(85, 149, 227);
 }
 
 .element.style {
@@ -163,6 +164,8 @@ onMounted(()=>{
 }
 
 .demo-pagination-block{
-  margin-left: 100px;
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
 }
 </style>

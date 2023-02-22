@@ -26,3 +26,11 @@ export const departmentlist = (): Promise<AxiosResponse<any>> => {
 export const classeslist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/classes/list',params)
 }
+//学生列表  /student/list
+export const studentlist = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/student/list',params)
+}
+//角色管理
+export const rolelist = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/role/list',params)
+}
