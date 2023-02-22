@@ -60,22 +60,22 @@ const data = reactive({
 
 // }
 const handleOpen = (key: string, keyPath: any) => {
-  console.log(key, keyPath);
+  // console.log(key, keyPath);
   // data.t=keyPath
 };
 const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
+  // console.log(key, keyPath);
 };
 
 onMounted(() => {
   const q: any = sessionStorage.getItem('data');
-  console.log(JSON.parse(q));
+  // console.log(JSON.parse(q));
   const e = JSON.parse(q);
   const w: any = e.filter((item: any) => {
     return item.pid == 0;
   });
   data.e = w;
-  console.log(w);
+  // console.log(w);
 });
 const { e }: any = toRefs(data);
 </script>

@@ -19,10 +19,14 @@ export const getvisituserlist = (params: any) => {
 };
 
 //部门列表
-export const departmentlist = (): Promise<AxiosResponse<any>> => {
-  return get('/department/list')
+export const departmentlist = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/department/list',params)
 }
 //班级列表
 export const classeslist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/classes/list',params)
+}
+//考试列表
+export const TextList = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/test/list',params)
 }
