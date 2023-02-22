@@ -9,8 +9,10 @@
 </template>
 <style scoped>
     .max{
+        text-align: center;
         display: flex;
-        
+        justify-content:center;
+        align-items:center
     }
     .box{
         width: 400px;
