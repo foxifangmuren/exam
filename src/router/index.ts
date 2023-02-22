@@ -14,7 +14,9 @@ import Subjects from '../pages/Home/children/Subjects/Subjects.vue';
 import Databaselist from '../pages/Home/children/Databaselist/Databaselist.vue';
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
-import stutest from '../pages/Home/children/stutest/stutest.vue'
+import stutest from '../pages/Home/children/stutest/stutest.vue';
+import examprepare from '../pages/examprepare/examprepare.vue';
+import stuexam from '../pages/stuexam/stuexam.vue'
 //定义路由，每个路由都需要映射到一个组件。
 const routes:any = [
   //登录页面
@@ -27,6 +29,18 @@ const routes:any = [
     path: '/login',
     name: 'login',
     component: Login,
+  },
+  // 考试
+  {
+    path:'/examprepare',
+    name:'examprepare',
+    component:examprepare
+  },
+  // 学生开始答题
+  {
+    path:'/stuexam',
+    name:'stuexam',
+    component:stuexam
   },
   // 首页
   {

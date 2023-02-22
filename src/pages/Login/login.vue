@@ -80,6 +80,7 @@ const {form,isShow} = toRefs(obj)
 </script>
 <style lang="less" scoped>
 body{
+  position: relative;
   .qie{
     width: 60px;
     height: 60px;
@@ -95,9 +96,11 @@ body{
   margin: 0;
   padding: 0;
   .box{
+    position: absolute;
+    top:100px;
 
     position: relative;
-    margin: 275px auto 0;
+    margin:0 auto;
     width: 535px;
     height: 630px;
     background-color: #ffffff;
