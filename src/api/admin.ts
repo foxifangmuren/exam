@@ -17,3 +17,12 @@ export const getList = (params: any): Promise<AxiosResponse<any>> => {
 export const getvisituserlist = (params: any) => {
   return get('/visituser/list', params);
 };
+
+//部门列表
+export const departmentlist = (): Promise<AxiosResponse<any>> => {
+  return get('/department/list')
+}
+//班级列表
+export const classeslist = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/classes/list',params)
+}

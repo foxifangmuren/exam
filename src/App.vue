@@ -6,6 +6,9 @@
 
 <style scoped>
 
+div{
+  height: 100vh;
+}
 /* .logo {
   height: 6em;
   padding: 1.5em;

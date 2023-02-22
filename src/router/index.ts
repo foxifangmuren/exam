@@ -15,6 +15,7 @@ import Subjects from '../pages/Home/children/Subjects/Subjects.vue';
 import Databaselist from '../pages/Home/children/Databaselist/Databaselist.vue';
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
+import stutest from '../pages/Home/children/stutest/stutest.vue'
 //定义路由，每个路由都需要映射到一个组件。
 const routes:any = [
   //登录页面
@@ -95,6 +96,12 @@ const routes:any = [
         name: role,
         component: role,
       },
+       // "考试"
+       {
+        path: "/stutest",
+        name: stutest,
+        component: stutest,
+      }
     ],
   },
 
