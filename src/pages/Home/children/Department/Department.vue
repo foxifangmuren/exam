@@ -116,10 +116,10 @@ const update = async () => {
 const Delete = async () => {
   ElMessageBox.confirm(
     '确定要删除，该页面吗',
-    'Warning',
+    '提示',
     {
-      confirmButtonText: 'OK',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
       type: 'warning',
     }
   )
