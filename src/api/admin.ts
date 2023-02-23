@@ -22,6 +22,14 @@ export const getvisituserlist = (params: any) => {
 export const departmentlist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/department/list',params)
 }
+//部门添加  
+export const departmentadd = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/department/add',params)
+}
+//部门删除 
+export const departmentdelete = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/department/delete',params)
+}
 //班级列表
 export const classeslist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/classes/list',params)

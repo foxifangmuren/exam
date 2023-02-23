@@ -72,6 +72,7 @@
     <el-pagination
       v-model:current-page="data.page"
       v-model:page-size="data.psize"
+      background 
       :page-sizes="[5, 10, 15, 20]"
       layout="total, sizes, prev, pager, next, jumper"
       :total="form.total"
@@ -101,8 +102,8 @@ const handleCurrentChange = (val: number) => {
 };
 const form: any = reactive({
   data: {
-    page: '1',
-    psize: '5',
+    page: 1,
+    psize: 5,
     admin: '',
     key: '',
     ismy: null,
