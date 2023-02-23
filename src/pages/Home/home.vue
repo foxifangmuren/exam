@@ -102,13 +102,16 @@ const { e }: any = toRefs(data);
     margin-top: -30px;
   }
 }
-
+.common-layout{
+  height: 100vh;
+}
 .el-menu {
+  height: 100vh;
   background-color: #ebebeb !important;
 }
 .el-aside {
   width: 75px;
-  height: 100vh;
+  height: 100%;
   background-color: #ebebeb !important;
 }
 .el-main {

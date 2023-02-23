@@ -4,8 +4,6 @@ import App from './App.vue';
 import router from './router/index';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
-import { useRouter } from 'vue-router';
-const route = useRouter();
 import MyTable from "@/components/Table.vue"
 import MyPages from "@/components/pages.vue"
 import MyBialog from "@/components/Bialog.vue"
