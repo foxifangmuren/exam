@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router';
 const route = useRouter();
 import MyTable from "@/components/Table.vue"
 import MyPages from "@/components/pages.vue"
+import MyBialog from "@/components/Bialog.vue"
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 //引入axios
 import axios from 'axios';
@@ -19,4 +20,5 @@ app.use(ElementPlus, { locale: zhCn })
 app.use(router)
 app.component('MyTable',MyTable)
 app.component('MyPages',MyPages)
+app.component('MyBialog',MyBialog)
 app.mount('#app');

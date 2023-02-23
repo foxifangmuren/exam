@@ -44,6 +44,7 @@ const props = withDefaults(
   }>(),
   
   {
+    loading:false,
     isTypeSelection: true,
     tableHeader: () => [],
     tableData: () => [],
