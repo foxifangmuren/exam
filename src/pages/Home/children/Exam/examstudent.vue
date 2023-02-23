@@ -3,47 +3,29 @@
     <!-- 表头 -->
     <el-page-header @back="goBack">
       <template #content>
-        <span class="text-large font-600 mr-3"> Title </span>
+        <span class="text-large font-600 mr-3">{{ title }}</span>
       </template>
     </el-page-header>
     <!-- 头部 -->
     <el-form
       :inline="true"
-      :model="formInline"
+      :model="from.query"
       class="demo-form-inline title_box_input"
     >
       <el-form-item label="考生姓名">
-        <el-input
-          v-model="formInline.user"
-          placeholder="Approved by"
-          clearable
-        />
+        <el-input v-model="from.query.key" placeholder="请输入学生姓名" clearable />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select
-          v-model="formInline.region"
-          placeholder="Activity zone"
-          clearable
-        >
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
+        <el-select v-model="from.query.state"  placeholder="全部" clearable @keyup.enter="onSubmit" @change="onSubmit" >
+          <el-option label="已阅卷" value="已阅卷" />
+          <el-option label="未阅卷" value="未阅卷" />
         </el-select>
       </el-form-item>
       <el-form-item label="部门">
-        <el-tree-select
-          v-model="value"
-          :data="data"
-          :render-after-expand="false"
-          clearable
-        />
+        <el-tree-select v-model="from.query.dep" :data="data" :render-after-expand="false"  clearable />
       </el-form-item>
       <el-form-item label="班级">
-        <el-select
-          v-model="formInline.region"
-          placeholder="Activity zone"
-          disabled="true"
-          clearable
-        >
+        <el-select v-model="from.query.classname" placeholder="请选择" disabled="true" clearable >
           <el-option label="Zone one" value="shanghai" />
           <el-option label="Zone two" value="beijing" />
         </el-select>
@@ -52,43 +34,27 @@
         <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
     </el-form>
-
     <!-- 表格 -->
-
-
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-      :header-cell-style="{ background: '#f5f7fa' }"
-    >
-      <el-table-column prop="date" label="Date" />
-      <el-table-column prop="name" label="Name" />
-      <el-table-column label="Address" width="180">
-        <el-button key="primary" type="primary" link  @click="drawer = true">阅卷</el-button>
-      </el-table-column>
-    </el-table>
-
-
+    <!-- 此处为封装表格，表格内容为 是否有复选框（isTypeSelection） 格式（tableHeader），数据（tableData），若干方法等 -->
+    <MyTable
+      :tableData="from.tableData"
+      :tableHeader="tableHeader"
+      :isTypeSelection="false"
+      @go="go"
+    ></MyTable>
     <!-- 分页 -->
-    <div class="demo-pagination-block">
-      <el-pagination
-        v-model:current-page="currentPage4"
-        v-model:page-size="pageSize4"
-        :page-sizes="[100, 200, 300, 400]"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <!-- 此处为封装分页，分页内容为，分页相关方法（）（），总页数（total）,页数（page）条数（psize） -->
+    <MyPages
+      :total="from.total"
+      :page="from.query.page"
+      :psize="from.query.psize"
+      @changePageSize="changePageSize"
+      @changePage="changePage"
+    ></MyPages>
     <!-- 侧栏弹框 -->
     <el-drawer
-      v-model="drawer"
-      title="I am the title"
-      :direction="direction"
+      v-model="from.drawer"
+      title=""
       :before-close="handleClose"
     >
       <!-- 弹框内容 -->
@@ -99,58 +65,87 @@
 
 <script lang="ts" setup>
 import { ref,reactive  } from "vue";
-//侧边弹框引入
-import { ElMessageBox } from "element-plus";
+import { useRoute } from "vue-router"
 import router from "@/router";
+import {studentlist,studentinfo} from "@/api/exam"
+import { log } from "console";
+//地址栏数据
+const route = useRoute()
+const title=ref(route.query.title)
+const testid=ref(route.query.id)
 //表格数据
-const tableData = [
+const from=reactive({
+    query:{
+      testid:0,
+      page:  1,
+      psize:  10,
+      state:"",//状态
+      key:"" ,
+      dep:"",
+    },
+    tableData:[],
+    drawer:false,
+    //总条数
+    total: "",
+})
+const getlist=async (id:any)=>{
+    from.query.testid=id
+    const src = await studentlist(from.query)
+    console.log(src);
+    from.tableData=src.data.list
+    from.total = src.data.counts;
+}
+getlist(testid)
+//表格头部
+const tableHeader = [
   {
-    date: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "name",
+    label: "姓名",
   },
   {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "classname",
+    label: "班级名称",
   },
   {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "scores",
+    label: "分数",
   },
   {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "readtime",
+    label: "考试时间",
+  },
+  {
+    prop: "state",
+    label: "状态",
+  },
+  {
+    label: "操作",
+    type: "buttons",
+    buttons: [
+      {
+        text: "exam",
+        type: "primary",
+        event:"go"
+      },
+    ],
   },
 ];
-
-//分页数据
-const currentPage4 = ref(4);
-const pageSize4 = ref(100);
-const small = ref(false);
-const background = ref(false);
-const disabled = ref(false);
 //分页操作
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
+const changePage = (val: number) => {
+  from.query.page = val;
+  getlist(testid);
 };
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
+const changePageSize = (val: number) => {
+  from.query.psize = val;
+  getlist(testid);
 };
 //返回
 const goBack = () => {
     router.go(-1)
 }
-//表单操作
-const formInline = reactive({
-  user: "",
-  region: "",
-});
-
+//查询
 const onSubmit = () => {
-  console.log("submit!");
+  getlist(testid)
 };
 
 //树形控制
@@ -225,10 +220,18 @@ const data = [
   },
 ];
 //侧边弹框
-const drawer = ref(false);
-const handleClose = (done: () => void) => {
-  done();
-};
+const go=(val:any)=>{
+    from.drawer=true
+    console.log(val);  
+    console.log(testid);
+     
+}
+const getstdent=async(testid:any,studentid:any)=>{
+  const src=await studentinfo({testid:  3569 ,studentid: 83042})
+  console.log(src);
+  
+}
+const handleClose = (done: () => void) =>done();
 </script>
 
 <style scoped>
