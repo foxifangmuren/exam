@@ -11,118 +11,122 @@
           placeholder="请输入题库名称"
           clearable
         />
-        <el-button type="primary" @click="query" >搜索</el-button>
-        <el-button @click="drawer = true">1111</el-button>
+        <el-button type="primary" @click="query">搜索</el-button>
       </div>
     </div>
     <!-- 表格 -->
-    <MyTable :tableData="form.tableData" :tableHeader="tableHeader" ></MyTable>
+    <MyTable
+      :tableData="form.tableData"
+      :tableHeader="tableHeader"
+      :isTypeSelection="false"
+      @go="goStudent"
+    ></MyTable>
     <!-- 分页 -->
-    <div class="demo-pagination-block">
-      <el-pagination
-        v-model:current-page="currentPage4"
-        v-model:page-size="pageSize4"
-        :page-sizes="[100, 200, 300, 400]"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <!-- 封装公共分页功能 需要传递参数 总页数、分页相关方法、page psize -->
+    <MyPages
+      :total="form.total"
+      :page="form.query.page"
+      :psize="form.query.psize"
+      @changPageSize="handleSizeChange"
+      @changPage="handleCurrentChange"
+    ></MyPages>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref,reactive  } from "vue";
-import router from '@/router';
-import {examList} from "@/api/exam"
+import { ref, reactive } from "vue";
+import router from "@/router";
+import { examList } from "@/api/exam";
+import { ElMessage } from "element-plus";
 import { log } from "console";
 /***
  * 列表请求
  * 添加
  * 删除
- * 
+ *
  */
 
-
 //查询功能--由于只有一个输入框，不需要监听输入查询
-const query=()=>{
-    getlist()
-}
+const query = () => {
+  if (!form.query.key) {
+    ElMessage({ message: "当前查询为查询全部！！", type: "warning", });
+  } else {
+    getlist();
+  }
+};
 //表格数据--数组中又多少数据就有多少条数据
 const form = reactive({
-    query:{
-      key:"",
-      page:"",
-      psize:"",
-      isread:"1",
-    },
-    tableData:[]
+  //请求数据
+  query: {
+    key: "",
+    page: 1,
+    psize: 10,
+    isread: "1",
+  },
+  total: 0,
+  //列表数据
+  tableData: [],
 });
-const getlist=async()=>{
-  const sre=await examList(form.query)
+// 请求列表并调用
+const getlist = async () => {
+  const sre = await examList(form.query);
   console.log(sre);
-  form.tableData=sre.data.list
-}
-getlist()
-//分页
-const currentPage4 = ref(4);
-const pageSize4 = ref(100);
-const small = ref(false);
-const background = ref(false);
-const disabled = ref(false);
+  form.tableData = sre.data.list;
+  form.total = sre.data.counts;
+};
+getlist();
 //分页操作
 const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`)
-  
+  form.query.psize = val;
+  getlist();
 };
 const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
+  form.query.page = val;
+  getlist();
 };
 //跳转页面
-const goStudent=()=>{
-  router.push('/Exam_student');
-}
+const goStudent = (val:any) => {
+  // console.log(val.id,val.title);
+  router.push("/Exam_student?id="+val.id+"&title="+val.title);
+};
 //表格数据开头
-const tableHeader=[
+const tableHeader = [
   {
-    prop:"title" ,
-    label:"考试名称"
+    prop: "title",
+    label: "考试名称",
   },
   {
-   prop:"info" ,
-   label:"考试说明"
+    prop: "info",
+    label: "考试说明",
   },
-   {
-    prop:"subjectnum" ,
-    label:"题量"
+  {
+    prop: "subjectnum",
+    label: "题量",
   },
-   {
-   prop:"studentcounts" ,
-   label:"考试人数"
+  {
+    prop: "studentcounts",
+    label: "考试人数",
   },
-   {
-   prop:"incomplete" ,
-   label:"未判人数"
+  {
+    prop: "incomplete",
+    label: "未判人数",
   },
-   {
-   prop:"endtime" ,
-   label:"开放时间"
+  {
+    prop: "endtime",
+    label: "开放时间",
   },
-   {
-    label:"操作",
-    type:"buttons",
-    buttons:[
+  {
+    label: "操作",
+    type: "buttons",
+    buttons: [
       {
-        text:"阅卷",
-        type:"primary"
-      }
-    ]
+        text: "exam",
+        type: "primary",
+        event:"go"
+      },
+    ],
   },
-]
+];
 </script>
 
 <style scoped>

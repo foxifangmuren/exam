@@ -3,7 +3,7 @@
     <!-- 表头 -->
     <el-page-header @back="goBack">
       <template #content>
-        <span class="text-large font-600 mr-3"> Title </span>
+        <span class="text-large font-600 mr-3">{{ title }}</span>
       </template>
     </el-page-header>
     <!-- 头部 -->
@@ -52,38 +52,22 @@
         <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
     </el-form>
-
     <!-- 表格 -->
-
-
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-      :header-cell-style="{ background: '#f5f7fa' }"
-    >
-      <el-table-column prop="date" label="Date" />
-      <el-table-column prop="name" label="Name" />
-      <el-table-column label="Address" width="180">
-        <el-button key="primary" type="primary" link  @click="drawer = true">阅卷</el-button>
-      </el-table-column>
-    </el-table>
-
-
+    <!-- 此处为封装表格，表格内容为 是否有复选框（isTypeSelection） 格式（tableHeader），数据（tableData），若干方法等 -->
+    <MyTable
+      :tableData="from.tableData"
+      :tableHeader="tableHeader"
+      :isTypeSelection="false"
+    ></MyTable>
     <!-- 分页 -->
-    <div class="demo-pagination-block">
-      <el-pagination
-        v-model:current-page="currentPage4"
-        v-model:page-size="pageSize4"
-        :page-sizes="[100, 200, 300, 400]"
-        :small="small"
-        :disabled="disabled"
-        :background="background"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <!-- 此处为封装分页，分页内容为，分页相关方法（）（），总页数（total）,页数（page）条数（psize） -->
+    <MyPages
+      :total="from.total"
+      :page="from.query.page"
+      :psize="from.query.psize"
+      @changePageSize="changePageSize"
+      @changePage="changePage"
+    ></MyPages>
     <!-- 侧栏弹框 -->
     <el-drawer
       v-model="drawer"
@@ -99,45 +83,75 @@
 
 <script lang="ts" setup>
 import { ref,reactive  } from "vue";
-//侧边弹框引入
-import { ElMessageBox } from "element-plus";
+import { useRoute } from "vue-router"
 import router from "@/router";
+import {studentlist} from "@/api/exam"
+const route = useRoute()
+const title=ref(route.query.title)
+const testid=ref(route.query.id)
 //表格数据
-const tableData = [
+const from=reactive({
+    query:{
+      testid:0,
+      page:  1,
+      psize:  10,
+      state:"",
+      key:"" ,
+    },
+    tableData:[],
+      //总条数
+  total: "",
+})
+const getlist=async (id:any)=>{
+    from.query.testid=id
+    const src = await studentlist(from.query)
+    console.log(src);
+    from.tableData=src.data.list
+      from.total = src.data.counts;
+}
+getlist(testid)
+//表格头部
+const tableHeader = [
   {
-    date: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "name",
+    label: "姓名",
   },
   {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "classname",
+    label: "班级名称",
   },
   {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "scores",
+    label: "分数",
   },
   {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
+    prop: "readtime",
+    label: "考试时间",
+  },
+  {
+    prop: "state",
+    label: "状态",
+  },
+  {
+    label: "操作",
+    type: "buttons",
+    buttons: [
+      {
+        text: "exam",
+        type: "primary",
+        event:"go"
+      },
+    ],
   },
 ];
-
-//分页数据
-const currentPage4 = ref(4);
-const pageSize4 = ref(100);
-const small = ref(false);
-const background = ref(false);
-const disabled = ref(false);
 //分页操作
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
+const changePage = (val: number) => {
+  from.query.page = val;
+  getlist(testid);
 };
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
+const changePageSize = (val: number) => {
+  from.query.psize = val;
+  getlist(testid);
 };
 //返回
 const goBack = () => {

@@ -14,7 +14,7 @@
           <el-form-item label="使用权限" prop="resource">
             <el-radio-group v-model="ruleForm.isshow">
             <el-form-item>
-                <el-radio :label="0">允许所有老师使用</el-radio>
+                <el-radio :label="1">允许所有老师使用</el-radio>
            </el-form-item>
             <el-form-item>
                 <el-radio :label="2">不允许任何老师使用</el-radio> 
