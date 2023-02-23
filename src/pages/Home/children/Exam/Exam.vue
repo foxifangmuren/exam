@@ -38,7 +38,6 @@ import { ref, reactive } from "vue";
 import router from "@/router";
 import { examList } from "@/api/exam";
 import { ElMessage } from "element-plus";
-import { log } from "console";
 /***
  * 列表请求
  * 添加
@@ -70,7 +69,6 @@ const form = reactive({
 // 请求列表并调用
 const getlist = async () => {
   const sre = await examList(form.query);
-  console.log(sre);
   form.tableData = sre.data.list;
   form.total = sre.data.counts;
 };
@@ -86,7 +84,6 @@ const handleCurrentChange = (val: number) => {
 };
 //跳转页面
 const goStudent = (val:any) => {
-  // console.log(val.id,val.title);
   router.push("/Exam_student?id="+val.id+"&title="+val.title);
 };
 //表格数据开头
