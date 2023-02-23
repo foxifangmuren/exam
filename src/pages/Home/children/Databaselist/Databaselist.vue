@@ -43,6 +43,7 @@
       :tableHeader="tableHeader"
       :tableData="from.tableData"
       @del="open"
+      @gopage="gopage"
     ></MyTable>
     <!-- 分页 -->
     <MyPages
@@ -59,6 +60,7 @@
 </template>
 
 <script lang="ts" setup>
+import router from "@/router";
 import { reactive, ref, toRefs } from "vue";
 import { databaseList ,del} from "@/api/databaselist";
 import { ElMessageBox,ElMessage } from "element-plus";
@@ -103,6 +105,7 @@ const tableHeader = [
       {
         type: "primary",
         text: "试题",
+        event:"gopage"
       },
       {
         type: "primary",
@@ -182,6 +185,10 @@ const check = (done: () => void) => {
       .catch(() => {checked.value = true;});
   }
 };
+//跳转页面
+const gopage=(val:any)=>{
+ router.push("/Dataitem?id="+val.id+"&title="+val.title);
+}
 </script>
 
 

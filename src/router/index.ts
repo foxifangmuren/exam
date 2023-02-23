@@ -14,6 +14,7 @@ import teacher from '../pages/Home/children/teacher/teacher.vue';
 import Subjects from '../pages/Home/children/Subjects/Subjects.vue';
 import subjectsitem from '@/pages/Home/children/Subjects/Subjects_chren.vue';
 import Databaselist from '../pages/Home/children/Databaselist/Databaselist.vue';
+import Dataitem from "@/pages/Home/children/Databaselist/Dataitem.vue"
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
 import stutest from '../pages/Home/children/stutest/stutest.vue'
@@ -68,7 +69,12 @@ const routes:any = [
        {
         path: '/databaselist',
         name: Databaselist,
-        component: Databaselist,
+        component: Databaselist,Dataitem
+      },
+      {
+        path: '/Dataitem',
+        name: Dataitem,
+        component: Dataitem,
       },
        // ""部门"
        {
