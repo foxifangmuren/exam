@@ -16,9 +16,9 @@
         <el-input v-model="from.query.key" placeholder="请输入学生姓名" clearable />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="from.query.state"  placeholder="全部" clearable >
-          <el-option label="已阅卷" value="shanghai" />
-          <el-option label="未阅卷" value="beijing" />
+        <el-select v-model="from.query.state"  placeholder="全部" clearable @keyup.enter="onSubmit" @change="onSubmit" >
+          <el-option label="已阅卷" value="已阅卷" />
+          <el-option label="未阅卷" value="未阅卷" />
         </el-select>
       </el-form-item>
       <el-form-item label="部门">
@@ -40,6 +40,7 @@
       :tableData="from.tableData"
       :tableHeader="tableHeader"
       :isTypeSelection="false"
+      @go="go"
     ></MyTable>
     <!-- 分页 -->
     <!-- 此处为封装分页，分页内容为，分页相关方法（）（），总页数（total）,页数（page）条数（psize） -->
@@ -51,15 +52,14 @@
       @changePage="changePage"
     ></MyPages>
     <!-- 侧栏弹框 -->
-    <!-- <el-drawer
-      v-model="drawer"
-      title="I am the title"
-      :direction="direction"
+    <el-drawer
+      v-model="from.drawer"
+      title=""
       :before-close="handleClose"
-    > -->
+    >
       <!-- 弹框内容 -->
-      <!-- <span>Hi, there!</span> -->
-    <!-- </el-drawer> -->
+      <span>Hi, there!</span>
+    </el-drawer>
   </div>
 </template>
 
@@ -67,7 +67,9 @@
 import { ref,reactive  } from "vue";
 import { useRoute } from "vue-router"
 import router from "@/router";
-import {studentlist} from "@/api/exam"
+import {studentlist,studentinfo} from "@/api/exam"
+import { log } from "console";
+//地址栏数据
 const route = useRoute()
 const title=ref(route.query.title)
 const testid=ref(route.query.id)
@@ -82,15 +84,16 @@ const from=reactive({
       dep:"",
     },
     tableData:[],
-      //总条数
-  total: "",
+    drawer:false,
+    //总条数
+    total: "",
 })
 const getlist=async (id:any)=>{
     from.query.testid=id
     const src = await studentlist(from.query)
     console.log(src);
     from.tableData=src.data.list
-      from.total = src.data.counts;
+    from.total = src.data.counts;
 }
 getlist(testid)
 //表格头部
@@ -140,14 +143,9 @@ const changePageSize = (val: number) => {
 const goBack = () => {
     router.go(-1)
 }
-//表单操作
-const formInline = reactive({
-  user: "",
-  region: "",
-});
-
+//查询
 const onSubmit = () => {
-  console.log("submit!");
+  getlist(testid)
 };
 
 //树形控制
@@ -222,10 +220,18 @@ const data = [
   },
 ];
 //侧边弹框
-const drawer = ref(false);
-const handleClose = (done: () => void) => {
-  done();
-};
+const go=(val:any)=>{
+    from.drawer=true
+    console.log(val);  
+    console.log(testid);
+     
+}
+const getstdent=async(testid:any,studentid:any)=>{
+  const src=await studentinfo({testid:  3569 ,studentid: 83042})
+  console.log(src);
+  
+}
+const handleClose = (done: () => void) =>done();
 </script>
 
 <style scoped>

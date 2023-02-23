@@ -4,7 +4,13 @@ import { AxiosResponse } from 'axios';
 const examList=(params:any)=>{
     return get('test/list',params)
 }
+//考试学生
 const studentlist=(params:any)=>{
     return get('student/test',params)
 }
-export {examList,studentlist}
+//学生单个信息
+const studentinfo=(params:any)=>{
+    return get('question/listforstu',params)
+}
+
+export {examList,studentlist,studentinfo}
