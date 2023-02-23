@@ -3,7 +3,7 @@
     <!-- 头部标题 -->
     <div class="title_header">
       <p>题库管理</p>
-      <el-button type="primary" @click="gg"
+      <el-button type="primary" @click="popout"
         >创建题库</el-button
       >
     </div>
@@ -23,7 +23,7 @@
           @keyup.enter="onSubmit"
         />
       </el-form-item>
-      <el-form-item label="创建人">
+      <el-form-item >
         <el-checkbox v-model="checked" @change="check"
           >只看我创建的</el-checkbox
         >
@@ -61,11 +61,11 @@
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from "vue";
 import { databaseList ,del} from "@/api/databaselist";
-import { ElMessageBox } from "element-plus";
+import { ElMessageBox,ElMessage } from "element-plus";
 
 //弹框区域
 let Refer=ref<any>(null)
-const gg =()=>{
+const popout =()=>{
   console.log(Refer.value)
   Refer.value.dialogVisible=true
 }
@@ -123,7 +123,7 @@ const from = reactive({
     page: 1,
     psize: 10,
     key: "",
-    ismy: "",
+    ismy: 0,
     admin: "",
   },
   loading:true,
@@ -144,16 +144,14 @@ getlist();
 //删除
 const open= async(val:any) =>{
   //删除刷新列表，删除时有提示信息，删除时出现Login效果
-  const src:any=await del({id:val.id})
-  console.log(src);
-  if(src.errCode=="10000"){
-    //请求列表
-    getlist()
-  }else{
-    console.log();
-    
-  }
-  
+  ElMessageBox.confirm(`确定要删除该条数据吗?`)
+    .then(async () => {
+      const src:any=await del({id:val.id})
+      if(src.errCode=="10000"){ElMessage({ message: src.errMsg, type: "success", });getlist()}
+    })
+    .catch(() => {
+      ElMessage({ message: "已取消", type: "error", });
+    });  
 }
 // 分页方法
 const changePage = (val: number) => {
@@ -167,27 +165,21 @@ const changePageSize = (val: number) => {
 //复选框监听
 const check = (done: () => void) => {
   if (checked.value == true) {
-    // console.log('111')
-    from.query.ismy = "3";
-    getlist();
-
     ElMessageBox.confirm(`确定要切换本人创建的吗?`)
       .then(() => {
+        from.query.ismy =1;
         checked.value = true;
+        getlist();
       })
-      .catch(() => {
-        // catch error
-        checked.value = false;
-      });
+      .catch(() => { checked.value = false; });
   } else {
     ElMessageBox.confirm(`确定要切换全部试题吗?`)
       .then(() => {
+        from.query.ismy = 0;
+        getlist();
         checked.value = false;
       })
-      .catch(() => {
-        // catch error
-        checked.value = true;
-      });
+      .catch(() => {checked.value = true;});
   }
 };
 </script>

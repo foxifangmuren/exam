@@ -6,6 +6,7 @@
     <el-table-column v-for="item in tableHeader" :prop="item.prop" :label="item.label" :key="item.id">
       <!-- 建立插槽 -->
       <template #default="scope">
+
         <!-- 按钮 按钮是个数组 -->
         <div v-if="item.type === 'buttons'">
           <!-- 循环按钮数组 -->
@@ -23,11 +24,11 @@
           <span>{{scope.row.endtime==null? '不限':scope.row.addtime-scope.row.endtime}}</span>
         </div>
         <!-- 阅卷详情之班级名称 -->
-        <!-- <div v-if="item.label=='班级名称'">
-            <span>
-              {{scope.row.classname==''? '暂无数据':scope.row.classname}}
-            </span>
-        </div> -->
+        <div v-if="item.type === 'button'">
+           <span>
+              <el-button link  type="primary" size="small" @click="$emit(btn.event, scope.row)" >{{ scope.row.title }}</el-button>
+           </span>  
+        </div>
         <!-- 颜色更改(阅卷未判人数) -->
         <div v-if="item.label=='未判人数'">
             <span v-if="scope.row.incomplete>0" style="color:red" >
