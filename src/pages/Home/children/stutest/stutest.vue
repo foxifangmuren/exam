@@ -55,7 +55,7 @@
   import{getList} from '../../../../api/stutest'
   import { useRouter } from 'vue-router'
   const router = useRouter()
-  const obj = reactive({
+  const obj:any = reactive({
     data:{
       page:1,
       psize:10,
@@ -65,7 +65,7 @@
     list:[]
   })
   const List= async()=>{
-    let res = await getList(obj.data)
+    let res:any = await getList(obj.data)
     // console.log(res)
     if(res.errCode===10000){
       obj.list = res.data.list
@@ -73,7 +73,7 @@
     console.log(obj.list)
   }
   //跳转考试详情
-  const getexamprepare=(data)=>{
+  const getexamprepare=(data:any)=>{
     // console.log(data)
     if(data.result == '未考试'){
       router.push({path:'/examprepare',query:{id:data.id}})
