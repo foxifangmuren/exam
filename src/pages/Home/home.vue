@@ -60,22 +60,22 @@ const data = reactive({
 
 // }
 const handleOpen = (key: string, keyPath: any) => {
-  console.log(key, keyPath);
+  // console.log(key, keyPath);
   // data.t=keyPath
 };
 const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
+  // console.log(key, keyPath);
 };
 
 onMounted(() => {
   const q: any = sessionStorage.getItem('data');
-  console.log(JSON.parse(q));
+  // console.log(JSON.parse(q));
   const e = JSON.parse(q);
   const w: any = e.filter((item: any) => {
     return item.pid == 0;
   });
   data.e = w;
-  console.log(w);
+  // console.log(w);
 });
 const { e }: any = toRefs(data);
 </script>
@@ -102,13 +102,16 @@ const { e }: any = toRefs(data);
     margin-top: -30px;
   }
 }
-
+.common-layout{
+  height: 100vh;
+}
 .el-menu {
+  height: 100vh;
   background-color: #ebebeb !important;
 }
 .el-aside {
   width: 75px;
-  height: 100vh;
+  height: 100%;
   background-color: #ebebeb !important;
 }
 .el-main {

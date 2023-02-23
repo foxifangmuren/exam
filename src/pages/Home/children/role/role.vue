@@ -5,7 +5,7 @@
       <span class="head">角色管理</span>
       <el-button type="primary">添加角色</el-button>
     </div>
-    <!-- 内容 -->
+    <!-- 表格 -->
     <div class="content">
       <div>
         <el-table
@@ -16,13 +16,14 @@
         >
           
           <el-table-column property="name" label="学生姓名" />
-          <el-table-column label="操作" width="120">
+          <el-table-column label="操作" width="120" #default="scope">
             <span class="zi" style="cursor:pointer;">编辑</span>
-            <span class="zi" style="cursor:pointer;">删除</span>
+            <span class="zi" style="cursor:pointer;" @click="del(scope.row.id)">删除</span>
           </el-table-column>
         </el-table>
       </div>
     </div>
+    <!-- 分页 -->
     <div class="demo-pagination-block">
       <el-pagination
         v-model:current-page="data.params.page"
@@ -39,8 +40,9 @@
 
 <script setup lang="ts">
 import { log } from 'console';
+import { ElMessageBox,ElMessage } from 'element-plus';
 import { onMounted, reactive,ref, toRefs } from 'vue';
-import {rolelist} from '../../../../api/admin'
+import {rolelist ,roledel} from '../../../../api/admin'
 const data = reactive({
   //表格数据
   tableData:[],
@@ -53,7 +55,8 @@ const data = reactive({
   //搜索
   value:[],
   //分页 总页数
-  total:0
+  total:0,
+  ids:[]
 });
 // 解构数据
 const {  params} = toRefs(data)
@@ -89,7 +92,31 @@ const onSubmit = () => {
   console.log('hello')
   rouleList()
 };
-
+//删除的点击
+const del = (ids:number) => {
+  ElMessageBox.confirm('是否永久删除此文件','提示',{
+    cancelButtText:"取消",
+    confirmButtonText:"确定",
+    type:'warning',
+  })
+  .then((res:any) => {
+    dell(ids)
+  })
+  .catch((error:any)=>{
+    ElMessage.error("已取消删除");
+  })
+}
+//删除接口
+const dell = async(ids:number)=>{
+  const res:any = await roledel({id:ids})
+  // console.log('删除',res)
+  if (res.errCode === 10000) {
+    ElMessage.success("删除成功");
+    rouleList();
+  } else {
+    ElMessage.error(res.errMsg);
+  }
+}
 //分页
 const handleSizeChange = (val: number) => {
   rouleList()
