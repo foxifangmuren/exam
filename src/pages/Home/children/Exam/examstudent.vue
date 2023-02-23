@@ -9,41 +9,23 @@
     <!-- 头部 -->
     <el-form
       :inline="true"
-      :model="formInline"
+      :model="from.query"
       class="demo-form-inline title_box_input"
     >
       <el-form-item label="考生姓名">
-        <el-input
-          v-model="formInline.user"
-          placeholder="Approved by"
-          clearable
-        />
+        <el-input v-model="from.query.key" placeholder="请输入学生姓名" clearable />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select
-          v-model="formInline.region"
-          placeholder="Activity zone"
-          clearable
-        >
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
+        <el-select v-model="from.query.state"  placeholder="全部" clearable >
+          <el-option label="已阅卷" value="shanghai" />
+          <el-option label="未阅卷" value="beijing" />
         </el-select>
       </el-form-item>
       <el-form-item label="部门">
-        <el-tree-select
-          v-model="value"
-          :data="data"
-          :render-after-expand="false"
-          clearable
-        />
+        <el-tree-select v-model="from.query.dep" :data="data" :render-after-expand="false"  clearable />
       </el-form-item>
       <el-form-item label="班级">
-        <el-select
-          v-model="formInline.region"
-          placeholder="Activity zone"
-          disabled="true"
-          clearable
-        >
+        <el-select v-model="from.query.classname" placeholder="请选择" disabled="true" clearable >
           <el-option label="Zone one" value="shanghai" />
           <el-option label="Zone two" value="beijing" />
         </el-select>
@@ -69,15 +51,15 @@
       @changePage="changePage"
     ></MyPages>
     <!-- 侧栏弹框 -->
-    <el-drawer
+    <!-- <el-drawer
       v-model="drawer"
       title="I am the title"
       :direction="direction"
       :before-close="handleClose"
-    >
+    > -->
       <!-- 弹框内容 -->
-      <span>Hi, there!</span>
-    </el-drawer>
+      <!-- <span>Hi, there!</span> -->
+    <!-- </el-drawer> -->
   </div>
 </template>
 
@@ -95,8 +77,9 @@ const from=reactive({
       testid:0,
       page:  1,
       psize:  10,
-      state:"",
+      state:"",//状态
       key:"" ,
+      dep:"",
     },
     tableData:[],
       //总条数

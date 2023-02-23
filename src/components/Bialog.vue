@@ -38,6 +38,11 @@
 <script setup lang="ts" >
 import {  ref,reactive  } from "vue";
 import {addlist} from "@/api/databaselist";
+import type { FormInstance, FormRules } from 'element-plus'
+const ruleFormRef = ref<any>()
+
+//刷新列表
+const emit=defineEmits(['getlist'])
 //显示不显示
 const dialogVisible = ref(false);
 //暴漏
@@ -48,10 +53,9 @@ defineExpose({
 const handleClose = (done: () => void) => done();
 // 表单
 const formSize = ref('default')
-const ruleFormRef = ref<any>()
-const ruleForm = reactive({
+const ruleForm:any = reactive({
   id:0,
-  title: 'Hello',
+  title: '',
   isshow: 0,
   limits:[]
 })
@@ -63,11 +67,15 @@ const rules = reactive<any>({
 })
 //添加按钮
 const add=async()=>{
-    console.log(ruleForm);
+    // console.log(ruleForm);
     const src=await addlist(ruleForm)
     console.log(src);
+    // 关闭弹框
     dialogVisible.value = false
-    //强制刷新TODO
+    //调用列表
+    emit('getlist')
+    //清空列表
+    ruleForm.resetFields()
 }
 </script>
 

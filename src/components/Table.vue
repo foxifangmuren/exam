@@ -10,6 +10,7 @@
         <div v-if="item.type === 'buttons'">
           <!-- 循环按钮数组 -->
           <span v-for="(btn, index) in item.buttons" :key="index">
+            <!-- 阅卷按钮，最后按钮判断 -->
             <span v-if="btn.text=='exam'">
                  <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.incomplete>0?'阅卷':'查看'}}</el-button> 
             </span>
@@ -21,6 +22,12 @@
         <div v-if="item.label=='开放时间'">
           <span>{{scope.row.endtime==null? '不限':scope.row.addtime-scope.row.endtime}}</span>
         </div>
+        <!-- 阅卷详情之班级名称 -->
+        <!-- <div v-if="item.label=='班级名称'">
+            <span>
+              {{scope.row.classname==''? '暂无数据':scope.row.classname}}
+            </span>
+        </div> -->
         <!-- 颜色更改(阅卷未判人数) -->
         <div v-if="item.label=='未判人数'">
             <span v-if="scope.row.incomplete>0" style="color:red" >
@@ -30,7 +37,8 @@
                   已经全部阅完
             </span>
         </div>
-        <!-- 如果没有值显示  -->
+        <!-- 如果没有值显示 TODO -->
+
       </template>
     </el-table-column>
   </el-table>

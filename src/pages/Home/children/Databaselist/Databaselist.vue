@@ -53,7 +53,7 @@
       @changePage="changePage"
     ></MyPages>
     <!-- 弹框 -->
-    <MyBialog ref="Refer"></MyBialog>
+    <MyBialog ref="Refer" @getlist="getlist"></MyBialog>
 
   </div>
 </template>
@@ -128,7 +128,7 @@ const from = reactive({
   },
   loading:true,
   //总条数
-  total: "",
+  total: 0,
   //表格数据
   tableData: [],
   //批量删除按钮
@@ -143,11 +143,10 @@ const getlist = async () => {
 getlist();
 //删除
 const open= async(val:any) =>{
-  // console.log(val.id);
   //删除刷新列表，删除时有提示信息，删除时出现Login效果
   const src:any=await del({id:val.id})
   console.log(src);
-  if(src.errcode=="00000"){
+  if(src.errCode=="10000"){
     //请求列表
     getlist()
   }else{
