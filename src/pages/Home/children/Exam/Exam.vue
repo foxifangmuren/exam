@@ -11,7 +11,7 @@
           placeholder="请输入题库名称"
           clearable
         />
-        <el-button type="primary" @click="query">搜索</el-button>
+        <el-button type="primary" @click="query" @keyup.enter="query">搜索</el-button>
       </div>
     </div>
     <!-- 表格 -->

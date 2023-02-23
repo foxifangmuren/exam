@@ -61,7 +61,7 @@ const from = reactive({
   query: {
     key: "",
     admin: "",
-    ismy: 1,
+    ismy: 0,
     page: 1,
     psize: 10,
   },
