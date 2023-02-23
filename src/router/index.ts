@@ -12,7 +12,7 @@ import classes from '../pages/Home/children/classes/classes.vue';
 import Department from '../pages/Home/children/Department/Department.vue';
 import teacher from '../pages/Home/children/teacher/teacher.vue';
 import Subjects from '../pages/Home/children/Subjects/Subjects.vue';
-import Subjects_chrenVue from '@/pages/Home/children/Subjects/Subjects_chren.vue';
+import subjectsitem from '@/pages/Home/children/Subjects/Subjects_chren.vue';
 import Databaselist from '../pages/Home/children/Databaselist/Databaselist.vue';
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
@@ -60,9 +60,9 @@ const routes:any = [
         component: Subjects,
       },
       {
-        path:"/Subjects_chrenVue",
-        name:Subjects_chrenVue,
-        Comment:Subjects_chrenVue
+        path:"/subjectsitem",
+        name:subjectsitem,
+        component:subjectsitem
       },
        // ""题库""
        {

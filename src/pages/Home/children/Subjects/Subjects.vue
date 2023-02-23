@@ -181,7 +181,7 @@ const del = (val: any) => {
 };
 //跳转详情页面
 const skip=()=>{
-  router.push("/Exam_student");
+  router.push("/subjectsitem");
 }
 </script>
 
