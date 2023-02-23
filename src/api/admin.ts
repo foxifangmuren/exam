@@ -70,3 +70,7 @@ export const teacherlist = (params: any): Promise<AxiosResponse<any>> => {
 export const teacherdel = (params: any): Promise<AxiosResponse<any>> => {
   return get('/teacher/delete',params)
 }
+//考试列表
+export const TextList = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/test/list',params)
+}
