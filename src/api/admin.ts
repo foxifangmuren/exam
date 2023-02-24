@@ -46,6 +46,10 @@ export const classesdel = (params: any): Promise<AxiosResponse<any>> => {
 export const studentlist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/student/list',params)
 }
+//学员添加
+export const studentadd = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/student/add',params)
+}
 //删除学员
 export const studentdel = (params: any): Promise<AxiosResponse<any>> => {
   return get('/student/delete',params)

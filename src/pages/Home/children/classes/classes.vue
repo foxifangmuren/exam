@@ -152,7 +152,7 @@ const handleSelectionChange = (val: User[]) => {
 const value: any = ref('');
 //级联调接口
 const departmentList = async () => {
-  const res: any = await departmentlist();
+  const res: any = await departmentlist(data.params);
   console.log('级联', res);
   if (res.errCode === 10000) {
     data.options = res.data.list;

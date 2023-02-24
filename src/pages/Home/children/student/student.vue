@@ -8,50 +8,7 @@
         <el-button type="primary" @click="dialogFormVisible = true">添加学生</el-button>
       </div>
     </div>
-    <!-- 添加 -->
-    <div>
-      <el-dialog v-model="dialogFormVisible" title="添加学生">
-        <el-form :model="form">
-          <el-form-item label="姓名" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="电话" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="部门"  :label-width="formLabelWidth">
-            <el-cascader
-            v-model="data.value"
-            :options="data.options"
-            :props="props"
-            @change="handleChange"
-            clearable
-          ></el-cascader>
-          </el-form-item>
-          <el-form-item label="班级"  :label-width="formLabelWidth">
-          <el-select
-            v-model="ClassOptions"
-            placeholder="请选择"
-            @change="changeClass"
-          >
-            <el-option
-              v-for="item in Class"
-              :label="item.name"
-              :value="item.id"
-              :key="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        </el-form>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">
-              Confirm
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
+    
     <!-- 内容 -->
     <div class="content">
       <el-form :inline="true" class="demo-form-inline">
@@ -68,7 +25,7 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="班级">
-          <el-select
+          <!-- <el-select
             v-model="ClassOptions"
             placeholder="请选择"
             @change="changeClass"
@@ -76,10 +33,17 @@
             <el-option
               v-for="item in Class"
               :label="item.name"
-              :value="item.id"
-              :key="item.id"
+              :value="item.classid"
+              :key="item.classid"
             ></el-option>
-          </el-select>
+          </el-select> -->
+          <el-cascader
+            v-model="data.value"
+            :options="data.Class"
+            :props="props"
+            @change="handleChange"
+            clearable
+          ></el-cascader>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">搜索</el-button>
@@ -135,24 +99,15 @@ import {
   classeslist,
   studentdel,
   studentdelall,
+  studentadd
 } from '../../../../api/admin';
+import { ElMessageBox, ElMessage, Action } from 'element-plus';
 const dialogTableVisible = ref(false)
 const dialogFormVisible = ref(false)
 const formLabelWidth = '140px'
-
-const form = reactive({
-  name: '',
-  region: '',
-  date1: '',
-  date2: '',
-  delivery: false,
-  type: [],
-  resource: '',
-  desc: '',
-})
 //引入添加学生的对话框
 // import StuAdd from "../../../../components/student/studentadd.vue"
-import { ElMessageBox, ElMessage, Action } from 'element-plus';
+
 const data = reactive({
   //表格数据
   tableData: [],
@@ -198,7 +153,7 @@ const handleSelectionChange = (val: any) => {
 const value: any = ref('');
 //部门级联调接口
 const departmentList = async () => {
-  const res: any = await departmentlist();
+  const res: any = await departmentlist(data.params);
   console.log('部门级联', res);
   if (res.errCode === 10000) {
     data.options = res.data.list;
@@ -228,13 +183,8 @@ const studentList = async () => {
     data.total = res.data.counts;
   }
 };
-//添加学生
-const addstud = (e: any) => {
-  isStu.value = e;
-};
-const addstu = () => {
-  isStu.value = true;
-};
+
+
 //删除接口
 const dell = async (ids: number) => {
   const res: any = await studentdel({ id: ids });
@@ -283,6 +233,9 @@ const dels = async () => {
   });
   if (conf) dells();
 };
+
+//添加
+ 
 //查询
 const onSubmit = () => {
   console.log('hello');
