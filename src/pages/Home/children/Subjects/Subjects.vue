@@ -79,7 +79,15 @@ const tableHeader = [
   {
     prop: "title",
     label: "试卷名称",
-    type: "button",
+    type: "buttons",
+     buttons: [
+      {
+        type: "primary",
+        text: "表头",
+        event:"gopage"
+      },
+  ]
+
   },
   {
     prop: "counts",
@@ -116,6 +124,7 @@ const tableHeader = [
   {
     prop: "addtime",
     label: "更新时间",
+    type:"time",
   },
   {
     label: "操作",

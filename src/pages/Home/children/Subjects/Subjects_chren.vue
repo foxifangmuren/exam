@@ -38,7 +38,7 @@
   height: 60px;
   line-height: 60px;
   padding: 5px 30px;
-  background-color: pink;
+  background-color: rgb(249, 250, 255);
 }
 .item_body > span {
   font-size: 35px;

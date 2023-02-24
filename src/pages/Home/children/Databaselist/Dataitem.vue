@@ -12,14 +12,21 @@
       :model="from.query"
       class="demo-form-inline title_box_input"
     >
-      <el-form-item label="考生姓名">
+      <el-form-item label="题目名称">
         <el-input
           v-model="from.query.key"
-          placeholder="请输入学生姓名"
+          placeholder="请输入题目名称"
           clearable
         />
       </el-form-item>
-      <el-form-item label="状态">
+      <el-form-item label="创建人">
+        <el-input
+          v-model="from.query.key"
+          placeholder="请输入题目名称"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="题目类型">
         <el-select
           v-model="from.query.state"
           placeholder="全部"
@@ -31,27 +38,11 @@
           <el-option label="未阅卷" value="未阅卷" />
         </el-select>
       </el-form-item>
-      <el-form-item label="部门">
-        <el-tree-select
-          v-model="from.query.dep"
-          :data="data"
-          :render-after-expand="false"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item label="班级">
-        <el-select
-          v-model="from.query.classname"
-          placeholder="请选择"
-          disabled="true"
-          clearable
-        >
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
-        </el-select>
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="onSubmit">查询</el-button>
+         <el-button type="primary" @click="onSubmit">批量删除</el-button>
+          <el-button type="primary" @click="onSubmit">导出excel</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格 接受：表格数据（tableData）表格头部（tableHeader） 是否有复选框（isTypeSelection） -->
@@ -161,23 +152,20 @@ getlist(testid);
 const tableHeader = [
   {
     prop: "name",
-    label: "姓名",
+    label: "题目名称",
+    
   },
   {
     prop: "classname",
-    label: "班级名称",
+    label: "题量类型",
   },
   {
     prop: "scores",
-    label: "分数",
+    label: "创建时间",
   },
   {
     prop: "readtime",
-    label: "考试时间",
-  },
-  {
-    prop: "state",
-    label: "状态",
+    label: "创建人",
   },
   {
     label: "操作",

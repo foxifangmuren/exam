@@ -15,6 +15,9 @@
             <span v-if="btn.text=='exam'">
                  <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.incomplete>0?'阅卷':'查看'}}</el-button> 
             </span>
+            <span v-if="btn.text=='表头'">
+                 <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.title}}</el-button> 
+            </span>
             <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->
             <el-button v-else link :type="btn.type" size="small" @click="$emit(btn.event, scope.row)" >{{ btn.text }}</el-button>  
           </span>
@@ -22,12 +25,6 @@
         <!-- 文本(阅卷未判人数) -->
         <div v-if="item.label=='开放时间'">
           <span>{{scope.row.endtime==null? '不限':scope.row.addtime-scope.row.endtime}}</span>
-        </div>
-        <!-- 阅卷详情之班级名称 -->
-        <div v-if="item.type === 'button'">
-           <span>
-              <el-button link  type="primary" size="small" @click="$emit(btn.event, scope.row)" >{{ scope.row.title }}</el-button>
-           </span>  
         </div>
         <!-- 颜色更改(阅卷未判人数) -->
         <div v-if="item.label=='未判人数'">
@@ -38,8 +35,13 @@
                   已经全部阅完
             </span>
         </div>
+        <!-- 试卷时间处理 -->
+        <div v-if="item.label=='更新时间'">
+            <span  >
+              {{scope.row.addtime.slice(0,16)}}
+            </span>
+        </div>
         <!-- 如果没有值显示 TODO -->
-
       </template>
     </el-table-column>
   </el-table>
@@ -58,7 +60,6 @@ const props = withDefaults(
     tableHeader: any[];
     tableData: any[];
   }>(),
-  
   {
     loading:false,
     isTypeSelection: true,

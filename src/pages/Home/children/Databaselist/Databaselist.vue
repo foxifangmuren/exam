@@ -3,9 +3,7 @@
     <!-- 头部标题 -->
     <div class="title_header">
       <p>题库管理</p>
-      <el-button type="primary" @click="popout"
-        >创建题库</el-button
-      >
+      <el-button type="primary" @click="popout" >创建题库</el-button >
     </div>
     <!-- 搜索框 -->
     <el-form class="demo-form-inline" :inline="true" :model="from.query">
@@ -44,6 +42,7 @@
       :tableData="from.tableData"
       @del="open"
       @gopage="gopage"
+      @gopagetow="gopage"
     ></MyTable>
     <!-- 分页 -->
     <MyPages
@@ -85,6 +84,14 @@ const tableHeader = [
   {
     prop: "title",
     label: "题库",
+    type: "buttons",
+     buttons: [
+      {
+        type: "primary",
+        text: "表头",
+        event:"gopage"
+      },
+  ]
   },
   {
     prop: "counts",
