@@ -19,13 +19,13 @@
             />
           </el-form-item>
           <el-button type="primary" @click="log(ruleFormRef)">登录</el-button>
-          <span class="forget">忘记密码</span>
+          <span class="forget" @click="goseek">忘记密码</span>
         </el-form>
         <div class="code" v-show="!isShow">
           <div class="codebox">
             <img src="../../img/big_er.jpg" alt="" />
           </div>
-          <div class="title">使用<span>微信</span>扫一扫进行登录</div>
+          <div class="title">使用<span @click="gowechat">微信</span>扫一扫进行登录</div>
         </div>
       </div>
       <div class="qie" @click="soft">
@@ -76,6 +76,14 @@ const log = async (formEl: any) => {
   });
 };
 const { form, isShow } = toRefs(obj);
+//跳转忘记密码页
+const goseek=()=>{
+ router.push('/sell');
+}
+//跳转微信页面
+const gowechat=()=>{
+  router.push('/WeChat_logVue');
+}
 </script>
 <style lang="less" scoped>
 body {
@@ -153,6 +161,7 @@ body {
         color: #7abdff;
         float: right;
         margin-top: 25px;
+        cursor:pointer
       }
     }
   }

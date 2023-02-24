@@ -18,6 +18,7 @@ import Dataitem from "@/pages/Home/children/Databaselist/Dataitem.vue"
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
 import stutest from '../pages/Home/children/stutest/stutest.vue'
+import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
 //定义路由，每个路由都需要映射到一个组件。
 const routes:any = [
   //登录页面
@@ -123,7 +124,10 @@ const routes:any = [
     component: seel_pwdVue,
   },
   //微信扫码登录
-  
+  {
+    path:"/WeChat_logVue",
+    component:WeChat_logVue
+  },
   // 404页面
   {
     path: '/:pathMatch(.*)*',
