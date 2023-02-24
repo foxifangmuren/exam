@@ -43,7 +43,7 @@
         <el-select
           v-model="from.query.classname"
           placeholder="请选择"
-          disabled="true"
+          :disabled="true"
           clearable
         >
           <el-option label="Zone one" value="shanghai" />
@@ -70,51 +70,39 @@
       @changePage="changePage"
     ></MyPages>
     <!-- 侧栏弹框 -->
-    <el-drawer
-      v-model="from.drawer"
-      :title="from.Dtitle"
-      :before-close="handleClose"
-    >
+    <el-drawer v-model="from.drawer" :title="from.Dtitle" :before-close="handleClose">
       <!-- 弹框内容 -->
       <div>
         <!-- 流动布局 -->
         <el-form ref="ruleFormRef" :model="from" status-icon label-width="120px" class="demo-ruleForm">
-
           <div v-for="(item, index) in Dlist" :key="index">
             <!-- 学生答卷详情 -->
             <!-- 标题 -->
-            
-              <p class="styles" ><span>{{index+1}}、</span> {{item.type}} <span>分值：{{item.scores}}</span></p>
-      
+            <p class="styles" ><span>{{index+1}}、</span> {{item.type}} <span>分值：{{item.scores}}</span></p>
             <!-- 题目 -->
-            
-              <p class="styles">{{item.title}}</p>
-            
+            <p class="styles">{{item.title}}</p>
             <!-- 回答 -->
-            
-              <p class="styles" :style="item.answer==null? 'color:red':''"> 回答：{{item.answer==null? '该学员未给出答案':item.answer}}</p>
-            
+            <p class="styles" :style="item.answer==null? 'color:red':''"> 回答：{{item.answer==null? '该学员未给出答案':item.answer}}</p>
             <!-- 老师阅卷 -->
             <el-form-item class="margin_top" :rules="studentscores(item.scores)" :prop="'list.' + index + '.studentscores'" >
               <!-- 评分 -->
-               <el-form-item label="打分" >
-                <el-input  v-model="item.studentscores" type="text" autocomplete="off" />
+              <el-form-item label="打分" >
+                <el-input  v-model="item.studentscores" type="text" autocomplete="off"   />
               </el-form-item>
               <!-- 备注 -->
               <el-form-item label="批准">
-                <el-input  type="textarea" />
+                <el-input  type="textarea" v-model="item.comments"/>
               </el-form-item>
             </el-form-item>
-
           </div>
-
           <!-- 按钮区域 -->
           <el-form-item>
-            <el-button type="primary" @click="submitForm(ruleFormRef)" >阅卷完毕</el-button >
+            <el-button type="primary" @click="submitForm()" >阅卷完毕</el-button >
             <el-button @click="resetForm(ruleFormRef)">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
+
     </el-drawer>
   </div>
 </template>
@@ -123,11 +111,11 @@
 /***
  * 分页格式---TODO （css样式，适应每一个页面）
  */
-import { ref, reactive, toRefs } from "vue";
+import { ref, reactive, toRefs, toRaw } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
-import { studentlist, studentinfo } from "@/api/exam";
-import { ElMessageBox,ElMessage,FormInstance } from "element-plus";
+import { studentlist, studentinfo ,stydenupdata} from "@/api/exam";
+import { ElMessageBox,ElMessage,} from "element-plus";
 //地址栏数据
 const route = useRoute();
 const title = ref(route.query.title);
@@ -142,17 +130,20 @@ const from = reactive({
     key: "",
     dep: "",
   },
+  //侧边栏标题
   Dtitle: "",
+  //表格数据
   tableData: [],
+  //题库数据
   Dlist:[],
+  // 侧边是否显示
   drawer: false,
   //总条数
-  total: "",
+  total: 0,
 });
 const getlist = async (id: any) => {
   from.query.testid = id;
   const src = await studentlist(from.query);
-  console.log(src);
   from.tableData = src.data.list;
   from.total = src.data.counts;
 };
@@ -201,110 +192,40 @@ const changePageSize = (val: number) => {
   getlist(testid);
 };
 //返回
-const goBack = () => {
-  router.go(-1);
-};
+const goBack = () =>router.go(-1);
 //查询
-const onSubmit = () => {
-  getlist(testid);
-};
-
+const onSubmit = () => getlist(testid);
 //树形控制
-const data = [
-  {
-    value: "1",
-    label: "Level one 1",
-    children: [
-      {
-        value: "1-1",
-        label: "Level two 1-1",
-        children: [
-          {
-            value: "1-1-1",
-            label: "Level three 1-1-1",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "2",
-    label: "Level one 2",
-    children: [
-      {
-        value: "2-1",
-        label: "Level two 2-1",
-        children: [
-          {
-            value: "2-1-1",
-            label: "Level three 2-1-1",
-          },
-        ],
-      },
-      {
-        value: "2-2",
-        label: "Level two 2-2",
-        children: [
-          {
-            value: "2-2-1",
-            label: "Level three 2-2-1",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "3",
-    label: "Level one 3",
-    children: [
-      {
-        value: "3-1",
-        label: "Level two 3-1",
-        children: [
-          {
-            value: "3-1-1",
-            label: "Level three 3-1-1",
-          },
-        ],
-      },
-      {
-        value: "3-2",
-        label: "Level two 3-2",
-        children: [
-          {
-            value: "3-2-1",
-            label: "Level three 3-2-1",
-          },
-        ],
-      },
-    ],
-  },
-];
+const data = [];
 //侧边弹框
 const go = (val: any) => {
   console.log(val);
   if(val.state=="已阅卷"){
     ElMessageBox.confirm(`本卷已阅完，是否更改结果?`)
       .then(() => {
-        ElMessage({ message: "没有权限", type: "error", });
+        from.drawer = true;
+        //注意传值，第一个参数是试卷，第二个是学生
+        getstdent(route.query.id, val.id);
+        from.Dtitle = val.name + "的试卷";
       })
       .catch(() => { });
   }else{
-     from.drawer = true;
+    from.drawer = true;
     //注意传值，第一个参数是试卷，第二个是学生
     getstdent(route.query.id, val.id);
     from.Dtitle = val.name + "的试卷";
   }
 };
+//获取学生答卷详情
 const getstdent = async (testid: number | any, studentid: number) => {
   const src = await studentinfo({ testid: testid, studentid: studentid });
   console.log(src);
   from.Dlist=src.data.list
-
 };
+//侧边栏叉号
 const handleClose = (done: () => void) => done();
 //侧边栏内容
-  const ruleFormRef = ref<FormInstance>()
+const ruleFormRef = ref<any>()
   //域解析
   const {Dlist}=toRefs(from);
   const scoresValidator = (rule: any, value: any, callback: any) => {
@@ -325,19 +246,21 @@ const handleClose = (done: () => void) => done();
     return [{ validator:scoresValidator,maxScores:scores, trigger: 'blur' },];
   }
   //提交
-  const submitForm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.validate((valid) => {
-      if (valid) {
-        console.log('submit!')
-      } else {
-        console.log('error submit!')
-        return false
-      }
-    })
+  const submitForm = async() => {
+    let _list=toRaw(from.Dlist)
+    let _menus:Array<any>=[]
+    _list.forEach((element:any)=> _menus.push({scores:element.studentscores,answerid:element.answerid,comments:element.comments}) )
+    const src:any=await stydenupdata(_menus)
+    if(src.errCode=="10000"){
+      //关闭弹框
+      from.drawer=false
+      //提示信息
+      ElMessage({ message: '完成阅卷', type: "success", })
+      getlist(testid)
+    } 
   }
   // 取消
-  const resetForm = (formEl: FormInstance | undefined) => {
+  const resetForm = (formEl: any | undefined) => {
     if (!formEl) return
     formEl.resetFields()
   }

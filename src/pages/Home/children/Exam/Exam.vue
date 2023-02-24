@@ -5,8 +5,8 @@
       <p class="titile_header">阅卷管理</p>
       <div class="title_box_input">
         <p>关键字:</p>
-        <el-input  class="titl_input" v-model="form.query.key" placeholder="请输入题库名称" clearable />
-        <el-button type="primary" @click="query" @keyup.enter="query">搜索</el-button>
+        <el-input  class="titl_input" v-model="form.query.key" placeholder="请输入题库名称" @keyup.enter="query" clearable />
+        <el-button type="primary" @click="query">搜索</el-button>
       </div>
     </div>
     <!-- 表格 接受：表格数据（tableData）表格头部（tableHeader） 是否有复选框（isTypeSelection） -->
@@ -30,13 +30,17 @@ import { ElMessage } from "element-plus";
  *    分页封装---完成
  *    页面跳转---完成
  *    加载效果---
- *    
+ *    页面布局---80%
+ * 项目优化
+ *    查看时没有数据
+ *    不进行跳转页面
  */
 
 //查询功能--由于只有一个输入框，不需要监听输入查询
 const query = () => {
   if (!form.query.key) {
     ElMessage({ message: "当前查询为查询全部！！", type: "warning", });
+    getlist();
   } else {
     getlist();
   }
