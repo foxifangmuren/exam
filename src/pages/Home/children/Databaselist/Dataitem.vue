@@ -154,9 +154,9 @@ const tableHeader = [
     label: "题目名称",
     type: "buttons",
      buttons: [
-      {
+      { 
+        text: "title",
         type: "primary",
-        text: "表头",
         event:"goinfo"
       },
   ]

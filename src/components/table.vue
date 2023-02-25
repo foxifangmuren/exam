@@ -1,24 +1,24 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#F7FBFE', color: '#000' }"   @selection-change="handleSelectionChange">
+  <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#F7FBFE', color: '#000' }">
     <!-- 复选框 -->
     <el-table-column type="selection" v-if="isTypeSelection" width="55" />
     <!-- 表格行 -->
     <el-table-column v-for="item in tableHeader" :prop="item.prop" :label="item.label" :key="item.id">
-      <!-- 建立插槽 -->
+    <!-- 建立插槽 -->
       <template #default="scope">
-        <!-- 按钮 按钮是个数组 -->
+    <!-- 按钮 按钮是个数组 -->
         <div v-if="item.type === 'buttons'">
-          <!-- 循环按钮数组 -->
+    <!-- 循环按钮数组 -->
           <span v-for="(btn, index) in item.buttons" :key="index">
-            <!-- 阅卷按钮，最后按钮判断 -->
+    <!-- 阅卷按钮，最后按钮判断 -->
             <span v-if="btn.text=='exam'">
                  <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.incomplete>0?'阅卷':'查看'}}</el-button> 
             </span>
-            <!-- 表格头部按钮 -->
-            <span v-else-if="btn.text=='表头'">
-                 <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.title}}</el-button> 
+    <!-- 板块表头跳转 -->
+            <span v-if="btn.text=='title'">
+                 <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)"  ><span v-html="scope.row.title"></span></el-button> 
             </span>
-            <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->
+    <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->
             <el-button v-else link :type="btn.type" size="small" @click="$emit(btn.event, scope.row)" >{{ btn.text }}</el-button>  
           </span>
         </div>
@@ -35,13 +35,8 @@
                   已经全部阅完
             </span>
         </div>
-        <!-- 试卷时间处理 -->
-        <div v-if="item.label=='更新时间'">
-            <span  >
-              {{scope.row.addtime.slice(0,16)}}
-            </span>
-        </div>
         <!-- 如果没有值显示 TODO -->
+
       </template>
     </el-table-column>
   </el-table>
@@ -54,14 +49,13 @@
  *      TableData(数据参数)
  *
  */
-import { ref } from 'vue'
-import { ElTable } from 'element-plus'
 const props = withDefaults(
   defineProps<{
     isTypeSelection?: boolean;
     tableHeader: any[];
     tableData: any[];
   }>(),
+  
   {
     loading:false,
     isTypeSelection: true,
@@ -69,8 +63,4 @@ const props = withDefaults(
     tableData: () => [],
   }
 );
-const handleSelectionChange = (val: any) => {
- console.log(val,1111);
- 
-}
 </script>
