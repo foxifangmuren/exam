@@ -53,9 +53,9 @@ const obj = reactive({
 const soft = () => {
   obj.isShow = !obj.isShow;
 };
-const ruleFormRef = ref<FormInstance>();
+const ruleFormRef = ref<any >();
 // 验证
-const rules = reactive<FormRules>({
+const rules = reactive<any>({
   usename: [{ required: true, message: '请输入账号', trigger: 'blur' }],
   pass: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 });
@@ -149,11 +149,11 @@ body {
       height: 390px;
       // background-color: aqua;
       margin: 27px auto 0;
-      /deep/input {
+      :deep(input) {
         height: 55px;
         border: 1px solid #ffffff;
       }
-      /deep/button {
+      :deep(button) {
         width: 100%;
         height: 53px;
       }

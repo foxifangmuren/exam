@@ -1,12 +1,11 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#F7FBFE', color: '#000' }">
+  <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#F7FBFE', color: '#000' }"   @selection-change="handleSelectionChange">
     <!-- 复选框 -->
     <el-table-column type="selection" v-if="isTypeSelection" width="55" />
     <!-- 表格行 -->
     <el-table-column v-for="item in tableHeader" :prop="item.prop" :label="item.label" :key="item.id">
       <!-- 建立插槽 -->
       <template #default="scope">
-
         <!-- 按钮 按钮是个数组 -->
         <div v-if="item.type === 'buttons'">
           <!-- 循环按钮数组 -->
@@ -15,7 +14,8 @@
             <span v-if="btn.text=='exam'">
                  <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.incomplete>0?'阅卷':'查看'}}</el-button> 
             </span>
-            <span v-if="btn.text=='表头'">
+            <!-- 表格头部按钮 -->
+            <span v-else-if="btn.text=='表头'">
                  <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.title}}</el-button> 
             </span>
             <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->
@@ -54,6 +54,8 @@
  *      TableData(数据参数)
  *
  */
+import { ref } from 'vue'
+import { ElTable } from 'element-plus'
 const props = withDefaults(
   defineProps<{
     isTypeSelection?: boolean;
@@ -67,4 +69,8 @@ const props = withDefaults(
     tableData: () => [],
   }
 );
+const handleSelectionChange = (val: any) => {
+ console.log(val,1111);
+ 
+}
 </script>

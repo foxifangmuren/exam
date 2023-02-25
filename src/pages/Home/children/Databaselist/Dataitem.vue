@@ -49,8 +49,9 @@
     <MyTable
       :tableData="from.tableData"
       :tableHeader="tableHeader"
-      :isTypeSelection="false"
-      @go="go"
+      :isTypeSelection="true "
+      @goinfo="goinfo"
+      @goinfotow="goinfo"
     ></MyTable>
     <!--  分页 接受：总条数（total） 页数（page） 条数（psize） 方法（changPageSize）（changPage） -->
     <MyPages
@@ -111,13 +112,10 @@
 </template>
 
 <script lang="ts" setup>
-/***
- * 分页格式---TODO （css样式，适应每一个页面）
- */
 import { ref, reactive, toRefs } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
-import { studentlist, studentinfo } from "@/api/exam";
+import {questions} from "@/api/databaselist"
 import { ElMessageBox,ElMessage,FormInstance } from "element-plus";
 //地址栏数据
 const route = useRoute();
@@ -126,23 +124,24 @@ const testid = ref(route.query.id);
 //表格数据
 const from = reactive({
   query: {
-    testid: 0,
+    databaseid: 0,
     page: 1,
     psize: 10,
-    state: "", //状态
     key: "",
-    dep: "",
+    tags:"", 
+    type: "",
+    admin: "",
   },
   Dtitle: "",
   tableData: [],
   Dlist:[],
   drawer: false,
   //总条数
-  total: "",
+  total: 0,
 });
 const getlist = async (id: any) => {
-  from.query.testid = id;
-  const src = await studentlist(from.query);
+  from.query.databaseid = id;
+  const src = await questions(from.query);
   console.log(src);
   from.tableData = src.data.list;
   from.total = src.data.counts;
@@ -151,20 +150,27 @@ getlist(testid);
 //表格头部
 const tableHeader = [
   {
-    prop: "name",
+    prop: "title",
     label: "题目名称",
-    
+    type: "buttons",
+     buttons: [
+      {
+        type: "primary",
+        text: "表头",
+        event:"goinfo"
+      },
+  ]
   },
   {
-    prop: "classname",
+    prop: "type",
     label: "题量类型",
   },
   {
-    prop: "scores",
+    prop: "addtime",
     label: "创建时间",
   },
   {
-    prop: "readtime",
+    prop: "admin",
     label: "创建人",
   },
   {
@@ -172,9 +178,13 @@ const tableHeader = [
     type: "buttons",
     buttons: [
       {
-        text: "exam",
+        text: "编辑",
         type: "primary",
-        event: "go",
+        event:"goinfotow"
+      },
+       {
+        text: "删除",
+        type: "primary",
       },
     ],
   },
@@ -196,7 +206,10 @@ const goBack = () => {
 const onSubmit = () => {
   getlist(testid);
 };
-
+//试卷详情
+const goinfo=()=>{
+  from.drawer=true
+}
 //树形控制
 const data = [
   {

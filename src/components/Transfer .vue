@@ -86,7 +86,7 @@ const generateData = () => {
 const data = ref<Option[]>(generateData());
 const value = ref([]);
 
-const filterMethod = (query, item) => {
+const filterMethod = (query: string, item: { initial: string; }) => {
   return item.initial.toLowerCase().includes(query.toLowerCase())
 }
 //弹框信息

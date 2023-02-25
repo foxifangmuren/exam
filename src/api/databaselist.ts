@@ -12,4 +12,8 @@ const addlist=(params:any)=>{
 const del=(params:any)=>{
     return get('database/delete',params)
 }
-export {databaseList,addlist,del}
+//试题列表
+const questions=(params:any)=>{
+    return get('databasequestion/list',params)
+}
+export {databaseList,addlist,del,questions}
