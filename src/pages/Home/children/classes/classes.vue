@@ -3,40 +3,32 @@
     <!-- 头部 -->
     <div class="header">
       <span class="head">班级管理</span>
-      <el-button type="primary" @click="dialogVisible = true"
+      <el-button type="primary" @click="dialogFormVisible = true"
         >添加班级</el-button
       >
     </div>
     <!-- 添加弹出框 -->
     <div>
-      <el-dialog
-        v-model="dialogVisible"
-        title="添加班级"
-        width="30%"
-        :before-close="handleClose"
-      >
-        <div>
-          <el-form :inline="true" class="demo-form-inline">
-            <el-form-item label="班级名称">
-              <el-input v-model="data.params.name" placeholder="请输入关键字" />
-            </el-form-item>
-            <el-form-item label="部门">
+      <el-dialog v-model="dialogFormVisible" title="添加">
+        <el-form :model="form">
+          <el-form-item label="班级名称" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="部门"  :label-width="formLabelWidth">
               <el-cascader
-                v-model="data.params.depname"
+                v-model="form.depid"
                 :options="data.options"
                 :props="props"
                 @change="handleChange"
                 clearable
               ></el-cascader>
             </el-form-item>
-          </el-form>
-        </div>
+          
+        </el-form>
         <template #footer>
           <span class="dialog-footer">
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="add">
-              确定
-            </el-button>
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+            <el-button type="primary" @click="add"> 确定 </el-button>
           </span>
         </template>
       </el-dialog>
@@ -71,8 +63,10 @@
           <el-table-column property="name" label="班级名称" />
           <el-table-column property="depname" label="部门" />
           <el-table-column label="操作" width="120" #default="scope">
-            <span class="zi" style="cursor:pointer;">修改</span>
-            <span class="zi" style="cursor:pointer;" @click="del(scope.row.id)">删除</span>
+            <span class="zi" style="cursor: pointer">修改</span>
+            <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
+              >删除</span
+            >
           </el-table-column>
         </el-table>
       </div>
@@ -93,12 +87,17 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref, toRefs } from 'vue';
-import { departmentlist, classeslist,classesadd,classesdel } from '../../../../api/admin';
-import { ElMessageBox,ElMessage,Action } from 'element-plus';
+import {
+  departmentlist,
+  classeslist,
+  classesadd,
+  classesdel,
+} from '../../../../api/admin';
+import { ElMessageBox, ElMessage, Action } from 'element-plus';
 import { log } from 'console';
-// import type { Action } from 'element-plus'
-const dialogVisible = ref(false);
 
+const dialogFormVisible = ref(false)
+const formLabelWidth = '140px'
 const handleClose = (done: () => void) => {
   ElMessageBox.confirm('Are you sure to close this dialog?')
     .then(() => {
@@ -108,12 +107,17 @@ const handleClose = (done: () => void) => {
       // catch error
     });
 };
+const form = reactive({
+  id: 0,
+  name: '',
+  depid: 3069,
+});
 const data = reactive({
   //表格数据
   tableData: [],
   //参数
   params: {
-    id:0,
+    id: 0,
     name: '',
     depname: '',
     page: 1,
@@ -177,39 +181,41 @@ const onSubmit = () => {
 };
 
 //添加
-const add = async()=>{
+const add = async () => {
   // console.log(data.params.depname)
-  const res:any = await classesadd(data.params)
-  console.log('班级添加',res)
-  if(res.errCode === 10000){
-    alert ('成功')
+  const res: any = await classesadd(form);
+  console.log('班级添加', res);
+  if (res.errCode === 10000) {
+    ElMessage.success('添加成功');
+    dialogFormVisible.value = false
+    getclasseslist();
   }
-}
+};
 //请求删除接口
-const delinfo = async (ids:number)=>{
-  const res:any = await classesdel({id:ids}) 
+const delinfo = async (ids: number) => {
+  const res: any = await classesdel({ id: ids });
   // console.log('删除',res)
   if (res.errCode === 10000) {
-    ElMessage.success("删除成功");
+    ElMessage.success('删除成功');
     getclasseslist();
   } else {
     ElMessage.error(res.errMsg);
   }
-}
+};
 //删除
-const del = (ids:number)=>{
+const del = (ids: number) => {
   ElMessageBox.confirm('是否永久删除此文件', '提示', {
-    cancelButtText:"取消",
-    confirmButtonText:"确定",
-    type:"warning",
+    cancelButtText: '取消',
+    confirmButtonText: '确定',
+    type: 'warning',
   })
-  .then((res:any) => {
-    delinfo(ids)
-  })
-  .catch((error:any)=>{
-    ElMessage.error("已取消删除")
-  })
-}
+    .then((res: any) => {
+      delinfo(ids);
+    })
+    .catch((error: any) => {
+      ElMessage.error('已取消删除');
+    });
+};
 
 //分页
 const handleSizeChange = (val: number) => {

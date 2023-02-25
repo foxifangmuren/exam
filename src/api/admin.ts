@@ -66,6 +66,10 @@ export const rolelist = (params: any): Promise<AxiosResponse<any>> => {
 export const roledel = (params: any): Promise<AxiosResponse<any>> => {
   return get('/role/delete',params)
 }
+//角色添加
+export const roleadd = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/role/add',params)
+}
 //师资列表
 export const teacherlist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/teacher/list',params)
