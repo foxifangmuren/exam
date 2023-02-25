@@ -16,4 +16,8 @@ const del=(params:any)=>{
 const questions=(params:any)=>{
     return get('databasequestion/list',params)
 }
-export {databaseList,addlist,del,questions}
+//根据单个ID导出我们的试题
+const exportExcel=(params:any)=>{
+    return get('subjects/exportExcel',params)
+}
+export {databaseList,addlist,del,questions,exportExcel}
