@@ -5,11 +5,59 @@
       <span class="head">学生管理</span>
       <div>
         <el-button>批量添加</el-button>
-        <el-button type="primary" @click="dialogFormVisible = true">添加学生</el-button>
+        <el-button type="primary" @click="dialogFormVisible = true"
+          >添加学生</el-button
+        >
       </div>
     </div>
-    
-    <!-- 内容 -->
+    <!-- 添加 -->
+    <el-dialog v-model="dialogFormVisible" title="添加">
+      <el-form :model="form">
+        <el-form-item label="姓名" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="部门" :label-width="formLabelWidth">
+          <el-cascader
+            v-model="data.value"
+            :options="data.options"
+            :props="props"
+            @change="handleChange"
+            clearable
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="班级" :label-width="formLabelWidth">
+          <el-cascader
+            v-model="form.classid"
+            :options="data.Class"
+            :props="props"
+            @change="handleChange"
+            clearable
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth">
+          <el-input v-model="form.remarks" type="textarea" />
+        </el-form-item>
+        <el-form-item label="账号" :label-width="formLabelWidth">
+          <el-input v-model="form.username" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input v-model="form.pass" autocomplete="off" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="add">
+            添加
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 搜索框 -->
     <div class="content">
       <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="班级名称">
@@ -25,9 +73,16 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="班级">
+          <el-cascader
+            v-model="data.value"
+            :options="data.Class"
+            :props="props"
+            @change="handleChange"
+            clearable
+          ></el-cascader>
           <!-- <el-select
-            v-model="ClassOptions"
-            placeholder="请选择"
+            v-model=""
+            placeholder="请选ClassOptions择"
             @change="changeClass"
           >
             <el-option
@@ -37,13 +92,7 @@
               :key="item.classid"
             ></el-option>
           </el-select> -->
-          <el-cascader
-            v-model="data.value"
-            :options="data.Class"
-            :props="props"
-            @change="handleChange"
-            clearable
-          ></el-cascader>
+          
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">搜索</el-button>
@@ -99,14 +148,12 @@ import {
   classeslist,
   studentdel,
   studentdelall,
-  studentadd
+  studentadd,
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
-const dialogTableVisible = ref(false)
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
+const dialogFormVisible = ref(false);
+const formLabelWidth = '140px';
 //引入添加学生的对话框
-// import StuAdd from "../../../../components/student/studentadd.vue"
 
 const data = reactive({
   //表格数据
@@ -135,6 +182,14 @@ const data = reactive({
 });
 // 解构数据
 const { params, ids, isStu, ClassOptions, Class } = toRefs(data);
+const form = reactive({
+  id: 0,
+  name: '',//学生姓名
+  classid: 1,
+  username: '',//账号
+  pass: '', //密码
+  remarks:'',//备注
+});
 const buttDis = ref('');
 const props = {
   expandTrigger: 'hover',
@@ -177,14 +232,23 @@ const studentList = async () => {
     depid: data.value ? data.value[data.value.length - 1] : 0,
     key: data.key,
   });
-  console.log('班级列表', res);
+  console.log('学员列表', res);
   if (res.errCode === 10000) {
     data.tableData = res.data.list;
     data.total = res.data.counts;
   }
 };
-
-
+//添加
+const add = async () => {
+  // console.log(data.params.depname)
+  const res: any = await studentadd(form);
+  console.log('班级添加', res);
+  if (res.errCode === 10000) {
+    ElMessage.success('添加成功');
+    dialogFormVisible.value = false
+    studentList();
+  }
+};
 //删除接口
 const dell = async (ids: number) => {
   const res: any = await studentdel({ id: ids });
@@ -235,7 +299,7 @@ const dels = async () => {
 };
 
 //添加
- 
+
 //查询
 const onSubmit = () => {
   console.log('hello');

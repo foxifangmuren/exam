@@ -14,7 +14,7 @@
         <el-form-item label="角色名称" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off" />
         </el-form-item>
-        <el-form-item>
+        <el-form-item :label-width="formLabelWidth">
           <div v-for="(item, index) in state.list" :key="item.id">
             <!-- {{ item.name }}
         <div style="margin-left:50px" v-for="item2 in item.children">
