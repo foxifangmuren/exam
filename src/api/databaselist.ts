@@ -18,6 +18,14 @@ const questions=(params:any)=>{
 }
 //根据单个ID导出我们的试题
 const exportExcel=(params:any)=>{
-    return get('subjects/exportExcel',params)
+    return get('databasequestion/exportExcel',params,{responseType: 'blob'})
 }
-export {databaseList,addlist,del,questions,exportExcel}
+//试题批量上传
+const Daddlist=(params:any)=>{
+    return post('databasequestion/addlist',params)
+}
+//试题删除信息
+const databasequestiondel=(params:any)=>{
+    return get('databasequestion/delete',params)
+}
+export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel}

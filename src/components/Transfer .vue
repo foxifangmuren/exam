@@ -9,12 +9,7 @@
       <!-- 搜索框 -->
       <div>部门 ：
         <el-select v-model="dep" class="m-2" placeholder="Select" >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <!-- 身体 -->
@@ -22,8 +17,6 @@
         <el-transfer 
         v-model="value" 
         :data="data" 
-        filterable
-         :filter-method="filterMethod"
         />
       </div>
     </div>
@@ -84,6 +77,7 @@ const generateData = () => {
 };
 
 const data = ref<Option[]>(generateData());
+
 const value = ref([]);
 
 const filterMethod = (query: string, item: { initial: string; }) => {
@@ -93,7 +87,6 @@ const filterMethod = (query: string, item: { initial: string; }) => {
 const dialogVisible = ref(false);
 //叉号
 const handleClose = (done: () => void) => {
-
       done();
 };
 

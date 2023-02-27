@@ -8,28 +8,16 @@
     <!-- 搜索框  -->
     <el-form class="demo-form-inline" :inline="true" :model="from.query">
       <el-form-item label="题库名称">
-        <el-input
-          v-model="from.query.key"
-          placeholder="请输入题库名称"
-          @keyup.enter="onSubmit"
-        />
+        <el-input  v-model="from.query.key" placeholder="请输入题库名称" @keyup.enter="onSubmit" />
       </el-form-item>
       <el-form-item label="创建人">
-        <el-input
-          v-model="from.query.admin"
-          placeholder="请输入创建人"
-          @keyup.enter="onSubmit"
-        />
+        <el-input v-model="from.query.admin" placeholder="请输入创建人" @keyup.enter="onSubmit" />
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="checked" @change="check"
-          >只看我创建的</el-checkbox
-        >
+        <el-checkbox v-model="checked" @change="check" >只看我创建的</el-checkbox >
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" @keyup="onSubmit"
-          >查询</el-button
-        >
+        <el-button type="primary" @click="onSubmit" @keyup="onSubmit" >查询</el-button >
       </el-form-item>
     </el-form>
     <!-- 表格 -->
@@ -38,6 +26,7 @@
       :tableHeader="tableHeader"
       :tableData="from.tableData"
       @del="del"
+      @gopage="gopage"
     ></MyTable>
     <!-- 分页 -->
     <MyPages
@@ -47,6 +36,10 @@
       @changePageSize="changePageSize"
       @changePage="changePage"
     ></MyPages>
+    <!-- 试卷详情  -->
+    <el-dialog v-model="dialogTableVisible" title="Shipping address"  width="80%">
+      <div>111</div>
+    </el-dialog>
   </div>
 </template>
 
@@ -55,6 +48,7 @@ import { reactive, ref } from "vue";
 import { getList, delinfo } from "@/api/Subjects";
 import { ElMessageBox ,ElMessage} from "element-plus";
 import router from "@/router";
+const dialogTableVisible = ref(false)
 //请求列表
 const from = reactive({
   query: {
@@ -191,6 +185,12 @@ const del = (val: any) => {
 //跳转详情页面
 const skip=()=>{
   router.push("/subjectsitem");
+}
+//试卷详情
+const gopage=()=>{
+  console.log('当前是试卷详情');
+dialogTableVisible.value=true
+  
 }
 </script>
 

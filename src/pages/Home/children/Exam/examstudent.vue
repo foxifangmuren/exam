@@ -7,45 +7,21 @@
       </template>
     </el-page-header>
     <!-- 头部 -->
-    <el-form
-      :inline="true"
-      :model="from.query"
-      class="demo-form-inline title_box_input"
-    >
+    <el-form :inline="true" :model="from.query" class="demo-form-inline title_box_input" >
       <el-form-item label="考生姓名">
-        <el-input
-          v-model="from.query.key"
-          placeholder="请输入学生姓名"
-          clearable
-        />
+        <el-input v-model="from.query.key" placeholder="请输入学生姓名" clearable />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select
-          v-model="from.query.state"
-          placeholder="全部"
-          clearable
-          @keyup.enter="onSubmit"
-          @change="onSubmit"
-        >
+        <el-select v-model="from.query.state" placeholder="全部" clearable @keyup.enter="onSubmit" @change="onSubmit" >
           <el-option label="已阅卷" value="已阅卷" />
           <el-option label="未阅卷" value="未阅卷" />
         </el-select>
       </el-form-item>
       <el-form-item label="部门">
-        <el-tree-select
-          v-model="from.query.dep"
-          :data="data"
-          :render-after-expand="false"
-          clearable
-        />
+        <el-tree-select v-model="from.query.dep" :data="data" :render-after-expand="false" clearable />
       </el-form-item>
       <el-form-item label="班级">
-        <el-select
-          v-model="from.query.classname"
-          placeholder="请选择"
-          :disabled="true"
-          clearable
-        >
+        <el-select v-model="from.query.classname" placeholder="请选择" :disabled="true" clearable >
           <el-option label="Zone one" value="shanghai" />
           <el-option label="Zone two" value="beijing" />
         </el-select>

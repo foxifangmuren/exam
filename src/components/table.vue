@@ -15,7 +15,7 @@
                  <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.incomplete>0?'阅卷':'查看'}}</el-button> 
             </span>
     <!-- 板块表头跳转 -->
-            <span v-if="btn.text=='title'">
+            <span v-else-if="btn.text=='title'">
                  <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)"  ><span v-html="scope.row.title"></span></el-button> 
             </span>
     <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->

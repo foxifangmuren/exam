@@ -66,9 +66,9 @@ instance.interceptors.response.use(
     }
 );
 
-const get = (url: string, params?: any): Promise<AxiosResponse<any>> => {
+const get = (url: string, params?: any,responseType?:any): Promise<AxiosResponse<any>> => {
   
-    return instance.get(url, { params });
+    return instance.get(url, { params,...responseType });
 }
 const post = (url: string, data?: any,config ? :any): Promise<AxiosResponse<any>> => {
   
