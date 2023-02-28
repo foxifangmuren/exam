@@ -59,9 +59,6 @@ watch(props, (nweProps, oldProps) => {
     ruleForm[item] = props.val[item];
   }
 });
-
-console.log(props.val);
-
 //刷新列表
 const emit = defineEmits(["getlist"]);
 //显示不显示

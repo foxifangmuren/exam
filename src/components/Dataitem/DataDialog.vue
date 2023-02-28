@@ -1,11 +1,6 @@
 <template>
 <div>
-     <el-dialog
-      v-model="dialogVisible"
-      title="批量导入试题"
-      width="40%"
-      :before-close="handleClose"
-      >
+     <el-dialog v-model="dialogVisible" title="批量导入试题" width="40%" >
       <div style="height: 150px">
         <el-steps direction="vertical" :active="1">
           <el-step status="wait" title="下载试题模板，批量导入试题"></el-step>
@@ -31,7 +26,7 @@
       </div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="from.dialogVisible = false">取消</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
           <el-button type="primary" @click="adddataitem"> 确定  </el-button>
         </span>
       </template>
@@ -46,46 +41,25 @@
  */
 import { ref, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
-import router from "@/router";
-import { questions, exportExcel,Daddlist,databasequestiondel} from "@/api/databaselist";
-import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
+import {Daddlist,} from "@/api/databaselist";
+import { ElMessageBox,} from "element-plus";
+
+
 //接受参数
-const props = defineProps({
-  val: {
-    type: Object,
-    default: null,
-  },
-});
-watch(props, (nweProps, oldProps) => {
-  console.log(props.val);
-  // ruleForm.title = props.val.title;
-});
-//刷新列表
-const emit = defineEmits(["getlist"]);
+//接受参数---父组件的方法
+const emit =defineEmits(['getlist'])
+//接受参数---定义
+const dialogVisible = ref(false)
+//接受参数---暴漏
+defineExpose({ dialogVisible })
+
 //地址栏数据
 const route = useRoute();
-const title = ref(route.query.title);
 const testid = ref(route.query.id);
 //表格数据
 const from = reactive({
-  //批量添加框
-  dialogVisible: false,
-  query: {
-    databaseid: 0,
-    page: 1,
-    psize: 10,
-    key: "",
-    tags: "",
-    type: "",
-    admin: "",
-  },
-  Dtitle: "",
-  tableData: [],
-  Dlist: [],
+  dialogVisible:false,
   Authorization:{Authorization:sessionStorage.getItem('token')},
-  drawer: false,
-  //总条数
-  total: 0,
   addFile:[],
 });
 //下载试题模板
@@ -106,31 +80,20 @@ const beforeRemove: any['beforeRemove'] = (uploadFile: { name: any; }, uploadFil
 }
 //上传成功对数据进行更改
 const addFile=async(file:any)=>{
-  console.log(file,"shuju");
   if(file.errCode===10000){
     from.addFile=file.data.map( (item:any)=>({...item,title:item.title}))
   }
 }
-//试题删除===单个试题的删除
-const datadel=(vla:any)=>{
-  ElMessageBox.confirm('确定删除该条数据吗?')
-    .then(async() => {
-      const src=await databasequestiondel({id:vla.id})
-      //刷新列表  
-      getlist(testid);
-    })
-    .catch(() => {})
-}
-
 //确定时调用接口===试题批量添加
 const adddataitem=async(file:any)=>{
   //调用批量添加接口  
   const src =await Daddlist({databaseid:testid.value,list:from.addFile})
-  //关闭弹框
-//   from.dialogVisible=false
-  //刷新列表
-//   getlist(testid);
+  //调用父组件方法
+  emit('getlist')
+  // 关闭弹框
+  dialogVisible.value=false
 }
+
 </script>
 <style scoped>
 </style>

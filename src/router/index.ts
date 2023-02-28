@@ -22,6 +22,7 @@ import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
 import TextVue from '../components/Transfer .vue';
 //定义路由，每个路由都需要映射到一个组件。
 const routes:any = [
+
   {
     path: '/TextVue',
     name: 'TextVue',

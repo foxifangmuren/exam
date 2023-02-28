@@ -11,10 +11,11 @@
       </div>
       <div>
         <el-button size="default">添加试题</el-button>
-        <el-button type="primary" size="default" @click="addall" >批量添加</el-button >
+        <el-button type="primary" size="default" @click="addall"
+          >批量添加</el-button
+        >
       </div>
     </div>
-    
     <!-- 头部 -->
     <el-form
       :inline="true"
@@ -66,50 +67,45 @@
       :tableHeader="tableHeader"
       :isTypeSelection="true"
       @goinfo="goinfo"
-      @goinfotow="goinfotow"
       @del="datadel"
     ></MyTable>
     <!--  分页 接受：总条数（total） 页数（page） 条数（psize） 方法（changPageSize）（changPage） -->
-    <MyPages
-      :total="from.total"
-      :page="from.query.page"
-      :psize="from.query.psize"
-      @changePageSize="changePageSize"
-      @changePage="changePage"
-    ></MyPages>
-    <!-- 侧栏弹框  试题详情-->
-    <el-drawer
-      v-model="from.drawer"
-      title="试题修改"
-      :close-on-click-modal="true"
-      :before-close="handleClose"
-      size="50%"
-    >
-      <!-- 弹框内容 -->
-      <div>111</div>
-    </el-drawer>
-
+    <MyPages :total="from.total" :page="from.query.page" :psize="from.query.psize"  @changePageSize="changePageSize" @changePage="changePage" ></MyPages>
+    <!-- 侧边详情框 -->
+    <MyCDatadrawer :list="from.data" ref="mycdatadrawer"></MyCDatadrawer>
     <!-- 批量添加弹框 -->
-    <DataDialog :dialogVisible="from.dialogVisible"></DataDialog>
-
-
+    <MyDialog @getlist="getlist" ref="adddata"></MyDialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, } from "vue";
+/**
+ * 试卷详情，
+ * 查询，
+ * 删除
+ * 弹框
+ *
+ */
+import { ref, reactive, provide } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
-import { questions, exportExcel,} from "@/api/databaselist";
+import { questions, exportExcel, databasequestiondel,} from "@/api/databaselist";
+import { ElMessageBox } from "element-plus";
+//详情列表的渲染
+const mycdatadrawer=ref<any>()
+const goinfo = (vla: any) => {
+  from.data=vla
+  mycdatadrawer.value.drawer=true
+};
 //地址栏数据
 const route = useRoute();
-const title = ref(route.query.title);
-const testid = ref(route.query.id);
-
+const title: any = ref(route.query.title);
+const testid:any = ref(route.query.id);
 //表格数据
 const from = reactive({
   //批量添加框
-  dialogVisible: true,
+  dialogVisible: false,
+  // 查询数据
   query: {
     databaseid: 0,
     page: 1,
@@ -119,23 +115,28 @@ const from = reactive({
     type: "",
     admin: "",
   },
-  Dtitle: "",
+  //列表数据
   tableData: [],
-  Dlist: [],
-  Authorization:{Authorization:sessionStorage.getItem('token')},
+  //详情数据框
   drawer: false,
+  data:{},
+  //详情数据列表
+  particulars: [],
   //总条数
   total: 0,
-  addFile:[],
 });
-
-const getlist = async (id: any) => {
-  from.query.databaseid = id;
+//请求列表接口
+const getlist = async () => {
+  from.query.databaseid = testid;
   const src = await questions(from.query);
   from.tableData = src.data.list;
   from.total = src.data.counts;
 };
-getlist(testid);
+getlist();
+//返回
+const goBack = () => router.go(-1);
+//查询
+const onSubmit = () => getlist();
 //表格头部
 const tableHeader = [
   {
@@ -174,53 +175,52 @@ const tableHeader = [
       {
         text: "删除",
         type: "primary",
-        event:'del'
+        event: "del",
       },
     ],
   },
 ];
+//批量添加===弹框
+const adddata=ref<any>()
+const addall = () => {
+  adddata.value.dialogVisible = true
+};
+//试题删除===单个试题的删除
+const datadel = (vla: any) => {
+  ElMessageBox.confirm("确定删除该条数据吗?")
+    .then(async () => {
+      const src = await databasequestiondel({ id: vla.id });
+      //刷新列表
+      getlist();
+    })
+    .catch(() => {});
+};
 //分页操作
 const changePage = (val: number) => {
   from.query.page = val;
-  getlist(testid);
+  getlist();
 };
 const changePageSize = (val: number) => {
   from.query.psize = val;
-  getlist(testid);
+  getlist();
 };
-//返回
-const goBack = () => router.go(-1);
-//查询
-const onSubmit = () => getlist(testid);
 //下载试卷内容
 const download = async () => {
-  console.log(testid.value, "111");
-  const src = await exportExcel({id:testid.value}).then(
-    (src:any)=>{
-        let blob= new Blob([src], {type: 'application/vnd.ms-excel'});
-        let url= URL.createObjectURL(blob);
-        let a= document.createElement("a");
-        a.href=url;
-        a.style.display="none";
-        document.body.appendChild(a);
-        a.setAttribute("download",'瞎子啊');
-        a.click();
-        document.body.removeChild(a);
-    }
-  )
-  console.log(src);
-  
+  const src = await exportExcel({ id: testid.value }).then((src: any) => {
+    let blob = new Blob([src], { type: "application/vnd.ms-excel" });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.setAttribute("download", title.value);
+    a.click();
+    document.body.removeChild(a);
+  });
 };
-//试卷详情
-const goinfo = () => {
-  from.drawer = true;
-};
-//批量添加===弹框
-const addall = () =>  from.dialogVisible = true;
-
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .titile_header {
   font-size: 20px;
 }

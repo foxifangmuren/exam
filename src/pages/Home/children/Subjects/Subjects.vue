@@ -63,7 +63,7 @@ const from = reactive({
 });
 const getlt = async () => {
   const src = await getList(from.query);
-  console.log(src);
+  // console.log(src);
   from.tableData = src.data.list;
   from.total = src.data.counts;
 };

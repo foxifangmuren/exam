@@ -1,7 +1,8 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#F7FBFE', color: '#000' }">
+  <el-table :data="tableData" style="width: 100%"  highlight-current-row :header-cell-style="{ background: '#F7FBFE', color: '#000' }">
     <!-- 复选框 -->
     <el-table-column type="selection" v-if="isTypeSelection" width="55" />
+
     <!-- 表格行 -->
     <el-table-column v-for="item in tableHeader" :prop="item.prop" :label="item.label" :key="item.id">
     <!-- 建立插槽 -->

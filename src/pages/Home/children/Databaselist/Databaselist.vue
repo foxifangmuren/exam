@@ -203,6 +203,7 @@ const check = (done: () => void) => {
 const gopage = (val: any) => {
   router.push("/Dataitem?id=" + val.id + "&title=" + val.title);
 };
+
 </script>
 
 
