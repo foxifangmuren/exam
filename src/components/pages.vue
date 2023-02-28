@@ -15,6 +15,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import {ref} from "vue"
 /**
  * 分页封装
  * 将原本的分页数据每页显示条数进行更改

@@ -54,8 +54,8 @@
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit">查询</el-button>
-        <el-button type="danger" @click="onSubmit" :disabled="true"
-          >批量删除</el-button
+        <el-button type="danger"  :disabled="from.disabled"
+          @click="dell">批量删除</el-button
         >
         <el-button @click="download">导出excel</el-button>
       </el-form-item>
@@ -66,8 +66,10 @@
       :tableData="from.tableData"
       :tableHeader="tableHeader"
       :isTypeSelection="true"
+      @delarrinfo="delarrinfo"
       @goinfo="goinfo"
       @del="datadel"
+      
     ></MyTable>
     <!--  分页 接受：总条数（total） 页数（page） 条数（psize） 方法（changPageSize）（changPage） -->
     <MyPages :total="from.total" :page="from.query.page" :psize="from.query.psize"  @changePageSize="changePageSize" @changePage="changePage" ></MyPages>
@@ -89,7 +91,7 @@
 import { ref, reactive, provide } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
-import { questions, exportExcel, databasequestiondel,} from "@/api/databaselist";
+import { questions, exportExcel, databasequestiondel,testdel} from "@/api/databaselist";
 import { ElMessageBox } from "element-plus";
 //详情列表的渲染
 const mycdatadrawer=ref<any>()
@@ -124,7 +126,24 @@ const from = reactive({
   particulars: [],
   //总条数
   total: 0,
+  //试卷批量删除
+  disabled: true,
+  delarray:[]
 });
+//批量删除
+const delarrinfo=(val:any)=>{
+  console.log(val);
+  
+    if(val){
+      from.disabled=false
+      from.delarray=val
+    }
+}
+const dell=async()=>{
+    const src=await testdel({"ids":from.delarray})
+    getlist();
+    console.log(src);
+}
 //请求列表接口
 const getlist = async () => {
   from.query.databaseid = testid;
