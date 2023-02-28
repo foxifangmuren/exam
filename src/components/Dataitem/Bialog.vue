@@ -1,11 +1,7 @@
 <template>
+<!-- 题库添加 -->
   <div>
-    <el-dialog
-      v-model="dialogVisible"
-      title="Tips"
-      width="30%"
-      :before-close="handleClose"
-    >
+    <el-dialog v-model="dialogVisible" title="题库添加" width="30%" :before-close="handleClose" >
       <div>
         <el-form
           ref="ruleFormRef"
@@ -44,7 +40,6 @@
 <script setup lang="ts" >
 import { ref, reactive, watch } from "vue";
 import { addlist } from "@/api/databaselist";
-import type { FormInstance, FormRules } from "element-plus";
 const ruleFormRef = ref<any>();
 const props = defineProps({
   val: {
@@ -54,11 +49,11 @@ const props = defineProps({
 });
 watch(props, (nweProps, oldProps) => {
   console.log(props.val);
-  // ruleForm.title = props.val.title;
   for (let item in ruleForm) {
     ruleForm[item] = props.val[item];
   }
 });
+
 //刷新列表
 const emit = defineEmits(["getlist"]);
 //显示不显示
@@ -83,9 +78,7 @@ const rules = reactive<any>({
 });
 //添加按钮
 const add = async () => {
-  // console.log(ruleForm);
   const src = await addlist(ruleForm);
-  console.log(src);
   // 关闭弹框
   dialogVisible.value = false;
   //调用列表

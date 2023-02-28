@@ -59,6 +59,12 @@
 </template>
 
 <script lang="ts" setup>
+/***题库管理
+ * 剩余
+ *    添加题库
+ *    批量删除
+ *    编辑
+ */
 import router from "@/router";
 import { reactive, ref, toRefs } from "vue";
 import { databaseList, del } from "@/api/databaselist";
