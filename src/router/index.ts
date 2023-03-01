@@ -3,7 +3,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 //引入组件，及要跳转到的页面，也可以直接写在routes中的component里
 import Login from '../pages/Login/login.vue';
 import Home from '../pages/Home/home.vue';
-import test from '../pages/Home/children/Text/Text.vue';
+import est from '../pages/Home/children/Text/Text.vue';
+import tesadd from '../pages/Home/children/Text/Textadd.vue';
 import Exam from '../pages/Home/children/Exam/Exam.vue';
 import Exam_student from "../pages/Home/children/Exam/examstudent.vue"
 import role from '../pages/Home/children/role/role.vue';
@@ -53,8 +54,14 @@ const routes:any = [
       // "考试"
       {
         path: '/test',
-        name:test,
-        component: test,
+        name:est,
+        component: est,
+      },
+      //考试添加
+      {
+        path: '/testadd',
+        name:tesadd,
+        component: tesadd,
       },
       // "阅卷"
       {

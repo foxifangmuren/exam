@@ -4,13 +4,6 @@
       <el-container>
         <!-- 左侧菜单 -->
         <el-aside width="70px" style="background-color: aqua">
-          <div class="block">
-            <img
-              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-              alt=""
-            />
-          </div>
-
           <el-col>
             <el-menu
               default-active="2"
@@ -19,6 +12,16 @@
               @close="handleClose"
               router
             >
+              <el-menu-item>
+                <template #default="scope">
+                  <div class="block">
+                    <img
+                      src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+                      alt=""
+                    />
+                  </div>
+                </template>
+              </el-menu-item>
               <el-menu-item
                 :index="item.url"
                 v-for="(item, index) in e"
@@ -102,7 +105,7 @@ const { e }: any = toRefs(data);
     margin-top: -30px;
   }
 }
-.common-layout{
+.common-layout {
   height: 100vh;
 }
 .el-menu {

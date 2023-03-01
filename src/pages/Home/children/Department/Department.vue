@@ -115,7 +115,7 @@ const update = async () => {
 };
 const Delete = async () => {
   ElMessageBox.confirm(
-    '确定要删除，该页面吗',
+    '确定要删除这个部门吗',
     '提示',
     {
       confirmButtonText: '确定',

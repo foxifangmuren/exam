@@ -3,9 +3,7 @@
     <!-- 头部标题 -->
     <div class="title_header">
       <p>题库管理</p>
-      <el-button type="primary" @click="gg"
-        >创建题库</el-button
-      >
+      <el-button type="primary" @click="gg">创建题库</el-button>
     </div>
     <!-- 搜索框 -->
     <el-form class="demo-form-inline" :inline="true" :model="from.query">
@@ -54,64 +52,62 @@
     ></MyPages>
     <!-- 弹框 -->
     <MyBialog ref="Refer" @getlist="getlist"></MyBialog>
-
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, toRefs } from "vue";
-import { databaseList ,del} from "@/api/databaselist";
-import { ElMessageBox } from "element-plus";
+import { reactive, ref, toRefs } from 'vue';
+import { databaseList, del } from '@/api/databaselist';
+import { ElMessageBox } from 'element-plus';
 
 //弹框区域
-let Refer=ref<any>(null)
-const gg =()=>{
-  console.log(Refer.value)
-  Refer.value.dialogVisible=true
-}
-
+let Refer = ref<any>(null);
+const gg = () => {
+  console.log(Refer.value);
+  Refer.value.dialogVisible = true;
+};
 
 //只看我创建的
 let checked: any = ref(false);
 //查询
 const onSubmit = () => {
-  console.log("submit!");
+  console.log('submit!');
   getlist();
 };
 //表格数据
 const tableHeader = [
   {
-    prop: "title",
-    label: "题库",
+    prop: 'title',
+    label: '题库',
   },
   {
-    prop: "counts",
-    label: "题量数目",
+    prop: 'counts',
+    label: '题量数目',
   },
   {
-    prop: "addtime",
-    label: "创建时间",
+    prop: 'addtime',
+    label: '创建时间',
   },
   {
-    prop: "admin",
-    label: "创建人",
+    prop: 'admin',
+    label: '创建人',
   },
   {
-    label: "操作",
-    type: "buttons",
+    label: '操作',
+    type: 'buttons',
     buttons: [
       {
-        type: "primary",
-        text: "试题",
+        type: 'primary',
+        text: '试题',
       },
       {
-        type: "primary",
-        text: "编辑",
+        type: 'primary',
+        text: '编辑',
       },
       {
-        type: "primary",
+        type: 'primary',
         event: 'del',
-        text: "删除",
+        text: '删除',
       },
     ],
   },
@@ -122,11 +118,11 @@ const from = reactive({
   query: {
     page: 1,
     psize: 10,
-    key: "",
-    ismy: "",
-    admin: "",
+    key: '',
+    ismy: '',
+    admin: '',
   },
-  loading:true,
+  loading: true,
   //总条数
   total: 0,
   //表格数据
@@ -142,19 +138,17 @@ const getlist = async () => {
 };
 getlist();
 //删除
-const open= async(val:any) =>{
+const open = async (val: any) => {
   //删除刷新列表，删除时有提示信息，删除时出现Login效果
-  const src:any=await del({id:val.id})
+  const src: any = await del({ id: val.id });
   console.log(src);
-  if(src.errCode=="10000"){
+  if (src.errCode == '10000') {
     //请求列表
-    getlist()
-  }else{
+    getlist();
+  } else {
     console.log();
-    
   }
-  
-}
+};
 // 分页方法
 const changePage = (val: number) => {
   from.query.page = val;
@@ -168,7 +162,7 @@ const changePageSize = (val: number) => {
 const check = (done: () => void) => {
   if (checked.value == true) {
     // console.log('111')
-    from.query.ismy = "3";
+    from.query.ismy = '3';
     getlist();
 
     ElMessageBox.confirm(`确定要切换本人创建的吗?`)
@@ -191,8 +185,6 @@ const check = (done: () => void) => {
   }
 };
 </script>
-
-
 
 <style scoped>
 .title_header {
