@@ -191,7 +191,7 @@ const form = reactive({
   remarks:'',//备注
   photo:'',  //手机号
   depid:'', //部门
-});
+});   
 const props = {
   expandTrigger: 'hover',
   checkStrictly: true,
