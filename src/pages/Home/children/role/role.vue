@@ -9,7 +9,7 @@
     </div>
 
     <!-- 添加弹出框 -->
-    <el-dialog v-model="dialogFormVisible" title="Shipping address">
+    <el-dialog v-model="dialogFormVisible" title="添加">
       <el-form :model="form">
         <el-form-item label="角色名称" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off" />
@@ -59,6 +59,7 @@
           :data="data.tableData"
           style="width: 100%"
           @selection-change="handleSelectionChange"
+          stripe 
         >
           <el-table-column property="name" label="学生姓名" />
           <el-table-column label="操作" width="120" #default="scope">

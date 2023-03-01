@@ -5,7 +5,7 @@
       <span class="head">学生管理</span>
       <div>
         <el-button>批量添加</el-button>
-        <el-button type="primary" @click="dialogFormVisible = true"
+        <el-button type="primary" v-show="1" @click="dialogFormVisible = true"
           >添加学生</el-button
         >
       </div>
@@ -17,7 +17,7 @@
           <el-input v-model="form.name" autocomplete="off" />
         </el-form-item>
         <el-form-item label="电话" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" />
+          <el-input v-model="form.photo" autocomplete="off" />
         </el-form-item>
         <el-form-item label="部门" :label-width="formLabelWidth">
           <el-cascader
@@ -62,7 +62,7 @@
       <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="班级名称">
           <el-input v-model="data.key" placeholder="请输入关键字" />
-        </el-form-item>
+        </el-form-item> 
         <el-form-item label="部门">
           <el-cascader
             v-model="data.value"
@@ -116,10 +116,9 @@
           <el-table-column property="addtime" label="添加时间" />
           <el-table-column label="操作" width="150" #default="scope">
             <span class="zi" style="cursor: pointer">重置密码</span>
-            <span class="zi" style="cursor: pointer">修改</span>
+            <span class="zi" style="cursor: pointer" v-show="2">修改</span>
             <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
-              >删除</span
-            >
+              >删除</span>
           </el-table-column>
         </el-table>
       </div>
@@ -189,8 +188,8 @@ const form = reactive({
   username: '',//账号
   pass: '', //密码
   remarks:'',//备注
+  photo:'',  //手机号
 });
-const buttDis = ref('');
 const props = {
   expandTrigger: 'hover',
   checkStrictly: true,
