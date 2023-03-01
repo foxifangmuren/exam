@@ -44,7 +44,14 @@
               </div>
              
             </div>
-            <div class="ty">335312</div>
+            <div class="ty">
+              <div>
+                <div>1</div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
             <div class="san">
               <el-button>添加题目</el-button>
               <el-button>批量导入</el-button>
