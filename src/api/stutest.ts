@@ -12,8 +12,6 @@ export const getTest = (params: any): Promise<AxiosResponse<any>> => {
 export const getteststart = (params: any): Promise<AxiosResponse<any>> => {
   return get('/test/start',  params );
 };
-  return get('/test/list', { params });
-};
 export const updateState = (params: any): Promise<AxiosResponse<any>> => {
   return post('/test/updateState', params );
 };
