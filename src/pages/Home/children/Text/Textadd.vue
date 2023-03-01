@@ -1,0 +1,495 @@
+<template>
+  <div>
+    <div class="title">创建考试</div>
+    <div class="basic">
+      <div class="one">
+        <span class="ones">1</span>
+        <span>基本信息</span>
+      </div>
+      <el-form
+        :label-position="labelPosition"
+        label-width="100px"
+        :model="AddFrom"
+        style="max-width: 460px"
+      >
+        <el-form-item label="考试名称">
+          <el-input v-model="AddFrom.title" />
+        </el-form-item>
+        <el-form-item label="考试说明">
+          <el-input v-model="AddFrom.info" type="textarea" />
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="setup">
+      <div class="one">
+        <span class="ones">2</span>
+        <span>内容设置</span>
+      </div>
+      <el-form
+        :label-position="labelPosition"
+        label-width="100px"
+        :model="AddFrom"
+        style="max-width: 1100px"
+      >
+        <el-form-item label="考试内容:">
+          <div class="shiti">
+            <div class="er">
+              <div>
+                <h3>试题列表</h3>
+              </div>
+              <div>
+                <span>总分:0</span>
+                <span>已添加零题</span>
+                <el-button>清空</el-button>
+              </div>
+             
+            </div>
+            <div class="ty">335312</div>
+            <div class="san">
+              <el-button>添加题目</el-button>
+              <el-button>批量导入</el-button>
+              <el-button>从题库中导入</el-button>
+              <el-button @click="dialogTableVisible = true"
+                >选择已有试卷</el-button
+              >
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item label="试题存入题库">
+          <el-select v-model="AddFrom.title" placeholder="请选择题库">
+            <el-option label="Zone one" value="shanghai" />
+          </el-select>
+          <el-button>+创建试题库</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="set">
+      <div class="one">
+        <span class="ones">3</span>
+        <span>考试设置</span>
+      </div>
+      <el-form
+        :label-position="labelPosition"
+        label-width="100px"
+        :model="AddFrom"
+        style="max-width: 800px"
+      >
+        <el-form-item label="通过分数:">
+          <el-input-number
+            v-model="num"
+            class="mx-4"
+            :min="1"
+            controls-position="right"
+            @change="handleChange"
+          />
+        </el-form-item>
+        <el-form-item label="考试时长:">
+          <el-radio-group v-model="AddFrom.limittime" class="num">
+            <el-radio label="不限时时长" />
+            <el-radio label="限时时长" />
+          </el-radio-group>
+          <el-input-number
+            v-model="num"
+            class="mx-4"
+            :min="1"
+            controls-position="right"
+            @change="handleChange"
+          />
+        </el-form-item>
+        <el-form-item label="开放时间:">
+          <div class="block">
+            <el-date-picker
+              v-model="value2"
+              type="datetimerange"
+              :shortcuts="shortcuts"
+              range-separator="To"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+            />
+            <span>不填表示永久</span>
+          </div>
+        </el-form-item>
+        <el-form-item label="答案解析">
+          <el-radio-group v-model="AddFrom.isshow">
+            <el-radio label="交卷后显示" />
+            <el-radio label="不允许查看" />
+            <el-radio label="仅可查看对错" />
+            <el-radio label="仅查看错题" />
+            <el-radio label="考试结束后查看" />
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="开放时间:">
+          <el-checkbox-group v-model="AddFrom.title">
+            <el-checkbox label="试题顺序打乱" name="type" />
+            <el-checkbox
+              label="选项顺序打乱（单选题，多选题，判断题）"
+              name="type"
+            />
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="Teacher">
+      <div class="one">
+        <span class="ones">4</span>
+        <span>考试设置</span>
+      </div>
+      <el-form
+        :label-position="labelPosition"
+        label-width="100px"
+        :model="AddFrom"
+        style="max-width: 1100px"
+      >
+        <el-form-item label="可见老师">
+          <el-badge :value="1" class="item" type="primary">
+            <el-button>+选择</el-button>
+          </el-badge>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="Teacher">
+      <div class="one">
+        <span class="ones">5</span>
+        <span>考试设置</span>
+      </div>
+      <el-form
+        :label-position="labelPosition"
+        label-width="100px"
+        :model="AddFrom"
+        style="max-width: 1100px"
+      >
+        <el-form-item label="考试范围">
+          <el-badge :value="1" class="item" type="primary">
+            <el-button>+选择</el-button>
+          </el-badge>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="Teacher">
+      <div class="one">
+        <span class="ones">6</span>
+        <span>考试设置</span>
+      </div>
+      <el-form
+        :label-position="labelPosition"
+        label-width="100px"
+        :model="AddFrom"
+        style="max-width: 1100px"
+      >
+        <el-form-item label="阅卷老师">
+          <el-badge :value="1" class="item" type="primary">
+            <el-button>+选择</el-button>
+          </el-badge>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="add">
+      <el-button type="primary" @click="TestAdd">发布</el-button>
+      <el-button>保存(不发布)</el-button>
+      <el-button>取消</el-button>
+    </div>
+    <el-dialog v-model="dialogTableVisible" title="试题列表" width="80%">
+      <el-form class="demo-form-inline" :inline="true" :model="from.query">
+        <el-form-item label="题库名称">
+          <el-input
+            v-model="from.query.key"
+            placeholder="请输入题库名称"
+            @keyup.enter="onSubmit"
+          />
+        </el-form-item>
+        <el-form-item label="创建人">
+          <el-input
+            v-model="from.query.admin"
+            placeholder="请输入创建人"
+            @keyup.enter="onSubmit"
+          />
+        </el-form-item>
+        <el-form-item label="创建人">
+          <el-checkbox v-model="checked" @change="check"
+            >只看我创建的</el-checkbox
+          >
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit" @keyup="onSubmit"
+            >查询</el-button
+          >
+        </el-form-item>
+      </el-form>
+      <MyTable
+        @clickToFather="w"
+        :isTypeSelection="true"
+        :tableHeader="tableHeader"
+        :tableData="from.tableData"
+      ></MyTable>
+      <!-- 分页 -->
+      <MyPages
+        :total="from.total"
+        :page="from.query.page"
+        :psize="from.query.psize"
+        @changePageSize="changePageSize"
+        @changePage="changePage"
+      ></MyPages>
+      <div class="shi">
+        <el-button @click="dialogTableVisible = false">取消</el-button>
+        <el-button type="primary" @click="wwy">确定</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { reactive, ref, onMounted } from 'vue';
+import { testadd } from '@/api/stutest';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { getList } from '@/api/Subjects';
+import { wy } from '@/api/databaselist';
+import router from '@/router';
+const dialogTableVisible = ref(false);
+const value2 = ref('');
+const va = ref();
+//试卷数据
+const w = async (id: any) => {
+  va.value = id;
+};
+const wwy = async () => {
+  dialogTableVisible.value = false;
+  const res = await wy({ id: va.value });
+  console.log(res);
+};
+const onSubmit = () => {
+  console.log('submit!');
+  getlt();
+};
+let checked: any = ref(false);
+
+const check = (done: () => void) => {
+  if (checked.value == true) {
+    // console.log('111')
+    from.query.ismy = '3';
+    getlt();
+
+    ElMessageBox.confirm(`确定要切换本人创建的吗?`)
+      .then(() => {
+        checked.value = true;
+      })
+      .catch(() => {
+        // catch error
+        checked.value = false;
+      });
+  } else {
+    ElMessageBox.confirm(`确定要切换全部试题吗?`)
+      .then(() => {
+        checked.value = false;
+      })
+      .catch(() => {
+        // catch error
+        checked.value = true;
+      });
+  }
+};
+const changePage = (val: number) => {
+  from.query.page = val;
+  getlt();
+};
+const changePageSize = (val: number) => {
+  from.query.psize = val;
+  getlt();
+};
+const tableHeader = [
+  {
+    prop: 'title',
+    label: '试卷名称',
+  },
+  {
+    prop: 'counts',
+    label: '题量',
+  },
+  {
+    prop: 'admin',
+    label: '创建人',
+  },
+  {
+    prop: 'addtime',
+    label: '创建时间',
+  },
+];
+
+const from: any = reactive({
+  query: {
+    key: '',
+    admin: '',
+    ismy: 0,
+    page: 1,
+    psize: 10,
+  },
+  tableData: [],
+  total: 0,
+});
+const getlt = async () => {
+  const src = await getList(from.query);
+  console.log(src);
+  from.tableData = src.data.list;
+  from.total = src.data.counts;
+};
+getlt();
+// 考试添加数据
+const AddFrom = reactive({
+  id: 0,
+  title: '1',
+  info: '2107全栈A《Vue移动项目开发》月考理论',
+  admin: 'ldq',
+  begintime: '2021-12-07 15:33:59.0',
+  endtime: '2021-12-02 15:34:03.0',
+  limittime: 120,
+  scores: 100,
+  pastscores: 60,
+  qorder: 1,
+  aorder: 1,
+  answershow: 2,
+  isshow: 1,
+  databaseid: 20,
+  state: 1,
+  limits: [{ id: 1 }, { id: 2 }],
+  markteachers: [{ id: 3 }, { id: 4 }],
+  students: [{ studentid: 5 }, { studentid: 6 }],
+  questions: [],
+});
+const TestAdd = async () => {
+  const res: any = await testadd(AddFrom);
+  console.log(res);
+  if (res.errCode == '10000') {
+    ElMessage({
+      message: '添加成功',
+      type: 'success',
+    });
+    router.push('test');
+  }
+};
+const shortcuts = [
+  {
+    text: '上周',
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      return [start, end];
+    },
+  },
+  {
+    text: '上个月',
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      return [start, end];
+    },
+  },
+  {
+    text: '上三个月',
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+      return [start, end];
+    },
+  },
+];
+const num = ref(1);
+const handleChange = (value: number) => {
+  console.log(value);
+};
+const labelPosition = ref('right');
+</script>
+
+<style scoped lang="less">
+.shi {
+  margin-left: 1300px;
+}
+.add {
+  margin-left: 250px;
+  margin-top: 50px;
+  margin-bottom: 100px;
+}
+.block {
+  display: flex;
+  color: #c3c3c3;
+  span {
+    margin-left: 10px;
+  }
+}
+.num {
+  margin-right: 15px;
+}
+.el-input-number {
+  width: 100px;
+}
+.san {
+  display: flex;
+  align-items: center;
+  // line-height: 50%;
+  height: 50%;
+  .el-button {
+    // line-height: 20%;
+    margin-left: 20px;
+  }
+}
+.er {
+  height: 50%;
+  // background-color: aqua;
+  display: flex;
+  align-items: center;
+  h3 {
+    margin-left: 20px;
+  }
+  border-bottom: 2px solid #dcdfe6;
+  span {
+    margin-right: 50px;
+  }
+  .el-button {
+    margin-right: 20px;
+  }
+  height: 50%;
+  display: flex;
+  justify-content: space-between;
+}
+.shiti {
+  width: 1000px;
+  // display: block;
+  // height: 100px;
+  border: #dcdfe6 0.5px solid;
+}
+.el-form--label-right {
+  margin: 10px 0;
+  margin-left: 150px;
+}
+.title {
+  font-size: 20px;
+  margin-left: 25px;
+  margin-bottom: 10px;
+}
+.one {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  background-color: #f9faff;
+  width: 100%;
+  .ones {
+    margin-right: 20px;
+    font-size: 35px;
+    margin-left: 25px;
+    color: #c7e5ff;
+  }
+}
+.setup {
+  width: 100%;
+  height: 100%;
+  .ty {
+    width: 100%;
+    height: 700px;
+    background-color: aqua;
+    // margin: 10px;
+    border:1px solid red;
+  }
+}
+</style>
