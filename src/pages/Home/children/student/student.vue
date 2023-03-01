@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item label="部门" :label-width="formLabelWidth">
           <el-cascader
-            v-model="data.value"
+            v-model="form.depid"
             :options="data.options"
             :props="props"
             @change="handleChange"
@@ -164,6 +164,7 @@ const data = reactive({
     depname: '',
     page: 1,
     psize: 10,
+    
   },
   key: '',
   //搜索
@@ -184,11 +185,12 @@ const { params, ids, isStu, ClassOptions, Class } = toRefs(data);
 const form = reactive({
   id: 0,
   name: '',//学生姓名
-  classid: 1,
+  classid: 3504,
   username: '',//账号
   pass: '', //密码
   remarks:'',//备注
   photo:'',  //手机号
+  depid:'', //部门
 });
 const props = {
   expandTrigger: 'hover',
@@ -239,14 +241,14 @@ const studentList = async () => {
 };
 //添加
 const add = async () => {
-  // console.log(data.params.depname)
-  const res: any = await studentadd(form);
-  console.log('班级添加', res);
-  if (res.errCode === 10000) {
-    ElMessage.success('添加成功');
-    dialogFormVisible.value = false
-    studentList();
-  }
+  console.log(form.classid)
+  // const res: any = await studentadd(form);
+  // console.log('班级添加', res);
+  // if (res.errCode === 10000) {
+  //   ElMessage.success('添加成功');
+  //   dialogFormVisible.value = false
+  //   studentList();
+  // }
 };
 //删除接口
 const dell = async (ids: number) => {
