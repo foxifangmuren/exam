@@ -10,7 +10,7 @@
         </el-page-header>
       </div>
       <div>
-        <el-button size="default">添加试题</el-button>
+        <el-button size="default" @click="addtest">添加试题</el-button>
         <el-button type="primary" size="default" @click="addall"
           >批量添加</el-button
         >
@@ -77,6 +77,8 @@
     <MyCDatadrawer :list="from.data" ref="mycdatadrawer"></MyCDatadrawer>
     <!-- 批量添加弹框 -->
     <MyDialog @getlist="getlist" ref="adddata"></MyDialog>
+    <!-- 添加侧边框 -->
+    <Adddrawer @getlist="getlist" ref="draweraddinfo"></Adddrawer>
   </div>
 </template>
 
@@ -93,6 +95,13 @@ import { useRoute } from "vue-router";
 import router from "@/router";
 import { questions, exportExcel, databasequestiondel,testdel} from "@/api/databaselist";
 import { ElMessageBox } from "element-plus";
+//试题添加
+const draweraddinfo=ref<any>()
+const addtest=()=>{
+  console.log('添加试题');
+  console.log(draweraddinfo,"暴露属性");
+  draweraddinfo.value.drawer=true
+}
 //详情列表的渲染
 const mycdatadrawer=ref<any>()
 const goinfo = (vla: any) => {

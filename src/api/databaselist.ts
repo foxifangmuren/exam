@@ -36,6 +36,11 @@ const dells=(params:any)=>{
 const testdel=(params:any)=>{
     return post('databasequestion/deleteall',params)
 }
+//试题添加
+const addDataitem=(params:any)=>{
+    return post('databasequestion/add',params)
+}
 export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel,dells,
     testdel,
+    addDataitem
 }
