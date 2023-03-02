@@ -20,6 +20,9 @@ import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
 import stutest from '../pages/Home/children/stutest/stutest.vue';
 import examprepare from '../pages/examprepare/examprepare.vue';
 import stuexam from '../pages/stuexam/stuexam.vue';
+import examresults from '../pages/examresults/examresults.vue';
+import stuexamwrong from '../pages/stuexamwrong/stuexamwrong.vue'
+import set from '../pages/Home/children/set/set.vue'
 import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
 //定义路由，每个路由都需要映射到一个组件。
 const routes: any = [
@@ -46,6 +49,20 @@ const routes: any = [
     name: 'stuexam',
     component: stuexam,
   },
+  //考试结果页面
+  {
+    path:"/examresults",
+    name:'examresults',
+    component:examresults
+  },
+  //查看考试结果页面
+  {
+    path:'/stuexamwrong',
+    name:'stuexamwrong',
+    component:stuexamwrong
+  },
+
+  
   // 首页
   {
     path: '/Home',
@@ -129,6 +146,12 @@ const routes: any = [
         path: '/stutest',
         name: stutest,
         component: stutest,
+      },
+        //考试设置
+      {
+        path:'/set',
+        name:'set',
+        component:set
       },
     ],
   },
