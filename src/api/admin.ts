@@ -19,7 +19,7 @@ export const getvisituserlist = (params: any) => {
 };
 
 //部门列表
-export const departmentlist = (params: any): Promise<AxiosResponse<any>> => {
+export const departmentlist = (params: any): Promise<AxiosResponse<any>>  => {
   return get('/department/list',params)
 }
 //部门添加  
@@ -81,4 +81,12 @@ export const teacherdel = (params: any): Promise<AxiosResponse<any>> => {
 //考试列表
 export const TextList = (params: any): Promise<AxiosResponse<any>> => {
   return get('/test/list',params)
+}
+//添加老师
+export const teacherAdd = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/teacher/add',params)
+}
+//老师修改密码
+export const changePass = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/teacher/changePass',params)
 }

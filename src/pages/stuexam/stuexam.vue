@@ -11,16 +11,57 @@
           <div class="score">分值 ：{{item.scores}}</div>
         </div>
         <div class="concent_box">
-          <div v-html="item.title " style="width: 400px;"></div>
+          
+          <span
+          class="title"
+          v-html="item.type === '填空题' ? rep(item.title, index) : item.title"
+        ></span>
           <div class="answers">
-            <div class="answersbox" v-for="(item1,index) in item.answers" :key="index1">
-              <div class="answersbox1" @click="changRadio(item1,index)">
-                <div :class = "isActive === index ? 'box2 active' : 'box2'">
-                  <div :class = "isActive === index ? 'box3 box5' : 'box3'">{{ item1.answerno }}</div>
+            <div class="answersbox">
+              <div class="answersbox1"  v-for="(item1,index1) in item.answers" :key="index1" @click="changRadio('单选题',item1,index)" v-if="item.type=='单选题'">
+                <div :class="item.studentanswer==null?'box2':item.studentanswer.indexOf(item1.answerno)>-1?'active box2':'box2'">
+                  <div :class="item.studentanswer==null?'box3':item.studentanswer.indexOf(item1.answerno)>-1?'box5 box3':'box3'">{{ item1.answerno }}</div>
                   <div class="box4">{{ item1.content}}</div>
                 </div>
-                
               </div>
+              <div class="answersbox1" v-if="item.type=='判断题'">
+                <!-- <div :class="item.studentanswer==null?'box2':item.studentanswer.indexOf(item1.answerno)>-1?'active box2':'box2'">
+                  <div :class="item.studentanswer==null?'box3':item.studentanswer.indexOf(item1.answerno)>-1?'box5 box3':'box3'">{{ item1.answerno }}</div>
+                  <div class="box4">{{ item1.content}}</div>
+                </div> -->
+                <div :class="item.studentanswer==='正确'?'active box2':'box2'" @click="judge('正确',index)">
+                  <div class="left">
+                  <div class="opt">
+                    {{ item.studentanswer === "正确" ? "√" : "" }}
+                  </div>
+                  <span>正确</span>
+                </div>
+                </div>
+                <div :class="item.studentanswer==='错误'?'active box2':'box2'" @click="judge('错误',index)">
+                  <div class="left">
+                  <div class="opt">
+                    {{ item.studentanswer === "错误" ? "√" : "" }}
+                  </div>
+                  <span>错误</span>
+                </div>
+                </div>
+              </div>
+              <div class="answersbox1"  v-for="(item1,index1) in item.answers" :key="index1" @click="changRadio('多选题',item1,index)" v-if="item.type=='多选题'">
+                <div :class="item.studentanswer==null?'box2':item.studentanswer.indexOf(item1.answerno)>-1?'active box2':'box2'">
+                  <div :class="item.studentanswer==null?'box3':item.studentanswer.indexOf(item1.answerno)>-1?'box5 box3':'box3'">{{ item1.answerno }}</div>
+                  <div class="box4">{{ item1.content}}</div>
+                </div>
+              </div>
+              <div class="answersbox1" v-if="item.type=='问答题'">
+                <el-input
+                  v-model="item.studentanswer"
+                  :rows="5"
+                  type="textarea"
+                  placeholder="Please input"
+                />
+              </div>
+             
+              <div></div>
             </div>
           </div>
         </div>
@@ -34,7 +75,7 @@
           <div class="boardbox" style="background-color: #fff; border: 1px solid #ccc;"></div><div>未答</div>
         </div>
         <div class="conten">
-        <div v-for="(item,index) in index1" :key="item">{{ item }}</div>
+        <div @click="tiao(index)" :class="item.studentanswer==null?'':'box7'" v-for="(item,index) in list.questions" :key="item">{{ index+1 }}</div>
       </div>
       <div class="hand">
         <div class="hand_top">
@@ -49,19 +90,54 @@
 <script lang="ts" setup>
 import {getteststart} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
-import{onMounted,reactive,toRefs} from 'vue'
+import{onMounted,reactive,toRefs,nextTick} from 'vue'
 const route = useRoute()
 const obj:any = reactive({
   list:[],
-  index1:[],
   isActive:false
 })
+
+// 替换方法
+const rep = (str: string, index: number) => {
+  return str.replace(
+    /\[\]/g,
+    `<input data-index="${index}" onpaste="return false;" style="margin:0 2px" class="input input${index}" type="text" />`
+  );
+};
+//判断题判断对错
+const judge = (e:string,index:number)=>{
+  obj.list.questions[index].studentanswer=e
+}
 //点击单选框
 
-const changRadio=(item: any,index:any)=>{
-    console.log('item', item);
-    obj.isActive = index
+const changRadio=(type:String,item: any,index:any)=>{
+  // console.log(item)
+  console.log(item.type)
+  if(type=='单选题'){
+    obj.list.questions[index].studentanswer = item.answerno
+  }else if(type=='多选题'){
+    console.log(1123)
+    if (obj.list.questions[index].studentanswer == null) {
+      obj.list.questions[index].studentanswer = "|" + item.answerno;
+    } else {
+      let arrIndex = obj.list.questions[index].studentanswer.indexOf(item.answerno);
+      if (arrIndex > -1) {
+        obj.list.questions[index].studentanswer = obj.list.questions[
+          index
+        ].studentanswer.replace("|" + item.answerno, "");
+      } else {
+        obj.list.questions[index].studentanswer =
+        obj.list.questions[index].studentanswer + "|" + item.answerno;
+      }
+    }
+  }
+   
     
+  }
+  const tiao=(index:any)=>{
+    // console.log(index)
+document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
+
   }
 const getList =async ()=>{
   let res:any = await getteststart({testid:route.query.testid})
@@ -69,10 +145,6 @@ const getList =async ()=>{
   if(res.errCode===10000){
 
     obj.list = res.data
-    obj.index1 = obj.list.questions.map((item:Number,index:any)=>{
-      return index+1
-      // console.log(123)
-    })
   }
   console.log(obj.list)
 }
@@ -80,12 +152,15 @@ const getList =async ()=>{
 onMounted(() => {
   getList()
 })
-const {list,index1,isActive} = toRefs(obj)
+const {list,isActive} = toRefs(obj)
 </script>
 <style lang="less" scoped>
  .active{
         border: 1px solid #3d80eb;
         background-color: #fff;
+  }
+  .box7{
+    background-color: #ccc;
   }
 .box2{
   width: 75%;
