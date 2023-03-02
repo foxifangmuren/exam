@@ -40,11 +40,9 @@
     const emits=defineEmits(['changePageSize','changePage'])
 
     const handleSizeChange = (val: number) => {
-        console.log(`${val} items per page`)
         emits('changePageSize',val)
     }
     const handleCurrentChange = (val: number) => {
-        console.log(`current page: ${val}`)
         emits("changePage",val)
     }
 </script>

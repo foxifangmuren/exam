@@ -12,5 +12,8 @@ const studentlist=(params:any)=>{
 const studentinfo=(params:any)=>{
     return get('question/listforstu',params)
 }
-
-export {examList,studentlist,studentinfo}
+//老师判卷
+const stydenupdata=(params:any)=>{
+    return post('studentanswer/update',params)
+}
+export {examList,studentlist,studentinfo,stydenupdata}

@@ -14,7 +14,9 @@ import classes from '../pages/Home/children/classes/classes.vue';
 import Department from '../pages/Home/children/Department/Department.vue';
 import teacher from '../pages/Home/children/teacher/teacher.vue';
 import Subjects from '../pages/Home/children/Subjects/Subjects.vue';
+import subjectsitem from '@/pages/Home/children/Subjects/Subjects_chren.vue';
 import Databaselist from '../pages/Home/children/Databaselist/Databaselist.vue';
+import Dataitem from "@/pages/Home/children/Databaselist/Dataitem.vue"
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
 import stutest from '../pages/Home/children/stutest/stutest.vue';
@@ -24,8 +26,15 @@ import examresults from '../pages/examresults/examresults.vue';
 import stuexamwrong from '../pages/stuexamwrong/stuexamwrong.vue'
 import set from '../pages/Home/children/set/set.vue'
 import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
+import TextVue from '../components/Transfer .vue';
 //定义路由，每个路由都需要映射到一个组件。
-const routes: any = [
+const routes:any = [
+
+  {
+    path: '/TextVue',
+    name: 'TextVue',
+    component: TextVue,
+  },
   //登录页面
   {
     path: '/',
@@ -103,11 +112,21 @@ const routes: any = [
         name: Subjects,
         component: Subjects,
       },
-      // ""题库""
       {
+        path:"/subjectsitem",
+        name:subjectsitem,
+        component:subjectsitem
+      },
+       // ""题库""
+       {s
         path: '/databaselist',
         name: Databaselist,
-        component: Databaselist,
+        component: Databaselist,Dataitem
+      },
+      {
+        path: '/Dataitem',
+        name: Dataitem,
+        component: Dataitem,
       },
       // ""部门"
       {
@@ -183,3 +202,4 @@ const router = createRouter({
 //暴露出router实例。方便在其他组件更改路由
 //这样可以在任意组件中以 this.$router的形式访问它，并且以this.$route的形式访问当前路由
 export default router;
+

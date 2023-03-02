@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     :drawer="drawer"
-    title="I am the title"
+    :title="title"
     :direction="direction"
     :before-close="handleClose"
   >
@@ -16,9 +16,10 @@ const handleClose = (done: () => void) =>done()
 const prpos = withDefaults(
     defineProps<{
        drawer:boolean;
-
+       title:string
     }>(),{
-        drawer:false
+        drawer:false,
+        title:"标题"
     }
 )
 </script>
