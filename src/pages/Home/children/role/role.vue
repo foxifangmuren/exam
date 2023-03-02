@@ -91,6 +91,7 @@ import { log } from 'console';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import { rolelist, roledel, roleadd } from '../../../../api/admin';
+import{menuList} from '../../../../api/role'
 const dialogFormVisible = ref(false);
 const formLabelWidth = '140px';
 const data = reactive({
@@ -113,8 +114,9 @@ const { params } = toRefs(data);
 
 
 const handleCheckAllChange = (index: number) => {
+  console.log(123)
   let ids = state.list[index].children.map((item: any) => item.id);
-
+  console.log(ids)
   if (
     state.list[index].checkedCities &&
     state.list[index].checkedCities.length > 0
@@ -125,10 +127,10 @@ const handleCheckAllChange = (index: number) => {
   }
 };
 const handleCheckedCitiesChange = (index: number) => {
-  // console.log(111,  state.list[index].ced);
-
+  console.log(state.list[index].children)
   let cheeckLen = state.list[index].checkedCities.length;
   let allLen = state.list[index].children.length;
+  console.log(allLen)
   state.list[index].isIndeterminate = false;
   if (cheeckLen == allLen) {
     state.list[index].ced = true;
@@ -138,230 +140,23 @@ const handleCheckedCitiesChange = (index: number) => {
     state.list[index].ced = false;
   }
 
-  // state.list[index].ced=true;
+  
 };
 const state = reactive<any>({
-  list: [
-    {
-      id: 1,
-      name: '考试管理',
-      ico: 'icon-loupanshuju',
-      url: '/building',
-      pid: 0,
-      sort: 1,
-      checked: 0,
-      postion: 'top',
-      children: [
-        {
-          id: 29,
-          name: '添加考试',
-          ico: null,
-          url: null,
-          pid: 1,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 30,
-          name: '修改考试',
-          ico: null,
-          url: null,
-          pid: 1,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 31,
-          name: '查看考试信息',
-          ico: null,
-          url: null,
-          pid: 1,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 32,
-          name: '删除加考试',
-          ico: null,
-          url: null,
-          pid: 1,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: '题库管理',
-      ico: 'icon-wodefangwu',
-      url: '/house',
-      pid: 0,
-      sort: 2,
-      checked: 0,
-      postion: 'top',
-      children: [
-        {
-          id: 33,
-          name: '添加题库',
-          ico: null,
-          url: null,
-          pid: 2,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 34,
-          name: '修改题库',
-          ico: null,
-          url: null,
-          pid: 2,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 35,
-          name: '删除题库',
-          ico: null,
-          url: null,
-          pid: 2,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 36,
-          name: '查看题库',
-          ico: null,
-          url: null,
-          pid: 2,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: '试卷管理',
-      ico: 'icon-renshu',
-      url: '/userinfo',
-      pid: 0,
-      sort: 3,
-      checked: 0,
-      postion: 'left',
-      children: [
-        {
-          id: 37,
-          name: '查看居试卷',
-          ico: null,
-          url: null,
-          pid: 3,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 40,
-          name: '删除试卷',
-          ico: null,
-          url: null,
-          pid: 3,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 39,
-          name: '修改试卷',
-          ico: null,
-          url: null,
-          pid: 3,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 38,
-          name: '添加试卷',
-          ico: null,
-          url: null,
-          pid: 3,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: '批卷管理',
-      ico: 'icon-wuyeguanli',
-      url: '/repairs',
-      pid: 0,
-      sort: 4,
-      checked: 0,
-      postion: 'left',
-      children: [
-        {
-          id: 43,
-          name: '修改批卷',
-          ico: null,
-          url: null,
-          pid: 4,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 42,
-          name: '删除批卷',
-          ico: null,
-          url: null,
-          pid: 4,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-        {
-          id: 41,
-          name: '查看批卷',
-          ico: null,
-          url: null,
-          pid: 4,
-          sort: 0,
-          checked: 0,
-          postion: null,
-          children: null,
-        },
-      ],
-    },
-  ],
+  list: []
 });
-
+const getMenuList=async ()=>{
+  let res:any = await menuList(null)
+  if(res.errCode===10000){
+    state.list = res.data.list
+  }
+}
 
 
 const form = reactive({
+  id:0,
   name: '',
+  menus:''
 });
 const props = {
   expandTrigger: 'hover',
@@ -398,6 +193,8 @@ const rouleList = async () => {
 //添加
 const add = async () => {
   // console.log(data.params.depname)
+  console.log()
+  console.log(form)
   const res: any = await roleadd(form);
   console.log('班级添加', res);
   if (res.errCode === 10000) {
@@ -448,6 +245,8 @@ const handleCurrentChange = (val: number) => {
 onMounted(() => {
   //角色列表
   rouleList();
+  //权限列表
+  getMenuList()
 });
 </script>
 
