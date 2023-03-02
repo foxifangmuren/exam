@@ -378,7 +378,6 @@ let checked: any = ref(false);
 
 const check = (done: () => void) => {
   if (checked.value == true) {
-    // console.log('111')
     from.query.ismy = '3';
     getlt();
 

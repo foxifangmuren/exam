@@ -32,7 +32,7 @@
         >
       </el-form-item>
       <el-form-item>
-        <el-button type="danger" :disabled="from.disabled">批量删除</el-button>
+        <el-button type="danger" :disabled="from.disabled" @click="dell">批量删除</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格 -->
@@ -41,6 +41,7 @@
       :tableHeader="tableHeader"
       :tableData="from.tableData"
       @del="open"
+      @delarrinfo="delarrinfo"
       @gopage="gopage"
       @gopagetow="gopage"
       @bialog="popout"
@@ -59,10 +60,17 @@
 </template>
 
 <script lang="ts" setup>
+/***题库管理
+ * 剩余
+ *    添加题库
+ *    批量删除
+ *    编辑
+ */
 import router from "@/router";
 import { reactive, ref, toRefs } from "vue";
-import { databaseList, del } from "@/api/databaselist";
+import { databaseList, del,dells } from "@/api/databaselist";
 import { ElMessageBox, ElMessage } from "element-plus";
+
 
 //弹框区域
 let Refer = ref<any>(null);
@@ -70,10 +78,13 @@ const popout = (val?: any) => {
   from.val = val;
   Refer.value.dialogVisible = true;
 };
+
+
 //只看我创建的
 let checked: any = ref(false);
 //查询
 const onSubmit = () => {
+  console.log('submit!');
   getlist();
 };
 //表格数据
@@ -143,7 +154,20 @@ const from = reactive({
   tableData: [],
   //批量删除按钮
   disabled: true,
+  delarray:[]
 });
+//批量删除
+const delarrinfo=(val:any)=>{
+    if(val){
+      from.disabled=false
+      from.delarray=val
+    }
+}
+const dell=async()=>{
+    const src=await dells({"ids":from.delarray})
+    getlist();
+    console.log(src);
+}
 //请求列表
 const getlist = async () => {
   const src = await databaseList(from.query);

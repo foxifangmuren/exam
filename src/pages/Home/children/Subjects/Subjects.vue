@@ -37,18 +37,24 @@
       @changePage="changePage"
     ></MyPages>
     <!-- 试卷详情  -->
-    <el-dialog v-model="dialogTableVisible" title="Shipping address"  width="80%">
-      <div>111</div>
-    </el-dialog>
+    <SubjectsdlogVue :title="from.title" :data="from.data"  ref="subdata"></SubjectsdlogVue>
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { getList, delinfo } from "@/api/Subjects";
+import { getList, delinfo,subjectsinfo } from "@/api/Subjects";
 import { ElMessageBox ,ElMessage} from "element-plus";
 import router from "@/router";
-const dialogTableVisible = ref(false)
+//试卷详情
+const subdata=ref<any>()
+
+const gopage=async(val:any)=>{
+  from.title=val.title
+  const src=await subjectsinfo({id:val.id})
+  from.data=src.data
+  subdata.value.dialogTableVisible=true
+}
 //请求列表
 const from = reactive({
   query: {
@@ -60,10 +66,12 @@ const from = reactive({
   },
   tableData: [],
   total: 0,
+  //详情
+  data:{},
+  title:'',
 });
 const getlt = async () => {
   const src = await getList(from.query);
-  // console.log(src);
   from.tableData = src.data.list;
   from.total = src.data.counts;
 };
@@ -185,12 +193,6 @@ const del = (val: any) => {
 //跳转详情页面
 const skip=()=>{
   router.push("/subjectsitem");
-}
-//试卷详情
-const gopage=()=>{
-  console.log('当前是试卷详情');
-dialogTableVisible.value=true
-  
 }
 </script>
 

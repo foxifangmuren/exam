@@ -173,7 +173,7 @@ defineProps<Props>()
 .body{
   font-size: 18px;
 }
-.deep(el-drawer__title){
+:deep(.el-drawer__title){
   font-size: 25px;
 }
 </style>

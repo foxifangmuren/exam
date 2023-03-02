@@ -31,4 +31,23 @@ const Daddlist=(params:any)=>{
 const databasequestiondel=(params:any)=>{
     return get('databasequestion/delete',params)
 }
-export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel,wy}
+//批量删除
+const dells=(params:any)=>{
+    return post('database/deleteall',params)
+}
+//试题批量删除
+const testdel=(params:any)=>{
+    return post('databasequestion/deleteall',params)
+}
+//试题添加
+const addDataitem=(params:any)=>{
+    return post('databasequestion/add',params)
+}
+const wy=(params:any)=>{
+     return get('/subjects/get',params)
+    }
+export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel,dells,
+    testdel,
+    addDataitem,
+    wy
+}
