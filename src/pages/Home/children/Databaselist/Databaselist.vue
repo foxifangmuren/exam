@@ -132,15 +132,6 @@ const tableHeader = [
         event: "del",
         text: "删除",
       },
-      {
-        type: 'primary',
-        text: '编辑',
-      },
-      {
-        type: 'primary',
-        event: 'del',
-        text: '删除',
-      },
     ],
   },
 ];
