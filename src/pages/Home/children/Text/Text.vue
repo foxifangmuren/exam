@@ -104,11 +104,11 @@
       <el-table-column prop="addtime" label="更新时间" />
       <el-table-column class="op" label="操作">
         <template #default="scope">
-          <el-link type="primary">学生</el-link>
+          <el-link type="primary" @click="studentTan = true">学生</el-link>
           <span>|</span>
-          <el-link type="primary">可见</el-link>
+          <el-link type="primary" @click="keJianTan = true">可见</el-link>
           <span>|</span>
-          <el-link type="primary">阅卷老师</el-link>
+          <el-link type="primary" @click="yueJuanTan = true">阅卷老师</el-link>
           <br />
           <el-link type="primary">分析</el-link>
           <span>|</span>
@@ -170,6 +170,76 @@
         <el-button>导出excel</el-button>
       </div>
     </el-dialog>
+    <!-- 学生弹出框 -->
+    <div>
+      <el-dialog v-model="studentTan" title="学生考试列表">
+        <div style="margin-left: 20px; margin-bottom: 20px; display: flex">
+          <div>
+            <el-form-item label="部门">
+              <el-cascader clearable />
+            </el-form-item>
+          </div>
+          <div style="margin-left: 20px">
+            <el-form-item label="班级">
+              <el-cascader clearable />
+            </el-form-item>
+          </div>
+        </div>
+        <div style="margin-left: 20px">
+          <el-transfer />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="studentTan = false">取消</el-button>
+            <el-button type="primary" @click="studentTan = false">
+              确定
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
+    <!-- 可见弹出框 -->
+    <div>
+      <el-dialog v-model="keJianTan" title="可见老师">
+        <div style="margin-left: 20px; margin-bottom: 20px">
+          <el-form-item label="部门">
+            <el-cascader clearable />
+          </el-form-item>
+        </div>
+        <div style="margin-left: 20px">
+          <el-transfer />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="keJianTan = false">取消</el-button>
+            <el-button type="primary" @click="keJianTan = false">
+              确定
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
+    <!-- 阅卷老师弹出框 -->
+    <div>
+      <el-dialog v-model="yueJuanTan" title="阅卷老师">
+        <div style="margin-left: 20px; margin-bottom: 20px">
+          <el-form-item label="部门">
+            <el-cascader clearable />
+          </el-form-item>
+        </div>
+        <div style="margin-left: 20px">
+          <el-transfer />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="yueJuanTan = false">取消</el-button>
+            <el-button type="primary" @click="yueJuanTan = false">
+              确定
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -181,6 +251,10 @@ import { ref, onMounted, toRefs } from 'vue';
 import { updateState, deleteall, del, testget } from '../../../../api/stutest';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '@/router';
+const studentTan = ref(false);
+const keJianTan = ref(false);
+//阅卷老师弹出框
+const yueJuanTan = ref(false)
 const value1 = ref<[Date, Date]>([
   new Date(2016, 9, 10, 8, 40),
   new Date(2016, 9, 10, 9, 40),

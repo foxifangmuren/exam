@@ -4,11 +4,13 @@ import App from './App.vue';
 import router from './router/index';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
+import { useRouter } from 'vue-router';
+const route = useRouter();
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import MyTable from "@/components/Table.vue"
 import MyPages from "@/components/pages.vue"
 import MyBialog from "@/components/Bialog.vue"
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 //引入axios
 import axios from 'axios';
 import VueAxios from 'vue-axios';

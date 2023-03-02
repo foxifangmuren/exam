@@ -97,9 +97,62 @@
           <el-select v-model="AddFrom.title" placeholder="请选择题库">
             <el-option label="Zone one" value="shanghai" />
           </el-select>
-          <el-button>+创建试题库</el-button>
+          <el-button @click="dialogFormVisible = true">+创建试题库</el-button>
         </el-form-item>
       </el-form>
+      <!-- 弹出框 -->
+      <div>
+        <el-dialog v-model="dialogFormVisible" title="题库添加">
+          <el-form :model="form">
+            <el-form-item label="题库名称">
+              <el-input
+                v-model="form.name"
+                autocomplete="off"
+                placeholder="请输入题库名称"
+                style="width: 200px"
+              />
+            </el-form-item>
+            <el-form-item label="被他人使用">
+              <el-radio-group>
+                <el-radio :label="3">允许所有老师使用</el-radio>
+                <el-radio :label="6">不允许任何老师使用</el-radio>
+                <el-radio :label="9" @click="chuanSuoKuang = true"
+                  >允许部分老师使用</el-radio
+                >
+                <div>
+                  <el-dialog v-model="chuanSuoKuang" title="可见老师">
+                    <div style="margin-left: 20px;margin-bottom: 20px;">
+                      <el-form-item label="部门">
+                        <el-cascader  clearable />
+                      </el-form-item>
+                    </div>
+                    <div style="margin-left: 20px;">
+                      <el-transfer />
+                    </div>
+                    
+                    <template #footer>
+                      <span class="dialog-footer">
+                        <el-button @click="chuanSuoKuang = false">取消</el-button>
+                        <el-button type="primary" @click="chuanSuoKuang = false">
+                          确定
+                        </el-button>
+                      </span>
+                    </template>
+                  </el-dialog>
+                </div>
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">取消</el-button>
+              <el-button type="primary" @click="dialogFormVisible = false">
+                确定
+              </el-button>
+            </span>
+          </template>
+        </el-dialog>
+      </div>
     </div>
     <div class="set">
       <div class="one">
@@ -284,6 +337,11 @@ import { getList } from '@/api/Subjects';
 import { wy } from '@/api/databaselist';
 import router from '@/router';
 const dialogTableVisible = ref(false);
+const dialogFormVisible = ref(false);
+const chuanSuoKuang = ref(false);
+const form = reactive({
+  name: '',
+});
 const value2 = ref('');
 const va = ref();
 //试卷数据

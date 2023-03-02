@@ -10,7 +10,7 @@
     </el-form-item> 
     <el-form-item label=" 状态：">
       <el-select v-model="data.result">
-        <el-option label="所有" value="所有" />
+        <el-option label="所有" value="" />
         <el-option label="已通过" value="已通过" />
         <el-option label="未通过" value="未通过" />
         <el-option label="待阅卷" value="待阅卷" />
@@ -18,17 +18,24 @@
       </el-select>
     </el-form-item> 
     <el-form-item>
-      <el-button type="primary">查询</el-button>
+      <el-button type="primary" @click="search">查询</el-button>
     </el-form-item>
   </el-form>
       </div>
       
     </div>
     <div class="conten">
-        <div class="contenbox" v-for="item in list" :key="item.id">
+        <div class="contenbox" @click="getexamprepare(item)" v-for="item in list" :key="item.id">
           <div class="contenbox_left">
             <div class="contenbox_left_top">
-              <img src="../../../../img/wait.jpg" alt="">
+              <!-- 未通过 -->
+              <img src="../../../../img/didNotPass.jpg" alt="" v-show="item.result=='未通过'?true:false">
+              <!-- 未参加 -->
+              <img src="../../../../img/notInvolved.jpg" alt="" v-show="item.result=='未考试'?true:false">
+              <!-- 待阅卷 -->
+              <img src="../../../../img/wait.jpg" alt="" v-show="item.result=='待阅卷'?true:false">
+              <!-- 已通过 -->
+              <img src="../../../../img/yes.jpg" alt="" v-show="item.result=='已通过'?true:false">
               <span>{{ item.title }}</span>
             </div>
             <div class="contenbox_left_time">
@@ -46,20 +53,36 @@
 <script lang="ts" setup>
   import {reactive,toRefs,onMounted} from 'vue'
   import{getList} from '../../../../api/stutest'
-  const obj = reactive({
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
+  const obj:any = reactive({
     data:{
+      page:1,
+      psize:10,
       key:'',
-      result:'所有'
+      result:''
     },
     list:[]
   })
   const List= async()=>{
-    let res = await getList()
+    let res:any = await getList(obj.data)
     // console.log(res)
     if(res.errCode===10000){
       obj.list = res.data.list
     }
     console.log(obj.list)
+  }
+  //跳转考试详情
+  const getexamprepare=(data:any)=>{
+    // console.log(data)
+    if(data.result == '未考试'){
+      router.push({path:'/examprepare',query:{id:data.id}})
+    }else{
+
+    }
+  }
+  const search=()=>{
+    List()
   }
   onMounted(() => {
     List()
@@ -70,24 +93,17 @@
   .stutest{
     .conten{
       display:flex;
-      // width: 98%;
-      // justify-content:space-between;
       flex-wrap:wrap;
-      // background-color:red;
       margin:0 auto;
       .contenbox{
-        // flex:3;
-        
         display:flex;
         justify-content:space-between;
-        // box-shadow: 2px 2px 2px 2px #ccc;
         border:1px solid #ccc;
         border-radius:5px;
         padding:10px;
         margin:0 10px;
         width:30%;
-        height:135px;
-        // background-color:pink;
+        height:120px;
         margin-bottom: 20px;
         .contenbox_right{
             color:#c4c4c6;
