@@ -140,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import studentUp from '../../../../components/student/studentup.vue'
+import studentUp from '../../../../components/student/studentUp.vue'
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
   departmentlist,
