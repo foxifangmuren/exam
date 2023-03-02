@@ -15,6 +15,7 @@
             
           </div>
           <div class="answers">
+            <div class=""></div>
             <div class="answersbox" v-if="item.type==='单选题'" v-for="(item1,index) in item.answers" :key="index1">
               <div class="answersbox1">
                  <div :class="item.studentanswer==item1.answerno?item.answer==item1.answerno?'box2 active':'box2 active1':'box2'">
@@ -40,6 +41,7 @@
               </div>
             </div>
           </div>
+          <div> <span>正确答案 </span><span>{{ item.answer }}</span></div>
         </div>
         <div class="line"></div>
         </div>
@@ -54,12 +56,7 @@
           <div :class="item==true?'dui':'red'" @click="tiao(index)" v-for="(item,index) in index1" :key="item">{{ index+1 }}</div>
        </div>
       </div>
-      <div class="hand">
-        <div class="hand_top">
-          共1题，还剩1题未完成
-        </div>
-        <el-button type="primary">交卷</el-button>
-      </div>
+      
   </div>
 </template>
 <script lang="ts" setup>

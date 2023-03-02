@@ -96,6 +96,7 @@ import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
 import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect} from 'vue'
 const route = useRoute()
+const router = useRouter()
 const obj:any = reactive({
   list:[],
   isActive:false,
@@ -165,8 +166,11 @@ const hand= async()=>{
     };
   });
   // console.log(studentAnswerModel
-  let res = await studentansweradd(studentAnswerModel)
+  let res:any = await studentansweradd(studentAnswerModel)
   console.log(res)
+  if(res.errCode===10000){
+    router.push('/stutest')
+  }
 }
 //判断题判断对错
 const judge = (e:string,index:number)=>{
