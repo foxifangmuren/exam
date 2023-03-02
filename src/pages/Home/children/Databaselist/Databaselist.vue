@@ -78,10 +78,13 @@ const popout = (val?: any) => {
   from.val = val;
   Refer.value.dialogVisible = true;
 };
+
+
 //只看我创建的
 let checked: any = ref(false);
 //查询
 const onSubmit = () => {
+  console.log('submit!');
   getlist();
 };
 //表格数据
@@ -99,20 +102,20 @@ const tableHeader = [
     ],
   },
   {
-    prop: "counts",
-    label: "题量数目",
+    prop: 'counts',
+    label: '题量数目',
   },
   {
-    prop: "addtime",
-    label: "创建时间",
+    prop: 'addtime',
+    label: '创建时间',
   },
   {
-    prop: "admin",
-    label: "创建人",
+    prop: 'admin',
+    label: '创建人',
   },
   {
-    label: "操作",
-    type: "buttons",
+    label: '操作',
+    type: 'buttons',
     buttons: [
       {
         type: "primary",
@@ -128,6 +131,15 @@ const tableHeader = [
         type: "primary",
         event: "del",
         text: "删除",
+      },
+      {
+        type: 'primary',
+        text: '编辑',
+      },
+      {
+        type: 'primary',
+        event: 'del',
+        text: '删除',
       },
     ],
   },
@@ -226,8 +238,6 @@ const gopage = (val: any) => {
 };
 
 </script>
-
-
 
 <style scoped>
 .title_header {

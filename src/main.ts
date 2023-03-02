@@ -7,6 +7,7 @@ import VueUeditorWrap from "vue-ueditor-wrap"
 import 'element-plus/dist/index.css';
 import { useRouter } from 'vue-router';
 const route = useRouter();
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import MyTable from "@/components/Table.vue"
 import MyPages from "@/components/pages.vue"
 import MyBialog from "@/components/Dataitem/Bialog.vue"
@@ -20,6 +21,9 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import './assets/icon/iconfont.css';
 const app=createApp(App)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
 app.use(VueAxios, axios)
 app.use(ElementPlus, { locale: zhCn })
 app.use(router)

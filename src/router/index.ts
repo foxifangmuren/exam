@@ -3,7 +3,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 //引入组件，及要跳转到的页面，也可以直接写在routes中的component里
 import Login from '../pages/Login/login.vue';
 import Home from '../pages/Home/home.vue';
-import test from '../pages/Home/children/Text/Text.vue';
+import est from '../pages/Home/children/Text/Text.vue';
+import tesadd from '../pages/Home/children/Text/Textadd.vue';
 import Exam from '../pages/Home/children/Exam/Exam.vue';
 import Exam_student from "../pages/Home/children/Exam/examstudent.vue"
 import role from '../pages/Home/children/role/role.vue';
@@ -17,7 +18,9 @@ import Databaselist from '../pages/Home/children/Databaselist/Databaselist.vue';
 import Dataitem from "@/pages/Home/children/Databaselist/Dataitem.vue"
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
-import stutest from '../pages/Home/children/stutest/stutest.vue'
+import stutest from '../pages/Home/children/stutest/stutest.vue';
+import examprepare from '../pages/examprepare/examprepare.vue';
+import stuexam from '../pages/stuexam/stuexam.vue'
 import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
 import TextVue from '../components/Transfer .vue';
 //定义路由，每个路由都需要映射到一个组件。
@@ -39,6 +42,18 @@ const routes:any = [
     name: 'login',
     component: Login,
   },
+  // 考试
+  {
+    path:'/examprepare',
+    name:'examprepare',
+    component:examprepare
+  },
+  // 学生开始答题
+  {
+    path:'/stuexam',
+    name:'stuexam',
+    component:stuexam
+  },
   // 首页
   {
     path: '/Home',
@@ -48,8 +63,14 @@ const routes:any = [
       // "考试"
       {
         path: '/test',
-        name:test,
-        component: test,
+        name:est,
+        component: est,
+      },
+      //考试添加
+      {
+        path: '/testadd',
+        name:tesadd,
+        component: tesadd,
       },
       // "阅卷"
       {

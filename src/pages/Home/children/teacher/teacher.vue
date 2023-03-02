@@ -23,7 +23,7 @@
         <el-form-item label="角色">
           <el-cascader
             v-model="data.value"
-            
+            :options="data.rolelist"
             :props="props"
             @change="handleChange"
             clearable
@@ -75,7 +75,8 @@ import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
   departmentlist,
   teacherlist,
-  teacherdel
+  teacherdel,
+  rolelist
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
 const data = reactive({
@@ -94,15 +95,15 @@ const data = reactive({
   //部门
   options: [],
   //角色
-
+  rolelist:[],
   //分页 总页数
   total: 0,
 });
 // 解构数据
 const { params } = toRefs(data);
 const props = {
-  expandTrigger: 'hover',
-  checkStrictly: true,
+  expandTrigger: 'hover', //次级菜单展开方式
+  checkStrictly: true,  //是否严格的遵守父子节点不相互关联
   value: 'id',
   label: 'name',
 };
@@ -123,20 +124,20 @@ const handleSelectionChange = (val: User[]) => {
 const value: any = ref('');
 //部门级联调接口
 const departmentList = async () => {
-  const res: any = await departmentlist();
+  const res: any = await departmentlist(data.params);
   console.log('部门级联', res);
   if (res.errCode === 10000) {
     data.options = res.data.list;
   }
 };
 // 角色级联列表
-// const getclasseslist = async ()=>{
-//   const res:any = await classeslist(data.params)
-//   console.log('班级列表',res)
-//   if(res.errCode === 10000){
-//     data.tableData = res.data.list
-//   }
-// }
+const getclasseslist = async ()=>{
+  const res:any = await rolelist({id:0,name:''})
+  console.log('角色级联列表',res)
+  if(res.errCode === 10000){
+    data.rolelist = res.data.list
+  }
+}
 //师资列表
 const teacherList = async () => {
   const res: any = await teacherlist({
@@ -196,6 +197,7 @@ onMounted(() => {
   //部门级联
   departmentList();
   // 角色列表
+  getclasseslist()
 });
 </script>
 
