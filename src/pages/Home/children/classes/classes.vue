@@ -63,7 +63,7 @@
           <el-table-column property="name" label="班级名称" />
           <el-table-column property="depname" label="部门" />
           <el-table-column label="操作" width="120" #default="scope">
-            <span class="zi" style="cursor: pointer">修改</span>
+            <span class="zi" style="cursor: pointer" @click="update(scope.row)">修改</span>
             <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
               >删除</span
             >
@@ -82,10 +82,12 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <classUp ref="up" @getclasseslist="getclasseslist"></classUp>
   </div>
 </template>
 
 <script setup lang="ts">
+import classUp from '../../../../components/class/classUp.vue'
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
   departmentlist,
@@ -95,7 +97,8 @@ import {
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
 import { log } from 'console';
-
+import { objectPick } from '@vueuse/shared';
+let up = ref<any>(null)
 const dialogFormVisible = ref(false)
 const formLabelWidth = '140px'
 const handleClose = (done: () => void) => {
@@ -133,6 +136,7 @@ const data = reactive({
 });
 // 解构数据
 const { params } = toRefs(data);
+let obj = ref({})
 const props = {
   expandTrigger: 'hover',
   checkStrictly: true,
@@ -191,6 +195,14 @@ const add = async () => {
     getclasseslist();
   }
 };
+//修改
+const update =(data:any)=>{
+  up.value.dialogVisible = true
+  console.log(up.value)
+  Object.assign(up.value.form.list ,data)
+  up.value.form.list = data
+  obj.value = data
+}
 //请求删除接口
 const delinfo = async (ids: number) => {
   const res: any = await classesdel({ id: ids });
