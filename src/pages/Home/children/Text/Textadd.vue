@@ -40,16 +40,47 @@
               <div>
                 <span>总分:0</span>
                 <span>已添加零题</span>
-                <el-button>清空</el-button>
+                <el-button @click="Wrodata.isshow=0">清空</el-button>
               </div>
-             
             </div>
-            <div class="ty">
-              <div>
-                <div>1</div>
-                <div></div>
-                <div></div>
-                <div></div>
+            <div class="ty" v-if="Wrodata.isshow == 1">
+              <div v-for="(item, index) in Wrodata.questions" :key="item.id">
+                <div class="abc">
+                  <div>
+                    {{ index + 1 }}{{ item.type }} <span>分值</span>
+                    <el-input v-model="item.scores"></el-input>
+                  </div>
+
+                  <div>
+                    <el-icon :size="20"><EditPen /></el-icon>
+                    <el-icon :size="20"><DeleteFilled /></el-icon>
+                  </div>
+                </div>
+                <div>
+                  {{ item.title }}
+                </div>
+                <div
+                  v-for="ite in item.answers"
+                  :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
+                  key="ite.id"
+                >
+                  <span>{{ ite.answerno }}:{{ ite.content }}</span>
+                </div>
+                <div class="liang" v-if="item.answer">
+                  正确答案:{{ item.answer }}
+                </div>
+                <div
+                  class="daan"
+                  v-if="
+                    item.type == '填空题'
+                      ? true
+                      : item.type == '问答题'
+                      ? true
+                      : false
+                  "
+                >
+                  答案解析：{{ item.explains }}
+                </div>
               </div>
             </div>
             <div class="san">
@@ -246,7 +277,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted, toRefs } from 'vue';
 import { testadd } from '@/api/stutest';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getList } from '@/api/Subjects';
@@ -259,10 +290,21 @@ const va = ref();
 const w = async (id: any) => {
   va.value = id;
 };
+
+const Wrod: any = reactive({
+  Wrodata: {
+    id: '',
+    isshow: 0,
+  },
+});
+
 const wwy = async () => {
   dialogTableVisible.value = false;
   const res = await wy({ id: va.value });
   console.log(res);
+  Wrod.Wrodata = res.data;
+  res.data.isshow = Wrod.Wrodata.isshow;
+  console.log(Wrod.Wrodata.questions);
 };
 const onSubmit = () => {
   console.log('submit!');
@@ -407,11 +449,28 @@ const handleChange = (value: number) => {
   console.log(value);
 };
 const labelPosition = ref('right');
+const { Wrodata } = toRefs(Wrod);
 </script>
 
 <style scoped lang="less">
+.ty {
+
+    div {
+      div {
+        margin-left: 10px;
+      }
+    }
+  }
+.el-icon {
+  color: #299aff;
+  margin-right: 10px;
+}
 .shi {
   margin-left: 1300px;
+}
+.abc {
+  display: flex;
+  justify-content: space-between;
 }
 .add {
   margin-left: 250px;
@@ -467,13 +526,39 @@ const labelPosition = ref('right');
   border: #dcdfe6 0.5px solid;
 }
 .el-form--label-right {
-  margin: 10px 0;
   margin-left: 150px;
 }
 .title {
   font-size: 20px;
   margin-left: 25px;
   margin-bottom: 10px;
+}
+.li {
+  background-color: blue;
+  width: 100%;
+  height: 100%;
+}
+.daan {
+  margin-left: 5px;
+  margin-top: 10px;
+  background-color: #f5faff;
+  color: #9dadbc;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.liang {
+  background-color: #eefaf6;
+  margin-top: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.hei {
+  margin-top: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
 }
 .one {
   height: 50px;
@@ -494,9 +579,14 @@ const labelPosition = ref('right');
   .ty {
     width: 100%;
     height: 700px;
-    background-color: aqua;
+    overflow: auto;
+
+    // background-color: aqua;
     // margin: 10px;
-    border:1px solid red;
+    // border: 1px solid red;
+    .el-input {
+      width: 70px;
+    }
   }
 }
 </style>

@@ -77,7 +77,9 @@
       <el-table-column type="selection" width="55" />
       <el-table-column label="考试名称" width="180">
         <template #default="scope">
-          <el-link type="primary" prop="title"> {{ scope.row.title }}</el-link>
+          <el-link type="primary" prop="title" @click="tit(scope.row.id)">
+            {{ scope.row.title }}</el-link
+          >
         </template>
       </el-table-column>
       <el-table-column prop="state" label="状态" width="180">
@@ -128,6 +130,46 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+    <el-dialog v-model="show" title="测试" width="80%">
+      <div class="ceshi">
+        <div>
+          <span>总分</span>
+          <span>{{ form.tidata.scores }}</span>
+        </div>
+        <div>
+          <span>通过分数</span>
+          <span>{{ form.tidata.pastscores }}</span>
+        </div>
+        <div>
+          <span>考试时长</span>
+          <span>100</span>
+        </div>
+        <div>
+          <span>开放时间</span>
+          <span>{{ form.tidata.begintime }}</span>
+        </div>
+      </div>
+      <div class="juan">
+        <div v-for="(item, index) in Wrodata.questions" :key="item.id">
+          <div class="titl">
+            {{ index + 1 }}{{ item.type }} <span>分值</span>{{ item.scores }}
+          </div>
+          <div>
+            {{ item.title }}
+          </div>
+          <div
+            v-for="ite in item.answers"
+            key="ite.id"
+            :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
+          >
+            <span>{{ ite.answerno }}:{{ ite.content }}</span>
+          </div>
+          <div class="liang" v-if="item.answer">正确答案:{{ item.answer }}</div>
+          <div class="daan"  v-if="item.type=='填空题'?true:(item.type=='问答题'?true:false)">答案解析：{{ item.explains }}</div>
+        </div>
+        <el-button>导出excel</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -136,13 +178,23 @@ import { ElTable } from 'element-plus';
 import { reactive } from 'vue';
 import { TextList } from '../../../../api/admin';
 import { ref, onMounted, toRefs } from 'vue';
-import { updateState, deleteall,del } from '../../../../api/stutest';
+import { updateState, deleteall, del, testget } from '../../../../api/stutest';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '@/router';
 const value1 = ref<[Date, Date]>([
   new Date(2016, 9, 10, 8, 40),
   new Date(2016, 9, 10, 9, 40),
 ]);
+const show: any = ref(false);
+
+const tit = async (val: any) => {
+  console.log(val);
+  show.value = true;
+  const res = await testget({ id: val });
+  console.log(res);
+  form.Wrodata = res.data;
+  form.tidata = res.data;
+};
 const handleSizeChange = (val: number) => {
   console.log(`${val} items per page`);
   TexLis();
@@ -171,6 +223,11 @@ const form: any = reactive({
   },
   datas: [],
   total: '',
+  tidata: [],
+  Wrodata: {
+    id: '',
+    isshow: 0,
+  },
 });
 //发布状态
 const va: any = ref('');
@@ -247,7 +304,7 @@ const unpublished = (data: any, num: any) => {
 };
 const unpublishe = (data: any, num: number) => {
   console.log(num);
-  
+
   ElMessageBox.confirm('此操作将修改选中的考试状态, 是否继续?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
@@ -268,17 +325,17 @@ const unpublishe = (data: any, num: number) => {
       } else if (num == 2) {
         const id: any = data.id;
         console.log(id);
-        
-        const res = await del({id:id});
+
+        const res = await del({ id: id });
         console.log(res);
-        
+
         e.value = '删除';
       }
 
       TexLis();
       ElMessage({
         type: 'success',
-        message: e.value+"成功",
+        message: e.value + '成功',
       });
     })
     .catch(() => {});
@@ -305,12 +362,59 @@ const onSubmit = () => {
 onMounted(() => {
   TexLis();
 });
-const { datas, data } = toRefs(form);
+const { datas, data, Wrodata } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
+.liang {
+  background-color: #eefaf6;
+  margin-top: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+/deep/.el-dialog {
+  // width: 100%;
+  // height: 100%;
+  margin-top: 50px;
+}
+.daan{
+  background-color: #f5faff;
+  color: #9dadbc;
+  height:50px;
+  display: flex;
+  align-items: center;
+}
+.juan {
+  height: 650px;
+  margin-bottom: 50px;
+  overflow: auto;
+  .el-button {
+    position: absolute;
+    top: 50px;
+    right: 30px;
+    width: 80px;
+  }
+}
+.hei {
+  margin-top: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.ceshi {
+  div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  display: flex;
+}
 span {
   margin: 0 2px;
+}
+.titl {
+  margin-top: 20px;
 }
 .title {
   justify-content: space-between;

@@ -16,3 +16,6 @@ export const del= (id: any): Promise<AxiosResponse<any>> => {
 export const testadd= (params: any): Promise<AxiosResponse<any>> => {
   return post('/test/add', params );
 };  
+export const testget= (params: any): Promise<AxiosResponse<any>> => {
+  return get('/test/get', params );
+};  
