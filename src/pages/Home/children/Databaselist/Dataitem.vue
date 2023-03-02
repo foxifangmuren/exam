@@ -145,7 +145,7 @@ const tableHeader = [
     type: "buttons",
     buttons: [
       {
-        text: "title",
+        text: "表头",
         type: "primary",
         event: "goinfo",
       },
