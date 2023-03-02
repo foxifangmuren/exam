@@ -237,7 +237,7 @@ onMounted(() => {
 <style scoped>
 .box {
   margin-left: 5px;
-  /* background-color: aquamarine; */
+  background-color: #fff;
 }
 .header {
   display: flex;
