@@ -54,11 +54,12 @@
   import {reactive,toRefs,onMounted} from 'vue'
   import{getList} from '../../../../api/stutest'
   import { useRouter } from 'vue-router'
+import { da } from 'element-plus/es/locale';
   const router = useRouter()
   const obj:any = reactive({
     data:{
       page:1,
-      psize:10,
+      psize:20,
       key:'',
       result:''
     },
@@ -78,7 +79,7 @@
     if(data.result == '未考试'){
       router.push({path:'/examprepare',query:{id:data.id}})
     }else{
-
+      router.push({path:'examresults',query:{id:data.id}})
     }
   }
   const search=()=>{

@@ -12,3 +12,11 @@ export const getTest = (params: any): Promise<AxiosResponse<any>> => {
 export const getteststart = (params: any): Promise<AxiosResponse<any>> => {
   return get('/test/start',  params );
 };
+// 获取学生考试结果
+export const getForResult = (params:any):Promise<AxiosResponse<any>>=>{
+  return get('/test/getForResult',params)
+}
+//学生端的修改
+export const StudentChangepass= (params:any):Promise<AxiosResponse<any>>=>{
+  return post('/student/changepass',params)
+}
