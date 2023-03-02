@@ -4,9 +4,10 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Login from '../pages/Login/login.vue';
 import Home from '../pages/Home/home.vue';
 import est from '../pages/Home/children/Text/Text.vue';
+import analyse from '../pages/Home/children/Text/analyse.vue';
 import tesadd from '../pages/Home/children/Text/Textadd.vue';
 import Exam from '../pages/Home/children/Exam/Exam.vue';
-import Exam_student from "../pages/Home/children/Exam/examstudent.vue"
+import Exam_student from '../pages/Home/children/Exam/examstudent.vue';
 import role from '../pages/Home/children/role/role.vue';
 import student from '../pages/Home/children/student/student.vue';
 import classes from '../pages/Home/children/classes/classes.vue';
@@ -18,10 +19,10 @@ import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
 import stutest from '../pages/Home/children/stutest/stutest.vue';
 import examprepare from '../pages/examprepare/examprepare.vue';
-import stuexam from '../pages/stuexam/stuexam.vue'
+import stuexam from '../pages/stuexam/stuexam.vue';
 import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
 //定义路由，每个路由都需要映射到一个组件。
-const routes:any = [
+const routes: any = [
   //登录页面
   {
     path: '/',
@@ -35,44 +36,49 @@ const routes:any = [
   },
   // 考试
   {
-    path:'/examprepare',
-    name:'examprepare',
-    component:examprepare
+    path: '/examprepare',
+    name: 'examprepare',
+    component: examprepare,
   },
   // 学生开始答题
   {
-    path:'/stuexam',
-    name:'stuexam',
-    component:stuexam
+    path: '/stuexam',
+    name: 'stuexam',
+    component: stuexam,
   },
   // 首页
   {
     path: '/Home',
-    name:Home,
+    name: Home,
     component: Home,
     children: [
       // "考试"
       {
         path: '/test',
-        name:est,
+        name: est,
         component: est,
+      },
+      {
+        path: '/analyse',
+        name: analyse,
+        component: analyse,
       },
       //考试添加
       {
         path: '/testadd',
-        name:tesadd,
+        name: tesadd,
         component: tesadd,
       },
       // "阅卷"
       {
         path: '/exam',
         name: Exam,
-        component: ()=>import('../pages/Home/children/Exam/Exam.vue'),
+        component: () => import('../pages/Home/children/Exam/Exam.vue'),
       },
       {
-        path:"/Exam_student",
-        name:Exam_student,
-        component:Exam_student
+        path: '/Exam_student',
+        name: Exam_student,
+        component: Exam_student,
       },
       // "试卷"
       {
@@ -80,50 +86,50 @@ const routes:any = [
         name: Subjects,
         component: Subjects,
       },
-       // ""题库""
-       {
+      // ""题库""
+      {
         path: '/databaselist',
         name: Databaselist,
         component: Databaselist,
       },
-       // ""部门"
-       {
+      // ""部门"
+      {
         path: '/department',
         name: Department,
         component: Department,
       },
-      
-       // "/师资"
-       {
-        path: "/teacher",
+
+      // "/师资"
+      {
+        path: '/teacher',
         name: teacher,
         component: teacher,
       },
       // "班级"
       {
-        path: "/classes",
+        path: '/classes',
         name: classes,
         component: classes,
       },
-      
-       // "学员"
-       {
-        path: "/student",
+
+      // "学员"
+      {
+        path: '/student',
         name: student,
         component: student,
       },
-       // "角色"
-       {
-        path: "/role",
+      // "角色"
+      {
+        path: '/role',
         name: role,
         component: role,
       },
-       // "考试"
-       {
-        path: "/stutest",
+      // "考试"
+      {
+        path: '/stutest',
         name: stutest,
         component: stutest,
-      }
+      },
     ],
   },
 
@@ -134,8 +140,8 @@ const routes:any = [
   },
   //微信扫码登录
   {
-    path:"/WeChat_logVue",
-    component:WeChat_logVue
+    path: '/WeChat_logVue',
+    component: WeChat_logVue,
   },
   // 404页面
   {

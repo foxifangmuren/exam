@@ -40,7 +40,7 @@
               <div>
                 <span>总分:0</span>
                 <span>已添加零题</span>
-                <el-button @click="Wrodata.isshow=0">清空</el-button>
+                <el-button @click="Wrodata.isshow = 0">清空</el-button>
               </div>
             </div>
             <div class="ty" v-if="Wrodata.isshow == 1">
@@ -121,19 +121,24 @@
                 >
                 <div>
                   <el-dialog v-model="chuanSuoKuang" title="可见老师">
-                    <div style="margin-left: 20px;margin-bottom: 20px;">
+                    <div style="margin-left: 20px; margin-bottom: 20px">
                       <el-form-item label="部门">
-                        <el-cascader  clearable />
+                        <el-cascader clearable />
                       </el-form-item>
                     </div>
-                    <div style="margin-left: 20px;">
+                    <div style="margin-left: 20px">
                       <el-transfer />
                     </div>
-                    
+
                     <template #footer>
                       <span class="dialog-footer">
-                        <el-button @click="chuanSuoKuang = false">取消</el-button>
-                        <el-button type="primary" @click="chuanSuoKuang = false">
+                        <el-button @click="chuanSuoKuang = false"
+                          >取消</el-button
+                        >
+                        <el-button
+                          type="primary"
+                          @click="chuanSuoKuang = false"
+                        >
                           确定
                         </el-button>
                       </span>
@@ -167,7 +172,7 @@
       >
         <el-form-item label="通过分数:">
           <el-input-number
-            v-model="num"
+            v-model="AddFrom.scores"
             class="mx-4"
             :min="1"
             controls-position="right"
@@ -180,7 +185,7 @@
             <el-radio label="限时时长" />
           </el-radio-group>
           <el-input-number
-            v-model="num"
+            v-model="AddFrom.limittime"
             class="mx-4"
             :min="1"
             controls-position="right"
@@ -190,7 +195,7 @@
         <el-form-item label="开放时间:">
           <div class="block">
             <el-date-picker
-              v-model="value2"
+              v-model="AddFrom.begintime"
               type="datetimerange"
               :shortcuts="shortcuts"
               range-separator="To"
@@ -210,7 +215,7 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="开放时间:">
+        <el-form-item label="防作弊:">
           <el-checkbox-group v-model="AddFrom.title">
             <el-checkbox label="试题顺序打乱" name="type" />
             <el-checkbox
@@ -224,7 +229,7 @@
     <div class="Teacher">
       <div class="one">
         <span class="ones">4</span>
-        <span>考试设置</span>
+        <span>教师范围</span>
       </div>
       <el-form
         :label-position="labelPosition"
@@ -242,7 +247,7 @@
     <div class="Teacher">
       <div class="one">
         <span class="ones">5</span>
-        <span>考试设置</span>
+        <span>考试学生</span>
       </div>
       <el-form
         :label-position="labelPosition"
@@ -260,7 +265,7 @@
     <div class="Teacher">
       <div class="one">
         <span class="ones">6</span>
-        <span>考试设置</span>
+        <span>协同设置</span>
       </div>
       <el-form
         :label-position="labelPosition"
@@ -276,9 +281,9 @@
       </el-form>
     </div>
     <div class="add">
-      <el-button type="primary" @click="TestAdd">发布</el-button>
-      <el-button>保存(不发布)</el-button>
-      <el-button>取消</el-button>
+      <el-button type="primary" @click="TestAdd(1)">发布</el-button>
+      <el-button @click="TestAdd(2)">保存(不发布)</el-button>
+      <el-button> <router-link to="test">取消</router-link></el-button>
     </div>
     <el-dialog v-model="dialogTableVisible" title="试题列表" width="80%">
       <el-form class="demo-form-inline" :inline="true" :model="from.query">
@@ -361,7 +366,8 @@ const wwy = async () => {
   const res = await wy({ id: va.value });
   console.log(res);
   Wrod.Wrodata = res.data;
-  res.data.isshow = Wrod.Wrodata.isshow;
+  AddFrom.questions = res.data.questions;
+  Wrod.Wrodata.isshow = res.data.isshow;
   console.log(Wrod.Wrodata.questions);
 };
 const onSubmit = () => {
@@ -441,10 +447,10 @@ const getlt = async () => {
 };
 getlt();
 // 考试添加数据
-const AddFrom = reactive({
+const AddFrom:any = reactive({
   id: 0,
-  title: '1',
-  info: '2107全栈A《Vue移动项目开发》月考理论',
+  title: '',
+  info: '',
   admin: 'ldq',
   begintime: '2021-12-07 15:33:59.0',
   endtime: '2021-12-02 15:34:03.0',
@@ -462,7 +468,8 @@ const AddFrom = reactive({
   students: [{ studentid: 5 }, { studentid: 6 }],
   questions: [],
 });
-const TestAdd = async () => {
+const TestAdd = async (num: number) => {
+  AddFrom.state = num;
   const res: any = await testadd(AddFrom);
   console.log(res);
   if (res.errCode == '10000') {
@@ -512,13 +519,12 @@ const { Wrodata } = toRefs(Wrod);
 
 <style scoped lang="less">
 .ty {
-
+  div {
     div {
-      div {
-        margin-left: 10px;
-      }
+      margin-left: 10px;
     }
   }
+}
 .el-icon {
   color: #299aff;
   margin-right: 10px;
