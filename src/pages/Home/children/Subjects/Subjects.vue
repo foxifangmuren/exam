@@ -85,7 +85,7 @@ const tableHeader = [
      buttons: [
       {
         type: "primary",
-        text: "title",
+        text: "表头",
         event:"gopage"
       },
   ]
@@ -192,7 +192,7 @@ const del = (val: any) => {
 };
 //跳转详情页面
 const skip=()=>{
-  router.push("/subjectsitem");
+  router.push("/testadd");
 }
 </script>
 

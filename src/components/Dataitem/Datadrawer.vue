@@ -16,7 +16,7 @@
             <span>分值：{{ list.scores }}</span>
           </div>
           <!-- 内容 -->
-          <div class="typecontent">{{ list.title }}</div>
+          <div class="typecontent"><span v-html="list.title"></span></div>
           <!-- 答案 -->
           <div v-for="(item, index) in list.answers" :key="index">
             <div

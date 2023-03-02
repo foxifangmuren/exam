@@ -18,12 +18,12 @@
           >
           <!-- 题型选择 -->
             <div>
-              <el-radio-group v-model="ruleForm.answer">
-                <el-radio label="A">A</el-radio>
-                <el-radio label="B">B</el-radio>
-                <el-radio label="C">C</el-radio>
-                <el-radio label="D">D</el-radio>
-                <!-- <el-radio label="问答题">问答题</el-radio> -->
+              <el-radio-group v-model="ruleForm.type">
+                <el-radio label="单选题">单选题</el-radio>
+                <el-radio label="多选题">多选题</el-radio>
+                <el-radio label="判断题">判断题</el-radio>
+                <el-radio label="填空题">填空题</el-radio>
+                <el-radio label="问答题">问答题</el-radio>
               </el-radio-group>
             </div>
           <!-- 富文本 -->
@@ -38,17 +38,19 @@
         <!-- 选择题单选  -->
         <div v-if="ruleForm.type=='单选题'">
             <!-- 选择项 -->
-            <el-form-item label="单选" prop="desc">
+            <el-form-item label="单选">
               <el-input v-model="ruleForm.desc" type="textarea" />
+              
             </el-form-item>
             <!-- 答案 -->
-              <el-radio-group v-model="ruleForm.type">
-                <el-radio label="单选题">单选题</el-radio>
-                <el-radio label="多选题">多选题</el-radio>
-                <el-radio label="判断题">判断题</el-radio>
-                <el-radio label="填空题">填空题</el-radio>
-                <el-radio label="问答题">问答题</el-radio>
+            <el-form-item label="答案">
+              <el-radio-group v-model="ruleForm.answer">
+                <el-radio label="A">A</el-radio>
+                <el-radio label="B">B</el-radio>
+                <el-radio label="C">C</el-radio>
+                <el-radio label="D">D</el-radio>
               </el-radio-group>
+            </el-form-item>
         </div>
         <!-- 多选题  -->
         <div v-if="ruleForm.type=='多选题'">
@@ -143,7 +145,7 @@ const ruleFormRef = ref<any>({
 const ruleForm = reactive({
     databaseid:0,
     title: "",
-    type: "",
+    type: "单选题",
     answer: "",
     tags: "",
     explains: "",

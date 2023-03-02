@@ -31,7 +31,7 @@
               >
             </span>
             <!-- 板块表头跳转 -->
-            <span v-else-if="btn.text == 'title'">
+            <span v-else-if="btn.text == '表头'">
               <el-button
                 link
                 :type="btn.type"
@@ -55,7 +55,7 @@
           <span>{{
             scope.row.endtime == null
               ? "不限"
-              : scope.row.addtime - scope.row.endtime
+              : scope.row.addtime 
           }}</span>
         </div>
         <!-- 颜色更改(阅卷未判人数) -->
@@ -72,7 +72,6 @@
 </template>
 
 <script setup lang="ts" >
-import { log } from "console";
 import { ref, defineEmits } from "vue";
 const emit = defineEmits(["delarrinfo"]);
 

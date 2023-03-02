@@ -96,7 +96,7 @@ const tableHeader = [
     buttons: [
       {
         type: "primary",
-        text: "title",
+        text: "表头",
         event: "gopage",
       },
     ],
