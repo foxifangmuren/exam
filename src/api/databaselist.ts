@@ -31,4 +31,4 @@ const Daddlist=(params:any)=>{
 const databasequestiondel=(params:any)=>{
     return get('databasequestion/delete',params)
 }
-export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel}
+export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel,wy}

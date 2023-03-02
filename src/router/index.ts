@@ -118,7 +118,7 @@ const routes:any = [
         component:subjectsitem
       },
        // ""题库""
-       {s
+       {
         path: '/databaselist',
         name: Databaselist,
         component: Databaselist,Dataitem
