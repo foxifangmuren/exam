@@ -12,4 +12,7 @@ const addlist=(params:any)=>{
 const del=(params:any)=>{
     return get('database/delete',params)
 }
-export {databaseList,addlist,del}
+const wy=(params:any)=>{
+  return get('/subjects/get',params)
+}
+export {databaseList,addlist,del,wy}

@@ -20,3 +20,15 @@ export const getForResult = (params:any):Promise<AxiosResponse<any>>=>{
 export const StudentChangepass= (params:any):Promise<AxiosResponse<any>>=>{
   return post('/student/changepass',params)
 }
+export const updateState = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/test/updateState', params );
+};
+export const deleteall = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/test/deleteall', params );
+};
+export const del= (id: any): Promise<AxiosResponse<any>> => {
+  return get('/test/delete', id );
+};
+export const testadd= (params: any): Promise<AxiosResponse<any>> => {
+  return post('/test/add', params );
+};  

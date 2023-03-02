@@ -130,8 +130,8 @@ const updata = (data:any)=>{
 // 解构数据
 const { params,options1 } = toRefs(data);
 const props = {
-  expandTrigger: 'hover',
-  checkStrictly: true,
+  expandTrigger: 'hover', //次级菜单展开方式
+  checkStrictly: true,  //是否严格的遵守父子节点不相互关联
   value: 'id',
   label: 'name',
 };

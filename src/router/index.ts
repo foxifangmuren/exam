@@ -3,7 +3,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 //引入组件，及要跳转到的页面，也可以直接写在routes中的component里
 import Login from '../pages/Login/login.vue';
 import Home from '../pages/Home/home.vue';
-import test from '../pages/Home/children/Text/Text.vue';
+import est from '../pages/Home/children/Text/Text.vue';
+import tesadd from '../pages/Home/children/Text/Textadd.vue';
 import Exam from '../pages/Home/children/Exam/Exam.vue';
 import Exam_student from "../pages/Home/children/Exam/examstudent.vue"
 import role from '../pages/Home/children/role/role.vue';
@@ -21,6 +22,7 @@ import stuexam from '../pages/stuexam/stuexam.vue';
 import examresults from '../pages/examresults/examresults.vue';
 import stuexamwrong from '../pages/stuexamwrong/stuexamwrong.vue'
 import set from '../pages/Home/children/set/set.vue'
+import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
 //定义路由，每个路由都需要映射到一个组件。
 const routes:any = [
   //登录页面
@@ -69,8 +71,14 @@ const routes:any = [
       // "考试"
       {
         path: '/test',
-        name:test,
-        component: test,
+        name:est,
+        component: est,
+      },
+      //考试添加
+      {
+        path: '/testadd',
+        name:tesadd,
+        component: tesadd,
       },
       // "阅卷"
       {
@@ -148,7 +156,10 @@ const routes:any = [
     component: seel_pwdVue,
   },
   //微信扫码登录
-  
+  {
+    path:"/WeChat_logVue",
+    component:WeChat_logVue
+  },
   // 404页面
   {
     path: '/:pathMatch(.*)*',

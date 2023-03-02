@@ -3,7 +3,7 @@
     <div class="title">
       <div class="kao">考试管理</div>
       <div>
-        <el-button type="primary">创建考试</el-button>
+        <el-button type="primary" @click="testadd">创建考试</el-button>
       </div>
     </div>
 
@@ -39,8 +39,8 @@
                 v-model="data.begindate"
                 is-range
                 range-separator="To"
-                start-placeholder="Start time"
-                end-placeholder="End time"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
               />
             </div>
           </el-col>
@@ -57,9 +57,42 @@
         </el-row>
       </el-form>
     </div>
-    <el-table :data="datas" style="width: 100%">
-      <el-table-column prop="title" label="考试名称" width="180" />
-      <el-table-column prop="state" label="状态" width="180" />
+    <div v-if="va != ''">
+      <el-button type="danger" @click="unpublished(data, 3)"
+        >批量删除</el-button
+      >
+      <el-button type="primary" @click="unpublished(data, 1)"
+        >发布考试</el-button
+      >
+      <el-button type="success" @click="unpublished(data, 2)"
+        >取消发布</el-button
+      >
+    </div>
+    <el-table
+      :data="datas"
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+      ref="multipleTableRef"
+    >
+      <el-table-column type="selection" width="55" />
+      <el-table-column label="考试名称" width="180">
+        <template #default="scope">
+          <el-link type="primary" prop="title"> {{ scope.row.title }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column prop="state" label="状态" width="180">
+        <template #default="scope">
+          <el-link type="primary" :underline="false" v-if="scope.row.state == 1"
+            >已发布</el-link
+          >
+          <el-link
+            type="danger"
+            v-if="scope.row.state == 2"
+            @click="unpublishe(scope.row, 1)"
+            >未发布</el-link
+          >
+        </template>
+      </el-table-column>
       <el-table-column prop="scores" label="总分" />
       <el-table-column prop="pastscores" label="通过分数" />
       <el-table-column prop="studentcounts" label="考试人数" />
@@ -67,26 +100,119 @@
       <el-table-column prop="begintime" label="开放时间" />
       <el-table-column prop="admin" label="创建人" />
       <el-table-column prop="addtime" label="更新时间" />
-      <el-table-column label="操作"></el-table-column>
+      <el-table-column class="op" label="操作">
+        <template #default="scope">
+          <el-link type="primary" @click="studentTan = true">学生</el-link>
+          <span>|</span>
+          <el-link type="primary" @click="keJianTan = true">可见</el-link>
+          <span>|</span>
+          <el-link type="primary" @click="yueJuanTan = true">阅卷老师</el-link>
+          <br />
+          <el-link type="primary">分析</el-link>
+          <span>|</span>
+          <el-link type="primary">编辑</el-link>
+          <span>|</span>
+          <el-link type="danger" @click="unpublishe(scope.row, 2)"
+            >删除</el-link
+          >
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       v-model:current-page="data.page"
       v-model:page-size="data.psize"
-      background 
+      background
       :page-sizes="[5, 10, 15, 20]"
       layout="total, sizes, prev, pager, next, jumper"
       :total="form.total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+    <!-- 学生弹出框 -->
+    <div>
+      <el-dialog v-model="studentTan" title="学生考试列表">
+        <div style="margin-left: 20px; margin-bottom: 20px; display: flex">
+          <div>
+            <el-form-item label="部门">
+              <el-cascader clearable />
+            </el-form-item>
+          </div>
+          <div style="margin-left: 20px">
+            <el-form-item label="班级">
+              <el-cascader clearable />
+            </el-form-item>
+          </div>
+        </div>
+        <div style="margin-left: 20px">
+          <el-transfer />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="studentTan = false">取消</el-button>
+            <el-button type="primary" @click="studentTan = false">
+              确定
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
+    <!-- 可见弹出框 -->
+    <div>
+      <el-dialog v-model="keJianTan" title="可见老师">
+        <div style="margin-left: 20px; margin-bottom: 20px">
+          <el-form-item label="部门">
+            <el-cascader clearable />
+          </el-form-item>
+        </div>
+        <div style="margin-left: 20px">
+          <el-transfer />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="keJianTan = false">取消</el-button>
+            <el-button type="primary" @click="keJianTan = false">
+              确定
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
+    <!-- 阅卷老师弹出框 -->
+    <div>
+      <el-dialog v-model="yueJuanTan" title="阅卷老师">
+        <div style="margin-left: 20px; margin-bottom: 20px">
+          <el-form-item label="部门">
+            <el-cascader clearable />
+          </el-form-item>
+        </div>
+        <div style="margin-left: 20px">
+          <el-transfer />
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="yueJuanTan = false">取消</el-button>
+            <el-button type="primary" @click="yueJuanTan = false">
+              确定
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ElTable } from 'element-plus';
 import { reactive } from 'vue';
 import { TextList } from '../../../../api/admin';
 import { ref, onMounted, toRefs } from 'vue';
-import { da } from 'element-plus/es/locale';
+import { updateState, deleteall, del } from '../../../../api/stutest';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import router from '@/router';
+const studentTan = ref(false);
+const keJianTan = ref(false);
+//阅卷老师弹出框
+const yueJuanTan = ref(false)
 const value1 = ref<[Date, Date]>([
   new Date(2016, 9, 10, 8, 40),
   new Date(2016, 9, 10, 9, 40),
@@ -94,6 +220,9 @@ const value1 = ref<[Date, Date]>([
 const handleSizeChange = (val: number) => {
   console.log(`${val} items per page`);
   TexLis();
+};
+const testadd = () => {
+  router.push('/testadd');
 };
 const handleCurrentChange = (val: number) => {
   TexLis();
@@ -117,12 +246,130 @@ const form: any = reactive({
   datas: [],
   total: '',
 });
+//发布状态
+const va: any = ref('');
+let i: any = ref([]);
+let e: any = ref('');
+const multipleTableRef = ref<InstanceType<typeof ElTable>>();
+const multipleSelection = ref<any[]>([]);
+const handleSelectionChange = (val: any[]) => {
+  console.log(val);
+  i.value = [];
+  val.forEach((item: any) => {
+    i.value.push(item.id);
+  });
+  console.log(i);
+  va.value = val;
+  multipleSelection.value = val;
+};
 
+const unpublished = (data: any, num: any) => {
+  if (i.value == '') {
+    console.log(1);
+
+    var ids: any = [data.id];
+  } else {
+    console.log(i);
+
+    var ids = i._rawValue;
+  }
+  ElMessageBox.confirm('此操作将修改选中的考试状态, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+
+    .then(async () => {
+      if (num === 1) {
+        console.log(111);
+
+        const params = {
+          ids,
+          state: 1,
+        };
+        const res = await updateState(params);
+        console.log(111111111111111111, params, res);
+      }
+      if (num === 2) {
+        const params = {
+          ids,
+          state: 2,
+        };
+        const res = await updateState(params);
+        console.log(2222222222222222, params, res);
+      }
+      if (num === 3) {
+        const params = {
+          ids,
+        };
+        const res = await deleteall(params);
+        console.log(333333333333333, params, res);
+      }
+      if (num === 3) {
+        e.value = '删除';
+      } else if (num == '1' || num == '2') {
+        e.value = '修改';
+      }
+      ElMessage({
+        type: 'success',
+        message: e.value + `成功`,
+      });
+      TexLis();
+    })
+
+    .catch(() => {});
+};
+const unpublishe = (data: any, num: number) => {
+  console.log(num);
+
+  ElMessageBox.confirm('此操作将修改选中的考试状态, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+
+    .then(async () => {
+      if (num == 1) {
+        const ids: any = [data.id];
+
+        const params = {
+          ids,
+          state: 1,
+        };
+        console.log(params);
+        e.value = '修改';
+        const res = await updateState(params);
+      } else if (num == 2) {
+        const id: any = data.id;
+        console.log(id);
+
+        const res = await del({ id: id });
+        console.log(res);
+
+        e.value = '删除';
+      }
+
+      TexLis();
+      ElMessage({
+        type: 'success',
+        message: e.value + '成功',
+      });
+    })
+    .catch(() => {});
+};
+
+//考试列表
 const TexLis = async () => {
   const res = await TextList(form.data);
   form.datas = res.data.list;
+  res.data.list.forEach((item: any) => {
+    item.addtime = item.addtime.slice(0, 16);
+    // console.log(item.addtime);
+    form.datas.addtime = item.addtime;
+  });
+  // console.log(form.datas);
   form.total = res.data.counts;
-  console.log(res);
+  // console.log(res);
   // TexLis();
 };
 
@@ -136,6 +383,9 @@ const { datas, data } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
+span {
+  margin: 0 2px;
+}
 .title {
   justify-content: space-between;
   display: flex;
