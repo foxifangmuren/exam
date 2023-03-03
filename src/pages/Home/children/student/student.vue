@@ -115,7 +115,7 @@
           <el-table-column property="username" label="账号" />
           <el-table-column property="addtime" label="添加时间" />
           <el-table-column label="操作" width="150" #default="scope">
-            <span class="zi" style="cursor: pointer">重置密码</span>
+            <span class="zi" style="cursor: pointer" @click="pass(scope.row)">重置密码</span>
             <span class="zi" style="cursor: pointer" @click="update(scope.row)">修改</span>
             <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
               >删除</span>
@@ -136,10 +136,12 @@
       />
     </div>
     <studentUp ref="studup" @studentList="studentList"></studentUp>
+    <studentPass ref="studpass" @studentList="studentList"></studentPass>
   </div>
 </template>
 
 <script setup lang="ts">
+import studentPass from '../../../../components/student/studentPass.vue'
 import studentUp from '../../../../components/student/studentUp.vue'
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
@@ -153,6 +155,7 @@ import {
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
 import { objectPick } from '@vueuse/shared';
 let studup = ref<any>(null)
+let studpass = ref<any>(null)
 const dialogFormVisible = ref(false);
 const formLabelWidth = '140px';
 let obj = ref({})
@@ -259,6 +262,11 @@ const update = (data:any) => {
   console.log(studup.value)
   studup.value.form.list = data
   obj.value = data
+}
+//点击修改密码
+const pass = (data:any)=>{
+  studpass.value.dialogVisible = true
+  studpass.value.data = data
 }
 //删除接口
 const dell = async (ids: number) => {
