@@ -79,31 +79,99 @@
       </div>
       <div class="hand">
         <div class="hand_top">
-          共1题，还剩1题未完成
+          <p>
+          共<span>{{ list.questions ? list.questions.length : 0 }}</span
+          >题，剩余<span>{{ list.questions ?  answered: 0 }}</span
+          >题未完成
+        </p>
         </div>
-        <el-button type="primary">交卷</el-button>
+        <el-button type="primary" @click="hand">交卷</el-button>
       </div>
     </div>
     
   </div>
 </template>
 <script lang="ts" setup>
-import {getteststart} from '../../api/stutest'
+import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
-import{onMounted,reactive,toRefs,nextTick} from 'vue'
+import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect} from 'vue'
 const route = useRoute()
+const router = useRouter()
 const obj:any = reactive({
   list:[],
-  isActive:false
+  isActive:false,
+  abc:'123',
+  answered:0
 })
 
 // 替换方法
 const rep = (str: string, index: number) => {
   return str.replace(
     /\[\]/g,
-    `<input data-index="${index}" onpaste="return false;" style="margin:0 2px" class="input input${index}" type="text" />`
+    `<input data-index="${index}" onpaste="return false;"  style="margin:0 2px" class="input input${index}" type="text" />`
   );
 };
+watchEffect(() => {
+  // 未答题的数量
+  var num: number = 0;
+  if (obj.list.id) {
+    obj.list.questions.map((item: any) => {
+      if (!item.studentanswer) {
+        num = num + 1;
+      }
+    });
+  }
+  obj.answered = num;
+});
+//点击交卷按钮
+const hand= async()=>{
+
+  let model =   JSON.parse(sessionStorage.getItem('model') as any)
+  console.log(model)
+  const studentAnswerModel = obj.list.questions.map((item: any) => {
+    let correctNum: number = 0;
+    if (item.studentanswer && item.type === "多选题") {
+      // 正确答案数组
+      const answerArr = item.answer.split("|");
+      
+      
+      // 学生答案
+      const studentanswerArr = item.studentanswer.split("|").filter((ite:any)=>(ite!=''));
+      console.log(answerArr,studentanswerArr);
+      answerArr.forEach((itemAnswer: any, index: number) => {
+        studentanswerArr.forEach((itemStudentAnswer: any, index2: number) => {
+          if (itemAnswer === itemStudentAnswer&&answerArr.length===studentanswerArr.length) {
+            correctNum += 1;
+          }
+        });
+      });
+    }
+    return {
+      testid: obj.list.id,
+      studentid: model.id,
+      questionid: item.id,
+      answer: item.studentanswer === null ? "" : item.studentanswer,
+      scores:
+        item.type === "问答题" || item.type === "填空题"
+          ? null
+          : item.type === "单选题" || item.type === "判断题"
+          ? item.studentanswer === item.answer
+            ? item.scores
+            : 0
+          : !item.studentanswer
+          ? 0
+          : correctNum === item.answer.split("|").length
+          ? item.scores
+          : 0,
+    };
+  });
+  // console.log(studentAnswerModel
+  let res:any = await studentansweradd(studentAnswerModel)
+  console.log(res)
+  if(res.errCode===10000){
+    router.push('/stutest')
+  }
+}
 //判断题判断对错
 const judge = (e:string,index:number)=>{
   obj.list.questions[index].studentanswer=e
@@ -136,8 +204,9 @@ const changRadio=(type:String,item: any,index:any)=>{
   }
   const tiao=(index:any)=>{
     // console.log(index)
-document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
-
+    document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
+    console.log(document.getElementsByClassName('concent')[index])
+    console.log(document.querySelectorAll('input'))
   }
 const getList =async ()=>{
   let res:any = await getteststart({testid:route.query.testid})
@@ -148,21 +217,43 @@ const getList =async ()=>{
   }
   console.log(obj.list)
 }
+onUpdated(()=>{
+  document.querySelectorAll(".input").forEach((item: any) => {
+        item.oninput = function () {
+          let _index = this.getAttribute("data-index");
+          let vals: any = [];
+          document.querySelectorAll(".input" + _index).forEach((itm: any) => {
+            console.log(itm.value)
+            if (itm.value) vals.push(itm.value);
+          });
+          obj.list.questions[_index].studentanswer =
+            vals.length == 0 ? null : vals.join("|");
+        };
+      });
+})
 
-onMounted(() => {
+onBeforeMount(() => {
   getList()
 })
-const {list,isActive} = toRefs(obj)
+nextTick(()=>{
+  console.log(document.querySelectorAll('input'))
+})
+
+const {list,isActive,answered} = toRefs(obj)
 </script>
 <style lang="less" scoped>
+html{
+  font-size: 13px;
+}
  .active{
         border: 1px solid #3d80eb;
-        background-color: #fff;
+        background-color: #f1f5fb;
   }
   .box7{
     background-color: #ccc;
   }
 .box2{
+  font-size: 13px;
   width: 75%;
   height: 40px;
   display: flex;
@@ -249,6 +340,7 @@ const {list,isActive} = toRefs(obj)
     background-color: #eee;
     padding-top:20px;
     .stuboxtop{
+      font-size: 30px;
       width: 60%;
       height: 50px;
       margin-left: 50px;
@@ -262,6 +354,7 @@ const {list,isActive} = toRefs(obj)
     .concent_top{
       display:flex;
       .num{
+        font-size: 15px;
         width: 25px;
         height: 23px;
         background-color:#3d80eb;
@@ -271,6 +364,7 @@ const {list,isActive} = toRefs(obj)
         line-heigt:23px;      
       }
       .type{
+        font-size: 15px;
         width:70px;
         height: 21px;
         background-color:'#fff';
@@ -288,6 +382,7 @@ const {list,isActive} = toRefs(obj)
     }
     .concent_box{
       margin-top:30px;
+      font-size: 15px;
       .answers{
         margin:20px;
       }

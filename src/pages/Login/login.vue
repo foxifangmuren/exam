@@ -53,9 +53,9 @@ const obj = reactive({
 const soft = () => {
   obj.isShow = !obj.isShow;
 };
-const ruleFormRef = ref<FormInstance>();
+const ruleFormRef = ref<any>();
 // 验证
-const rules = reactive<FormRules>({
+const rules = reactive<any>({
   usename: [{ required: true, message: '请输入账号', trigger: 'blur' }],
   pass: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 });
@@ -68,7 +68,7 @@ const log = async (formEl: any) => {
       console.log(res);
       sessionStorage.setItem('token', res.data.token);
       sessionStorage.setItem('data', JSON.stringify(res.data.menu));
-
+      sessionStorage.setItem('model',JSON.stringify(res.data.model))
       router.push('/Home');
     } else {
       console.log('error submit!', fields);
