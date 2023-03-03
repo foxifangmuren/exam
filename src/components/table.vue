@@ -8,6 +8,14 @@
   >
     <!-- 复选框 -->
     <el-table-column type="selection" v-if="isTypeSelection" width="55" />
+    <!-- 单选框 -->
+    <el-table-column  v-else-if="radio">
+      <template #default="scope">
+        <el-radio-group v-model="num" @click="ta(scope.row)" class="ml-4">
+          <el-radio :label="scope.row.id" size="large"></el-radio>
+        </el-radio-group>
+      </template>
+    </el-table-column>
     <!-- 表格行 -->
     <el-table-column
       v-for="item in tableHeader"
@@ -53,9 +61,7 @@
         <!-- 文本(阅卷未判人数) -->
         <div v-if="item.label == '开放时间'">
           <span>{{
-            scope.row.endtime == null
-              ? "不限"
-              : scope.row.addtime 
+            scope.row.endtime == null ? "不限" : scope.row.addtime
           }}</span>
         </div>
         <!-- 颜色更改(阅卷未判人数) -->
@@ -83,13 +89,15 @@ const emit = defineEmits(["delarrinfo"]);
  */
 const props = withDefaults(
   defineProps<{
+    radio?:boolean;
     isTypeSelection?: boolean;
     tableHeader: any[];
     tableData: any[];
   }>(),
   {
     loading: false,
-    isTypeSelection: true,
+    radio:false,
+    isTypeSelection: false,
     tableHeader: () => [],
     tableData: () => [],
   }
