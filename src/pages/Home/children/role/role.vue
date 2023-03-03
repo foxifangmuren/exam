@@ -16,19 +16,12 @@
         </el-form-item>
         <el-form-item :label-width="formLabelWidth">
           <div v-for="(item, index) in state.list" :key="item.id">
-            <!-- {{ item.name }}
-        <div style="margin-left:50px" v-for="item2 in item.children">
-        {{item2.name  }}
-      
-      </div> -->
-            {{ item.ced }}
             <el-checkbox
               v-model="item.ced"
               :indeterminate="item.isIndeterminate"
               @change="handleCheckAllChange(index)"
               >{{ item.name }}</el-checkbox
             >
-            {{ item.checkedCities }}
             <el-checkbox-group
               v-model="item.checkedCities"
               style="margin-left: 50px"
@@ -59,7 +52,7 @@
           :data="data.tableData"
           style="width: 100%"
           @selection-change="handleSelectionChange"
-          stripe 
+          stripe
         >
           <el-table-column property="name" label="学生姓名" />
           <el-table-column label="操作" width="120" #default="scope">
@@ -91,7 +84,7 @@ import { log } from 'console';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import { rolelist, roledel, roleadd } from '../../../../api/admin';
-import{menuList} from '../../../../api/role'
+import { menuList } from '../../../../api/role';
 const dialogFormVisible = ref(false);
 const formLabelWidth = '140px';
 const data = reactive({
@@ -112,11 +105,10 @@ const data = reactive({
 // 解构数据
 const { params } = toRefs(data);
 
-
 const handleCheckAllChange = (index: number) => {
-  console.log(123)
+  console.log(123);
   let ids = state.list[index].children.map((item: any) => item.id);
-  console.log(ids)
+  console.log(ids);
   if (
     state.list[index].checkedCities &&
     state.list[index].checkedCities.length > 0
@@ -127,10 +119,10 @@ const handleCheckAllChange = (index: number) => {
   }
 };
 const handleCheckedCitiesChange = (index: number) => {
-  console.log(state.list[index].children)
+  console.log(state.list[index].children);
   let cheeckLen = state.list[index].checkedCities.length;
   let allLen = state.list[index].children.length;
-  console.log(allLen)
+  console.log(allLen);
   state.list[index].isIndeterminate = false;
   if (cheeckLen == allLen) {
     state.list[index].ced = true;
@@ -139,24 +131,21 @@ const handleCheckedCitiesChange = (index: number) => {
   } else {
     state.list[index].ced = false;
   }
-
-  
 };
 const state = reactive<any>({
-  list: []
+  list: [],
 });
-const getMenuList=async ()=>{
-  let res:any = await menuList(null)
-  if(res.errCode===10000){
-    state.list = res.data.list
+const getMenuList = async () => {
+  let res: any = await menuList(null);
+  if (res.errCode === 10000) {
+    state.list = res.data.list;
   }
-}
-
+};
 
 const form = reactive({
-  id:0,
+  id: 0,
   name: '',
-  menus:''
+  menus: '',
 });
 const props = {
   expandTrigger: 'hover',
@@ -193,8 +182,8 @@ const rouleList = async () => {
 //添加
 const add = async () => {
   // console.log(data.params.depname)
-  console.log()
-  console.log(form)
+  console.log();
+  console.log(form);
   const res: any = await roleadd(form);
   console.log('班级添加', res);
   if (res.errCode === 10000) {
@@ -246,7 +235,7 @@ onMounted(() => {
   //角色列表
   rouleList();
   //权限列表
-  getMenuList()
+  getMenuList();
 });
 </script>
 
