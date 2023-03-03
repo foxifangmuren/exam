@@ -53,7 +53,8 @@
           <div class="boardbox" style="background-color: #fff; border: 1px solid #ccc;"></div><div>未答</div>
         </div>
         <div class="conten">
-          <div :class="item==true?'dui':'red'" @click="tiao(index)" v-for="(item,index) in index1" :key="item">{{ index+1 }}</div>
+          <!-- <div :class="item==true?'dui':'red'" @click="tiao(index)" v-for="(item,index) in index1" :key="item">{{ index+1 }}</div> -->
+          <div :class="item.studentscores > 0 ? 'dui' : 'red'" @click="tiao(index)" v-for="(item,index) in List.questions" :key="index">{{ index+1 }}</div>
        </div>
       </div>
       
@@ -67,24 +68,27 @@
   const obj:any = reactive({
     List:[],
     index1:[],
+    classs:String
   })
   const getList = async ()=>{
     let res:any = await getForResult({testid:route.query.testid})
-    // console.log(res)
+    console.log(res)
     if(res.errCode===10000){
       obj.List = res.data
-
-      obj.index1= obj.List.questions.map((item:any,index:any)=>{
-        // console.log(item.answer,item.studentanswer)
-        // if(item.answer==item.studentanswer){
-        //   console.log(true)
-        // }else{
-        //   console.log(false)
-        // }
-        console.log(item.answer[index]==item.studentanswer[index])
-        return item.answer==item.studentanswer
-      })
+      obj.List.questions = obj.List.questions.map((item: any) => {
+      if (item.type === "多选题") {
+        return {
+          ...item,
+          studentanswer:item.studentanswer.substr(1).split("|"),
+          answer: item.answer.split("|"),
+        };
+      } else {
+        return item;
+      }
+    });
+      console.log(obj.List)
     }
+    
     console.log(obj.index1)
     console.log(obj.List)
   }

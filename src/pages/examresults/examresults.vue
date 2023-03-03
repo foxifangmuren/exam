@@ -16,10 +16,13 @@
         <div class="grade_top" v-if="Scores==='未通过'">
           {{ Scores==='未通过'?data.studentScores:'' }}
         </div>
-        <div class="grade_top1" v-else>
+        <div class="grade_top1" v-if="Scores==='待阅卷'">
+          {{ Scores }}
+        </div> <div class="grade_top2" v-if="Scores==='已通过'">
           {{ Scores }}
         </div>
-        <div class="grade_bottom">
+
+        <div class="grade_bottom" v-if="Scores=='未通过'?true:false">
             很可惜，未通过
         </div>
       </div>
@@ -50,8 +53,8 @@
      
       <div class="button">
         <el-button type="danger"  @click="begin" v-if="Scores==='未通过'">查看答卷</el-button>
-        <el-button type="warning" disabled v-else>等待阅卷</el-button>
-        
+        <el-button type="warning" disabled v-if="Scores==='待阅卷'">等待阅卷</el-button>
+        <el-button type="success"  @click="begin" v-if="Scores==='已通过'">查看答案</el-button>
         
       </div>
     </div>
@@ -136,6 +139,11 @@ table td {
 }
 .grade_top1{
   color: #e8d208;
+  font-size: 60px;
+  text-align: center;
+}
+.grade_top2{
+  color: #08e808;
   font-size: 60px;
   text-align: center;
 }
