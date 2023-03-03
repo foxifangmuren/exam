@@ -2,14 +2,6 @@
   <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#F7FBFE', color: '#000' }">
     <!-- 复选框 -->
     <el-table-column type="selection" v-if="isTypeSelection" width="55" />
-    <!-- 单选框 -->
-    <el-table-column  v-else-if="radio">
-      <template #default="scope">
-        <el-radio-group v-model="num" @click="ta(scope.row)" class="ml-4">
-          <el-radio :label="scope.row.id" size="large"></el-radio>
-        </el-radio-group>
-      </template>
-    </el-table-column>
     <!-- 表格行 -->
     <el-table-column v-for="item in tableHeader" :prop="item.prop" :label="item.label" :key="item.id">
       <!-- 建立插槽 -->
@@ -19,32 +11,16 @@
           <!-- 循环按钮数组 -->
           <span v-for="(btn, index) in item.buttons" :key="index">
             <!-- 阅卷按钮，最后按钮判断 -->
-            <span v-if="btn.text == 'exam'">
-              <el-button
-                link
-                :type="btn.type"
-                @click="$emit(btn.event, scope.row)"
-                >{{ scope.row.incomplete > 0 ? "阅卷" : "查看" }}</el-button
-              >
-            </span>
-            <!-- 板块表头跳转 -->
-            <span v-else-if="btn.text == '表头'">
-              <el-button
-                link
-                :type="btn.type"
-                @click="$emit(btn.event, scope.row)"
-                ><span v-html="scope.row.title"></span
-              ></el-button>
+            <span v-if="btn.text=='exam'">
+                 <el-button link :type="btn.type"  @click="$emit(btn.event, scope.row)" >{{scope.row.incomplete>0?'阅卷':'查看'}}</el-button> 
             </span>
             <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->
             <el-button v-else link :type="btn.type" size="small" @click="$emit(btn.event, scope.row)" >{{ btn.text }}</el-button>  
           </span>
         </div>
         <!-- 文本(阅卷未判人数) -->
-        <div v-if="item.label == '开放时间'">
-          <span>{{
-            scope.row.endtime == null ? "不限" : scope.row.addtime
-          }}</span>
+        <div v-if="item.label=='开放时间'">
+          <span>{{scope.row.endtime==null? '不限':scope.row.addtime-scope.row.endtime}}</span>
         </div>
         <!-- 阅卷详情之班级名称 -->
         <!-- <div v-if="item.label=='班级名称'">
@@ -69,9 +45,6 @@
 </template>
 
 <script setup lang="ts" >
-import { ref, defineEmits } from "vue";
-const emit = defineEmits(["delarrinfo"]);
-
 /***
  * 接受两个参数，
  *      TableHeader(格式)
@@ -80,23 +53,16 @@ const emit = defineEmits(["delarrinfo"]);
  */
 const props = withDefaults(
   defineProps<{
-    radio?:boolean;
     isTypeSelection?: boolean;
     tableHeader: any[];
     tableData: any[];
   }>(),
   
   {
-    loading: false,
-    radio:false,
-    isTypeSelection: false,
+    loading:false,
+    isTypeSelection: true,
     tableHeader: () => [],
     tableData: () => [],
   }
 );
-//接受参数
-const handleSelectionChange = (val: any) => {
-  const deldata: Array<any> = val.map((item: { id: any }) => item.id);
-  emit("delarrinfo", deldata);
-};
 </script>
