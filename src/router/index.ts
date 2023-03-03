@@ -16,20 +16,19 @@ import teacher from '../pages/Home/children/teacher/teacher.vue';
 import Subjects from '../pages/Home/children/Subjects/Subjects.vue';
 import subjectsitem from '@/pages/Home/children/Subjects/Subjects_chren.vue';
 import Databaselist from '../pages/Home/children/Databaselist/Databaselist.vue';
-import Dataitem from "@/pages/Home/children/Databaselist/Dataitem.vue"
+import Dataitem from '@/pages/Home/children/Databaselist/Dataitem.vue';
 import NotFount from '../pages/Noufount/notfount.vue';
 import seel_pwdVue from '../pages/seek_pwd/seel_pwd.vue';
 import stutest from '../pages/Home/children/stutest/stutest.vue';
 import examprepare from '../pages/examprepare/examprepare.vue';
 import stuexam from '../pages/stuexam/stuexam.vue';
 import examresults from '../pages/examresults/examresults.vue';
-import stuexamwrong from '../pages/stuexamwrong/stuexamwrong.vue'
-import set from '../pages/Home/children/set/set.vue'
+import stuexamwrong from '../pages/stuexamwrong/stuexamwrong.vue';
+import set from '../pages/Home/children/set/set.vue';
 import WeChat_logVue from '@/pages/WeChat/WeChat_log.vue';
 import TextVue from '../components/Transfer .vue';
 //定义路由，每个路由都需要映射到一个组件。
-const routes:any = [
-
+const routes: any = [
   {
     path: '/TextVue',
     name: 'TextVue',
@@ -60,24 +59,24 @@ const routes:any = [
   },
   //考试结果页面
   {
-    path:"/examresults",
-    name:'examresults',
-    component:examresults
+    path: '/examresults',
+    name: 'examresults',
+    component: examresults,
   },
   //查看考试结果页面
   {
-    path:'/stuexamwrong',
-    name:'stuexamwrong',
-    component:stuexamwrong
+    path: '/stuexamwrong',
+    name: 'stuexamwrong',
+    component: stuexamwrong,
   },
 
-  
   // 首页
   {
     path: '/Home',
     name: Home,
     component: Home,
     children: [
+      { path: '/Home', redirect: '/test' },
       // "考试"
       {
         path: '/test',
@@ -113,15 +112,16 @@ const routes:any = [
         component: Subjects,
       },
       {
-        path:"/subjectsitem",
-        name:subjectsitem,
-        component:subjectsitem
+        path: '/subjectsitem',
+        name: subjectsitem,
+        component: subjectsitem,
       },
-       // ""题库""
-       {
+      // ""题库""
+      {
         path: '/databaselist',
         name: Databaselist,
-        component: Databaselist,Dataitem
+        component: Databaselist,
+        Dataitem,
       },
       {
         path: '/Dataitem',
@@ -166,11 +166,11 @@ const routes:any = [
         name: stutest,
         component: stutest,
       },
-        //考试设置
+      //考试设置
       {
-        path:'/set',
-        name:'set',
-        component:set
+        path: '/set',
+        name: 'set',
+        component: set,
       },
     ],
   },
@@ -202,4 +202,3 @@ const router = createRouter({
 //暴露出router实例。方便在其他组件更改路由
 //这样可以在任意组件中以 this.$router的形式访问它，并且以this.$route的形式访问当前路由
 export default router;
-

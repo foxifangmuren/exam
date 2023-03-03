@@ -43,9 +43,6 @@ const testdel=(params:any)=>{
 const addDataitem=(params:any)=>{
     return post('databasequestion/add',params)
 }
-const wy=(params:any)=>{
-     return get('/subjects/get',params)
-    }
 export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel,dells,
     testdel,
     addDataitem,

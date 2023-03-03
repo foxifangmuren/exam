@@ -120,9 +120,7 @@ const handleChange = (value: number) => {
 }
 
 //富文本编辑器
-import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import { log } from 'console'
+
     const editorRef = shallowRef()
     // 组件销毁时，也及时销毁编辑器
     onBeforeUnmount(() => {

@@ -3,7 +3,6 @@ import './style.css';
 import App from './App.vue';
 import router from './router/index';
 import ElementPlus from 'element-plus';
-import VueUeditorWrap from "vue-ueditor-wrap"
 import 'element-plus/dist/index.css';
 import { useRouter } from 'vue-router';
 const route = useRouter();
@@ -27,7 +26,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(VueAxios, axios)
 app.use(ElementPlus, { locale: zhCn })
 app.use(router)
-app.use(VueUeditorWrap)
 //表格
 app.component('MyTable',MyTable)
 //分页

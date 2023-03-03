@@ -26,39 +26,47 @@
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="学生统计" name="first">
           <el-form :model="form" label-width="120px">
-            <el-form-item label="Activity name">
-              <el-input v-model="form.name" />
-            </el-form-item>
-            <el-form-item label="Activity zone">
-              <el-select
-                v-model="form.name"
-                placeholder="please select your zone"
-              >
-                <el-option label="Zone one" value="shanghai" />
-                <el-option label="Zone two" value="beijing" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-input
-                v-model="form.name"
-                placeholder="Please input"
-                clearable
-              />
-            </el-form-item>
-            <el-form-item label="Activity zone">
-              <el-select
-                v-model="form.name"
-                placeholder="Activity zone"
-              >
-                <el-option label="Zone one" value="shanghai" />
-                <el-option label="Zone two" value="beijing" />
-              </el-select>
-            </el-form-item>
-            <el-button type="primary">查询</el-button>
-            <el-button>导出</el-button>
+            <el-row :gutter="20">
+              <el-form-item label="考试名称">
+                <el-input v-model="form.name" />
+              </el-form-item>
+              <el-form-item label=" 部门">
+                <el-select v-model="form.name" placeholder="请选择">
+                  <el-option label="Zone one" value="shanghai" />
+                  <el-option label="Zone two" value="beijing" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="班级">
+                <el-select v-model="form.name" placeholder="请选择">
+                  <el-option label="Zone one" value="shanghai" />
+                  <el-option label="Zone two" value="beijing" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="状态">
+                <el-select v-model="form.name" placeholder="请选择">
+                  <el-option label="Zone one" value="shanghai" />
+                  <el-option label="Zone two" value="beijing" />
+                </el-select>
+              </el-form-item>
+              <el-button type="primary">查询</el-button>
+              <el-button>导出</el-button>
+            </el-row>
           </el-form>
         </el-tab-pane>
       </el-tabs>
+    </div>
+    <div>
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="date" label="学员姓名" width="180" />
+        <el-table-column prop="name" label="部门" width="180" />
+        <el-table-column prop="name" label="班级" width="180" />
+        <el-table-column prop="name" label="分数" width="180" />
+        <el-table-column prop="name" label="通过情况" width="180" />
+        <el-table-column prop="name" label="用时" width="180" />
+        <el-table-column prop="name" label="考卷时间" width="180" />
+        <el-table-column prop="name" label="交卷时间" width="180" />
+        <el-table-column prop="address" label="操作" />
+      </el-table>
     </div>
   </div>
 </template>
@@ -66,7 +74,13 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
 import * as echarts from 'echarts';
-
+const tableData = [
+  {
+    date: '',
+    name: '',
+    address: '',
+  },
+];
 const form = reactive({
   name: '',
 });
@@ -149,10 +163,10 @@ onMounted(() => {
           show: false,
         },
         data: [
-          { value: 1048, name: '未考' },
-          { value: 735, name: '及格' },
-          { value: 580, name: '粑粑' },
-          { value: 484, name: '不及格' },
+          { value:0, name: '未考' },
+          { value:0 , name: '及格' },
+          { value:0 , name: '粑粑' },
+          { value: 1, name: '不及格' },
         ],
       },
     ],
@@ -163,6 +177,12 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
+/deep/.el-select {
+  width: 200px;
+}
+// /deep/.el-input {
+//   width: 100px;
+// }
 .one {
   margin-top: 20px;
   display: flex;

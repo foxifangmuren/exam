@@ -110,7 +110,7 @@
           <span>|</span>
           <el-link type="primary" @click="yueJuanTan = true">阅卷老师</el-link>
           <br />
-          <el-link type="primary">分析</el-link>
+          <el-link type="primary" @click="anse">分析</el-link>
           <span>|</span>
           <el-link type="primary">编辑</el-link>
           <span>|</span>
@@ -165,9 +165,20 @@
             <span>{{ ite.answerno }}:{{ ite.content }}</span>
           </div>
           <div class="liang" v-if="item.answer">正确答案:{{ item.answer }}</div>
-          <div class="daan"  v-if="item.type=='填空题'?true:(item.type=='问答题'?true:false)">答案解析：{{ item.explains }}</div>
+          <div
+            class="daan"
+            v-if="
+              item.type == '填空题'
+                ? true
+                : item.type == '问答题'
+                ? true
+                : false
+            "
+          >
+            答案解析：{{ item.explains }}
+          </div>
         </div>
-        <el-button>导出excel</el-button>
+        <el-button @click="down">导出excel</el-button>
       </div>
     </el-dialog>
     <!-- 学生弹出框 -->
@@ -176,7 +187,13 @@
         <div style="margin-left: 20px; margin-bottom: 20px; display: flex">
           <div>
             <el-form-item label="部门">
-              <el-cascader clearable />
+              <el-cascader
+                v-model="dataq.value"
+                :options="dataq.options"
+                :props="props"
+                @change="handleChange"
+                clearable
+              ></el-cascader>
             </el-form-item>
           </div>
           <div style="margin-left: 20px">
@@ -203,7 +220,13 @@
       <el-dialog v-model="keJianTan" title="可见老师">
         <div style="margin-left: 20px; margin-bottom: 20px">
           <el-form-item label="部门">
-            <el-cascader clearable />
+            <el-cascader
+              v-model="dataq.value"
+              :options="dataq.options"
+              :props="props"
+              @change="handleChange"
+              clearable
+            ></el-cascader>
           </el-form-item>
         </div>
         <div style="margin-left: 20px">
@@ -224,7 +247,13 @@
       <el-dialog v-model="yueJuanTan" title="阅卷老师">
         <div style="margin-left: 20px; margin-bottom: 20px">
           <el-form-item label="部门">
-            <el-cascader clearable />
+            <el-cascader
+              v-model="dataq.value"
+              :options="dataq.options"
+              :props="props"
+              @change="handleChange"
+              clearable
+            ></el-cascader>
           </el-form-item>
         </div>
         <div style="margin-left: 20px">
@@ -247,22 +276,42 @@
 import { ElTable } from 'element-plus';
 import { reactive } from 'vue';
 import { TextList } from '../../../../api/admin';
+import { departmentlist } from '../../../../api/admin';
 import { ref, onMounted, toRefs } from 'vue';
 import { updateState, deleteall, del, testget } from '../../../../api/stutest';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { exportExcel } from '@/api/Subjects';
+import { downLoadBlob } from '@/utils/download';
 import router from '@/router';
+//下载导出
+const down = async () => {
+  const src = await exportExcel({ id: vald.value.id }).then((src: any) => {
+    downLoadBlob(src, vald.value.title);
+  });
+};
+
 const studentTan = ref(false);
 const keJianTan = ref(false);
 //阅卷老师弹出框
-const yueJuanTan = ref(false)
+const yueJuanTan = ref(false);
 const value1 = ref<[Date, Date]>([
   new Date(2016, 9, 10, 8, 40),
   new Date(2016, 9, 10, 9, 40),
 ]);
 const show: any = ref(false);
-
+const anse = () => {
+  router.push('analyse');
+};
+const props = {
+  expandTrigger: 'hover', //次级菜单展开方式
+  checkStrictly: true, //是否严格的遵守父子节点不相互关联
+  value: 'id',
+  label: 'name',
+};
+const vald =ref()
 const tit = async (val: any) => {
   console.log(val);
+  vald.value=val
   show.value = true;
   const res = await testget({ id: val });
   console.log(res);
@@ -287,7 +336,7 @@ const form: any = reactive({
     psize: 5,
     admin: '',
     key: '',
-    ismy: null,
+    ismy: 0,
     opentime: null,
     begindate: '',
     enddate: '',
@@ -319,7 +368,36 @@ const handleSelectionChange = (val: any[]) => {
   va.value = val;
   multipleSelection.value = val;
 };
-
+const departmentList = async () => {
+  const res: any = await departmentlist(null);
+  console.log('部门级联', res);
+  if (res.errCode === 10000) {
+    dataq.options = res.data.list;
+  }
+};
+const dataq = reactive({
+  //表格数据
+  tableData: [],
+  //列表参数
+  params: {
+    name: '',
+    depname: '',
+    page: 1,
+    psize: 10,
+  },
+  key: '',
+  //搜索
+  value: [],
+  //部门
+  options: [],
+  //角色
+  options1: [],
+  //分页 总页数
+  total: 0,
+});
+const handleChange = (e: any) => {
+  data.value = e;
+};
 const unpublished = (data: any, num: any) => {
   if (i.value == '') {
     console.log(1);
@@ -435,11 +513,18 @@ const onSubmit = () => {
 };
 onMounted(() => {
   TexLis();
+  departmentList();
 });
 const { datas, data, Wrodata } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
+/deep/ .el-transfer-panel {
+  margin-right: 200px;
+}
+/deep/ .el-transfer__buttons {
+  display: none;
+}
 .liang {
   background-color: #eefaf6;
   margin-top: 10px;
@@ -452,10 +537,10 @@ const { datas, data, Wrodata } = toRefs(form);
   // height: 100%;
   margin-top: 50px;
 }
-.daan{
+.daan {
   background-color: #f5faff;
   color: #9dadbc;
-  height:50px;
+  height: 50px;
   display: flex;
   align-items: center;
 }
