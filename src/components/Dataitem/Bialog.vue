@@ -1,7 +1,12 @@
 <template>
-<!-- 题库添加 -->
+  <!-- 题库添加 -->
   <div>
-    <el-dialog v-model="dialogVisible" title="题库添加" width="30%" :before-close="handleClose" >
+    <el-dialog
+      v-model="dialogVisible"
+      title="题库添加"
+      width="30%"
+      :before-close="handleClose"
+    >
       <div>
         <el-form
           ref="ruleFormRef"
@@ -23,10 +28,33 @@
               <el-form-item>
                 <el-radio :label="2">不允许任何老师使用</el-radio>
               </el-form-item>
-              <el-radio v-model="ruleForm.limits">允许部分老师使用</el-radio>
+              <el-radio v-model="ruleForm.limits" @click="teacher = true"
+                >允许部分老师使用</el-radio
+              >
             </el-radio-group>
           </el-form-item>
         </el-form>
+      </div>
+      <div>
+        <el-dialog v-model="teacher" title="可见老师">
+          <div style="margin-left: 20px; margin-bottom: 20px">
+            <el-form-item label="部门">
+              <el-cascader clearable />
+            </el-form-item>
+          </div>
+          <div style="margin-left: 20px">
+            <el-transfer />
+          </div>
+
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="teacher = false">取消</el-button>
+              <el-button type="primary" @click="teacher = false">
+                确定
+              </el-button>
+            </span>
+          </template>
+        </el-dialog>
       </div>
       <template #footer>
         <span class="dialog-footer">
@@ -58,6 +86,7 @@ watch(props, (nweProps, oldProps) => {
 const emit = defineEmits(["getlist"]);
 //显示不显示
 const dialogVisible = ref(false);
+const teacher = ref(false);
 //暴漏
 defineExpose({
   dialogVisible,
@@ -69,7 +98,7 @@ const formSize = ref("default");
 const ruleForm: any = reactive({
   id: 0,
   title: "",
-  isshow: 0,
+  isshow:1,
   limits: [],
 });
 //非空校验

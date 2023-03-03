@@ -192,7 +192,7 @@ const del = (val: any) => {
 };
 //跳转详情页面
 const skip=()=>{
-  router.push("/subjectsitem");
+  router.push("/testadd");
 }
 </script>
 
