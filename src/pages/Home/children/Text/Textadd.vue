@@ -329,8 +329,8 @@
         @changePage="changePag"
       ></MyPages>
       <div class="shi">
-        <el-button @click="dialogTableVisible = false">取消</el-button>
-        <el-button type="primary" @click="wwy">确定</el-button>
+        <el-button @click="dialoe = false">取消</el-button>
+        <el-button type="primary" @click="zcc">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog v-model="dialogTableVisible" title="试题列表" width="80%">
@@ -473,6 +473,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, toRefs } from 'vue';
 import { testadd } from '@/api/stutest';
+import { questions, exportExcel, databasequestiondel,testdel} from "@/api/databaselist";
 import { examList } from '@/api/exam';
 import { departmentlist } from '../../../../api/admin';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -556,6 +557,42 @@ const Wrod: any = reactive({
   datas: {},
 });
 
+const fm = reactive({
+  //批量添加框
+  dialogVisible: false,
+  // 查询数据
+  query: {
+    databaseid: 0,
+    page: 1,
+    psize: 10,
+    key: "",
+    tags: "",
+    type: "",
+    admin: "",
+  },
+  //列表数据
+  tableData: [],
+  //详情数据框
+  drawer: false,
+  data:{},
+  //详情数据列表
+  particulars: [],
+  //总条数
+  total: 0,
+  //试卷批量删除
+  disabled: true,
+  delarray:[]
+});
+
+const zcc = async () => {
+  // dialoe.value = false;
+  const src = await questions({ databaseid: va.value });
+  console.log(src);
+  
+  fro.tableData = src.data.list;
+  fro.total = src.data.counts;
+};
+
 const wwy = async () => {
   dialogTableVisible.value = false;
   const res = await wy({ id: va.value });
@@ -611,6 +648,8 @@ const changePageSize = (val: number) => {
 };
 const getlist = async () => {
   const src = await databaseList(from.query);
+  console.log(src);
+  
   fro.tableData = src.data.list;
   fro.total = src.data.counts;
 };
@@ -638,27 +677,6 @@ const tableHeade = [
   {
     prop: 'admin',
     label: '创建人',
-  },
-  {
-    label: '操作',
-    type: 'buttons',
-    buttons: [
-      {
-        type: 'primary',
-        text: '试题',
-        event: 'gopage',
-      },
-      {
-        type: 'primary',
-        text: '编辑',
-        event: 'bialog',
-      },
-      {
-        type: 'primary',
-        event: 'del',
-        text: '删除',
-      },
-    ],
   },
 ];
 const tableHeader = [
