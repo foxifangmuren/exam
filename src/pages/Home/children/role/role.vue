@@ -56,7 +56,7 @@
         >
           <el-table-column property="name" label="学生姓名" />
           <el-table-column label="操作" width="120" #default="scope">
-            <span class="zi" style="cursor: pointer">编辑</span>
+            <span class="zi" style="cursor: pointer" @click="update(scope.row)">编辑</span>
             <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
               >删除</span
             >
@@ -76,17 +76,20 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <roleUp ref="roup" @rouleList="rouleList"></roleUp>
   </div>
 </template>
 
 <script setup lang="ts">
 import { log } from 'console';
+import roleUp from '../../../../components/role/roleUp.vue'
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import { rolelist, roledel, roleadd } from '../../../../api/admin';
 import { menuList } from '../../../../api/role';
 const dialogFormVisible = ref(false);
 const formLabelWidth = '140px';
+const roup =ref<any>(null)
 const data = reactive({
   //表格数据
   tableData: [],
@@ -192,11 +195,14 @@ const add = async () => {
     rouleList();
   }
 };
-//查询
-const onSubmit = () => {
-  console.log('hello');
-  rouleList();
-};
+let obj = ref({})
+//点击修改
+const update = (data:any)=>{
+  roup.value.dialogVisible = true
+  console.log(roup.value)
+  roup.value.form.name = data
+  obj.value = data
+}
 //删除的点击
 const del = (ids: number) => {
   ElMessageBox.confirm('是否永久删除此文件', '提示', {
