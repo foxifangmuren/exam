@@ -50,6 +50,10 @@ export const studentlist = (params: any): Promise<AxiosResponse<any>> => {
 export const studentadd = (params: any): Promise<AxiosResponse<any>> => {
   return post('/student/add',params)
 }
+//学员修改密码
+export const changepass = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/student/changepass',params)
+}
 //删除学员
 export const studentdel = (params: any): Promise<AxiosResponse<any>> => {
   return get('/student/delete',params)
