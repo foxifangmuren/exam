@@ -76,13 +76,6 @@ import {defineProps} from "vue"
 const dialogVisible = ref(false);
 
 const emits = defineEmits(['teacherList']);
-// const props1= defineProps({
-//   obj: {
-//     type: Object,
-//     required: true
-//   }
-// })
-// console.log(props1.obj.id)
 const formSize = ref('default');
 const ruleFormRef = ref<any>();
 const ruleForm: any = reactive({

@@ -1,4 +1,5 @@
 <template>
+   
   <div class="stu">
     <div class="stubox">
       <div class="stuboxtop">
@@ -75,7 +76,7 @@
           <div class="boardbox" style="background-color: #fff; border: 1px solid #ccc;"></div><div>未答</div>
         </div>
         <div class="conten">
-        <div @click="tiao(index)" :class="item.studentanswer==null?'':'box7'" v-for="(item,index) in list.questions" :key="item">{{ index+1 }}</div>
+        <div @click="tiao(index)" :class="item.studentanswer=='' || item.studentanswer==null?'':'box7'" v-for="(item,index) in list.questions" :key="item">{{ index+1 }}</div>
       </div>
       <div class="hand">
         <div class="hand_top">
@@ -85,23 +86,44 @@
           >题未完成
         </p>
         </div>
-        <el-button type="primary" @click="hand">交卷</el-button>
+        <el-popconfirm
+          @confirm="hand"
+          :title="
+            (list.questions
+              ? answered > 0
+                ? '你还有' + (list.questions ? answered : 0) + '题未答'
+                : '答题时间未结束'
+              : 0) + '，确定要提交吗?'
+          "
+        >
+          <template #reference>
+            <!-- <el-button class="but" type="primary">交卷</el-button> -->
+            <el-button type="primary" >交卷</el-button>
+          </template>
+        </el-popconfirm>
+       
       </div>
     </div>
-    
+    <div class="timeBox" v-show="list.limittime > 0">
+      <el-icon><AlarmClock /></el-icon>
+      <p class="title">倒计时</p>
+      <p class="time">{{ endTime }}</p>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
 import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect} from 'vue'
+import { head } from 'lodash';
 const route = useRoute()
 const router = useRouter()
 const obj:any = reactive({
   list:[],
   isActive:false,
   abc:'123',
-  answered:0
+  answered:0,
+  endTime:''
 })
 
 // 替换方法
@@ -179,12 +201,9 @@ const judge = (e:string,index:number)=>{
 //点击单选框
 
 const changRadio=(type:String,item: any,index:any)=>{
-  // console.log(item)
-  console.log(item.type)
   if(type=='单选题'){
     obj.list.questions[index].studentanswer = item.answerno
   }else if(type=='多选题'){
-    console.log(1123)
     if (obj.list.questions[index].studentanswer == null) {
       obj.list.questions[index].studentanswer = "|" + item.answerno;
     } else {
@@ -198,6 +217,7 @@ const changRadio=(type:String,item: any,index:any)=>{
         obj.list.questions[index].studentanswer + "|" + item.answerno;
       }
     }
+    console.log(obj.list)
   }
    
     
@@ -214,6 +234,42 @@ const getList =async ()=>{
   if(res.errCode===10000){
 
     obj.list = res.data
+    if (list.value.limittime > 0) {
+      var timer = setInterval(() => {
+        //获取当前时间
+        var date = new Date();
+        var now = Number(date);
+        //设置截止时间
+        var end =
+          Number(new Date(obj.list.studentStartTime)) +
+          list.value.limittime * 60 * 1000;
+        //获取截止时间和当前时间的时间差
+        var leftTime = end - now;
+        //定义变量 d,h,m,s分别保存天数，小时，分钟，秒
+        var d: any, h, m, s;
+        //判断剩余天数，时，分，秒
+        if (leftTime > 0) {
+          d = Math.floor(leftTime / 1000 / 60 / 60 / 24);
+          h = Math.floor((leftTime / 1000 / 60 / 60) % 24);
+          m = Math.floor((leftTime / 1000 / 60) % 60);
+          s = Math.floor((leftTime / 1000) % 60);
+          if (String(h).length === 1) {
+            h = "0" + h;
+          }
+          if (String(m).length === 1) {
+            m = "0" + m;
+          }
+          if (String(s).length === 1) {
+            s = "0" + s;
+          }
+          obj.endTime = h + ":" + m + ":" + s;
+        } else {
+          obj.endTime = "00:00:00";
+          clearInterval(timer);
+          hand();
+        }
+      }, 1000);
+    }
   }
   console.log(obj.list)
 }
@@ -239,13 +295,31 @@ nextTick(()=>{
   console.log(document.querySelectorAll('input'))
 })
 
-const {list,isActive,answered} = toRefs(obj)
+const {list,isActive,answered,endTime} = toRefs(obj)
 </script>
 <style lang="less" scoped>
 html{
   font-size: 13px;
 }
- .active{
+.timeBox{
+  position: fixed;
+  top: 50px;
+  right: 300px;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100px;
+  .el-icon{
+    font-size: 40px;
+    margin: 0 auto;
+  }
+  background-color: rgb(236, 21, 21);
+  p{
+    padding: 5px;
+  }
+}
+.active{
         border: 1px solid #3d80eb;
         background-color: #f1f5fb;
   }
@@ -361,7 +435,7 @@ html{
         color:#fff;
         text-align:center;
         border-radius:5px 0 0 5px;
-        line-heigt:23px;      
+        line-height:23px;      
       }
       .type{
         font-size: 15px;
@@ -372,7 +446,7 @@ html{
         border-radius:0 5px 5px 0;
         color:#3d80eb;
         text-align:center;
-        line-heigt:23px;      
+        line-height:23px;      
       }
       .score{
         color:#ccc;

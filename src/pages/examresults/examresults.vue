@@ -141,9 +141,14 @@ table td {
   color: #e8d208;
   font-size: 60px;
   text-align: center;
+  margin-bottom: 50px;
+  margin-top: 50px;
 }
+
 .grade_top2{
   color: #08e808;
+  margin-bottom: 50px;
+  margin-top: 50px;
   font-size: 60px;
   text-align: center;
 }
@@ -174,7 +179,7 @@ table td {
     background-size:100% 100%;
     position: absolute;
     background-attachment:fixed;
-    line-heigt:100%;
+    line-height:100%;
     .box{
       
       .grade{
@@ -186,6 +191,7 @@ table td {
         .grade_bottom{
           text-align: center;
           font-size: 20px;
+          margin-top: 50px;
         }
       }
       .button{
