@@ -86,7 +86,7 @@
               </div>
             </div>
             <div class="san">
-              <el-button>添加题目</el-button>
+              <el-button @click="goadd">添加题目</el-button>
               <el-button>批量导入</el-button>
               <el-button @click="dialoe = true">从题库中导入</el-button>
               <el-button @click="dialogTableVisible = true"
@@ -467,6 +467,7 @@
         </template>
       </el-dialog>
     </div>
+    <Adddrawer ref="draweraddinfo"></Adddrawer>
   </div>
 </template>
 
@@ -480,6 +481,13 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { getList } from '@/api/Subjects';
 import { wy, databaseList } from '@/api/databaselist';
 import router from '@/router';
+import Adddrawer from '@/components/Dataitem/adddrawer.vue';
+const draweraddinfo=ref<any>()
+
+const goadd=()=>{
+  draweraddinfo.value.drawer=true
+}
+
 const studentTan = ref(false);
 const keJianTan = ref(false);
 //阅卷老师弹出框
