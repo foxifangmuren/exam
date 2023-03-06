@@ -48,6 +48,8 @@
         </div>
         
       </div>
+      <MyPages :total="total" :page="data.page" :psize="data.psize" @changePageSize="changePagesize"
+@changePage="changepage"></MyPages>
   </div>
 </template>
 <script lang="ts" setup>
@@ -59,19 +61,32 @@ import { da } from 'element-plus/es/locale';
   const obj:any = reactive({
     data:{
       page:1,
-      psize:20,
+      psize:10,
       key:'',
       result:''
     },
-    list:[]
+    list:[],
+    total:0
   })
   const List= async()=>{
     let res:any = await getList(obj.data)
-    // console.log(res)
+    console.log(res)
     if(res.errCode===10000){
       obj.list = res.data.list
+      obj.total = res.data.counts
+      console.log(res.total)
     }
     console.log(obj.list)
+  }
+  const changePagesize=(val:Number)=>{
+    console.log(123)
+    obj.data.psize = val
+    List()
+  }
+  const changepage =(val:Number)=>{
+    // console.log(val)
+    obj.data.page = val
+    List()
   }
   //跳转考试详情
   const getexamprepare=(data:any)=>{
@@ -88,7 +103,7 @@ import { da } from 'element-plus/es/locale';
   onMounted(() => {
     List()
   })
-  const {data,list} = toRefs(obj)
+  const {data,list,total} = toRefs(obj)
 </script>
 <style lang="less" scoped>
   .stutest{
