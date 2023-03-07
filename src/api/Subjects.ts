@@ -16,4 +16,7 @@ const subjectsinfo=(params:any):Promise<AxiosResponse<any>>=>{
 const exportExcel=(params:any):Promise<AxiosResponse<any>>=>{
     return get ('subjects/exportExcel',params,{responseType: 'blob'})
 }
-export {getList, delinfo,subjectsinfo,exportExcel}
+const getTest = (id:any)=>{
+  return get('test/get',{id})
+}
+export {getList,getTest, delinfo,subjectsinfo,exportExcel}

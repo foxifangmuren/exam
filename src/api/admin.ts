@@ -94,3 +94,10 @@ export const teacherAdd = (params: any): Promise<AxiosResponse<any>> => {
 export const changePass = (params: any): Promise<AxiosResponse<any>> => {
   return post('/teacher/changePass',params)
 }
+export const SeleList = (params: any) => {
+  return get('/department/list', params)
+}
+// 获取试卷穿梭框数据
+export const ForList = (params: any) => {
+  return get('/teacher/list', params)
+}

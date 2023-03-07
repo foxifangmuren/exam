@@ -112,7 +112,7 @@
           <br />
           <el-link type="primary" @click="anse">分析</el-link>
           <span>|</span>
-          <el-link type="primary">编辑</el-link>
+          <el-link type="primary" @click="updata(scope.row)">编辑</el-link>
           <span>|</span>
           <el-link type="danger" @click="unpublishe(scope.row, 2)"
             >删除</el-link
@@ -283,6 +283,11 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { exportExcel } from '@/api/Subjects';
 import { downLoadBlob } from '@/utils/download';
 import router from '@/router';
+const updata = (row:any)=>{
+  console.log(row);
+  
+  row.studentcounts > 0 ? ElMessage.error('本场考试已有学生参加，不可编辑') : router.push(`/testadd/${row.id}`);
+}
 //下载导出
 const down = async () => {
   const src = await exportExcel({ id: vald.value.id }).then((src: any) => {
@@ -323,7 +328,7 @@ const handleSizeChange = (val: number) => {
   TexLis();
 };
 const testadd = () => {
-  router.push('/testadd');
+  router.push('/testadd/1');
 };
 const handleCurrentChange = (val: number) => {
   TexLis();

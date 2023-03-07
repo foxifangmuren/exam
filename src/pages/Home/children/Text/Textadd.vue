@@ -44,10 +44,16 @@
               </div>
             </div>
             <div class="ty" v-if="Wrodata.isshow == 1">
-              <div v-for="(item, index) in Wrodata.questions" :key="item.id">
+              <div
+                class="yt"
+                v-for="(item, index) in Wrodata.questions"
+                :key="item.id"
+              >
                 <div class="abc">
                   <div>
-                    {{ index + 1 }}{{ item.type }} <span>分值</span>
+                    {{ index + 1 }}.{{
+                      item.type
+                    }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>分值</span>&nbsp;
                     <el-input v-model="item.scores"></el-input>
                   </div>
 
@@ -58,18 +64,29 @@
                     /></el-icon>
                   </div>
                 </div>
-                <div>
-                  {{ item.title }}
-                </div>
+                <div>&nbsp;&nbsp;{{ item.title }}</div>
                 <div
                   v-for="ite in item.answers"
                   :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
                   key="ite.id"
                 >
-                  <span>{{ ite.answerno }}:{{ ite.content }}</span>
+                  <span
+                    >&nbsp;&nbsp;{{ ite.answerno }}: &nbsp;{{
+                      ite.content
+                    }}</span
+                  >
                 </div>
-                <div class="lian" v-if="item.answer">
-                  正确答案:{{ item.answer }}
+                <div
+                  class="lian"
+                  v-if="
+                    item.type == '填空题'
+                      ? true
+                      : item.type == '判断题'
+                      ? true
+                      : false
+                  "
+                >
+                  &nbsp;&nbsp; 正确答案:{{ item.answer }}
                 </div>
                 <div
                   class="daan"
@@ -209,11 +226,11 @@
         </el-form-item>
         <el-form-item label="答案解析">
           <el-radio-group v-model="AddFrom.isshow">
-            <el-radio label="交卷后显示" />
-            <el-radio label="不允许查看" />
-            <el-radio label="仅可查看对错" />
-            <el-radio label="仅查看错题" />
-            <el-radio label="考试结束后查看" />
+            <el-radio :label="1" size="large">交卷后显示</el-radio>
+            <el-radio :label="2" size="large">不允许查看</el-radio>
+            <el-radio :label="3" size="large">仅可查看对错</el-radio>
+            <el-radio :label="4" size="large">仅查看错题</el-radio>
+            <el-radio :label="5" size="large">考试结束后查看</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="防作弊:">
@@ -258,7 +275,7 @@
       >
         <el-form-item label="考试范围">
           <el-badge :value="0" class="item" type="primary">
-            <el-button @click="studentTan = true">+选择</el-button>
+            <el-button @click="dialogVisible1 = true">+选择</el-button>
           </el-badge>
         </el-form-item>
       </el-form>
@@ -286,6 +303,56 @@
       <el-button @click="TestAdd(2)">保存(不发布)</el-button>
       <el-button> <router-link to="test">取消</router-link></el-button>
     </div>
+    <el-dialog v-model="dialo" title="题库列表" width="80%">
+      <el-form class="demo-form-inline" :inline="true" :model="from.query">
+        <el-form-item label="题库名称">
+          <el-input
+            v-model="from.query.key"
+            placeholder="请输入题库名称"
+            @keyup.enter="onSubmit"
+          />
+        </el-form-item>
+        <el-form-item label="创建人">
+          <el-input
+            v-model="from.query.admin"
+            placeholder="请输入创建人"
+            @keyup.enter="onSubmit"
+          />
+        </el-form-item>
+        <el-form-item label="创建人">
+          <el-checkbox v-model="checked" @change="check"
+            >只看我创建的</el-checkbox
+          >
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit" @keyup="onSubmit"
+            >查询</el-button
+          >
+        </el-form-item>
+      </el-form>
+      <MyTable
+        @clickToFather="w"
+        :isTypeSelection="true"
+        :isshow="false"
+        @goinfo="goinfo"
+        @delarrinfo="delarrinfo"
+        :tableHeader="tableHead"
+        :tableData="fr.tableData"
+      ></MyTable>
+      <!-- 分页 -->
+      <MyPages
+        :total="fr.total"
+        :page="fr.query.page"
+        :psize="fr.query.psize"
+        @changePageSize="changePageSi"
+        @changePage="changePa"
+      ></MyPages>
+      <MyCDatadrawer :list="f.data" ref="mycdatadrawer"></MyCDatadrawer>
+      <div class="shi">
+        <el-button @click="dialo = false">取消</el-button>
+        <el-button type="primary" @click="qi">确定</el-button>
+      </div>
+    </el-dialog>
     <el-dialog v-model="dialoe" title="题库列表" width="80%">
       <el-form class="demo-form-inline" :inline="true" :model="from.query">
         <el-form-item label="题库名称">
@@ -467,33 +534,90 @@
         </template>
       </el-dialog>
     </div>
-    <Adddrawer ref="draweraddinfo"></Adddrawer>
+    <!-- <el-dialog v-model="dialogVisible1" v-if="dialogVisible1">
+      <Forth @isshow="isshoww" @valuesss="valuessss"></Forth>
+    </el-dialog> -->
+    <!-- <Drawer
+      :isTitle="isTitle"
+      v-if="isTitle"
+      :index="index"
+      @isF="isF"
+      :obj="obj"
+    ></Drawer> -->
   </div>
 </template>
 
 <script setup lang="ts">
+// import Drawer from '../../../../components/Drawer.vue';
 import { reactive, ref, onMounted, toRefs } from 'vue';
 import { testadd } from '@/api/stutest';
-import { questions, exportExcel, databasequestiondel,testdel} from "@/api/databaselist";
+import { useRouter, useRoute } from 'vue-router';
+import { nextTick } from 'vue';
+// import Forth from '../../../../components/ppp.vue';
+import {
+  questions,
+  exportExcel,
+  databasequestiondel,
+  testdel,
+} from '@/api/databaselist';
 import { examList } from '@/api/exam';
 import { departmentlist } from '../../../../api/admin';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { getList } from '@/api/Subjects';
+import { getList, getTest } from '@/api/Subjects';
 import { wy, databaseList } from '@/api/databaselist';
-import router from '@/router';
 import Adddrawer from '@/components/Dataitem/adddrawer.vue';
-const draweraddinfo=ref<any>()
+const draweraddinfo = ref<any>();
+const mycdatadrawer = ref<any>();
+const goinfo = (vla: any) => {
+  f.data = vla;
+  mycdatadrawer.value.drawer = true;
+};
+const v = ref('');
 
-const goadd=()=>{
-  draweraddinfo.value.drawer=true
-}
+const qi = () => {
+  Wrod.Wrodata.questions = v.value;
+  nextTick(() => {
+    Wrod.Wrodata.isshow = 1;
+  });
+  dialo.value = false;
+};
+const numberValidateForm = reactive({
+  limits: [],
+});
+const valuessss = (val: any) => {
+  numberValidateForm.limits = val;
+};
+const dialogVisible1 = ref(false);
+const isshoww = (val: any) => {
+  dialogVisible1.value = false;
+};
+const delarrinfo = (val: any) => {
+  v.value = val;
+  console.log(v);
+};
+const f = reactive({
+  data: {},
+});
+const router = useRouter();
+// route接收参数
+const route: any = useRoute();
+let id = route.params['id'];
 
+const goadd = () => {
+  isTitle.value = true;
+  // data.index = -1;
+  // data.obj ={};
+};
+// const isF = (e: any) => {
+//   isTitle.value = e;
+// };
 const studentTan = ref(false);
 const keJianTan = ref(false);
 //阅卷老师弹出框
 const yueJuanTan = ref(false);
 const dialogTableVisible = ref(false);
 const dialoe = ref(false);
+const dialo = ref(false);
 const dialogFormVisible = ref(false);
 const chuanSuoKuang = ref(false);
 
@@ -535,20 +659,46 @@ const departmentList = async () => {
     dataq.options = res.data.list;
   }
 };
+
+//题库列表
+const changePa = (val: number) => {
+  fr.query.page = val;
+  console.log(fro.query.page);
+
+  getlist();
+};
+const changePageSi = (val: number) => {
+  fr.query.psize = val;
+  console.log(fro.query.psize);
+
+  getlist();
+};
 const changePag = (val: number) => {
   fro.query.page = val;
+  console.log(fro.query.page);
+
   getlist();
 };
 const changePageSiz = (val: number) => {
   fro.query.psize = val;
+  console.log(fro.query.psize);
+
   getlist();
+};
+const getlist = async () => {
+  const src = await databaseList(fro.query);
+  console.log(src);
+
+  fro.tableData = src.data.list;
+  fro.total = src.data.counts;
 };
 const form = reactive({
   name: '',
 });
 const value2 = ref('');
 const va = ref();
-//试卷数据
+
+//单选获取到的id
 const w = async (id: any) => {
   va.value = id;
 };
@@ -573,32 +723,32 @@ const fm = reactive({
     databaseid: 0,
     page: 1,
     psize: 10,
-    key: "",
-    tags: "",
-    type: "",
-    admin: "",
+    key: '',
+    tags: '',
+    type: '',
+    admin: '',
   },
   //列表数据
   tableData: [],
   //详情数据框
   drawer: false,
-  data:{},
+  data: {},
   //详情数据列表
   particulars: [],
   //总条数
   total: 0,
   //试卷批量删除
   disabled: true,
-  delarray:[]
+  delarray: [],
 });
-
 const zcc = async () => {
-  // dialoe.value = false;
+  dialoe.value = false;
+  dialo.value = true;
   const src = await questions({ databaseid: va.value });
   console.log(src);
-  
-  fro.tableData = src.data.list;
-  fro.total = src.data.counts;
+
+  fr.tableData = src.data.list;
+  fr.total = src.data.counts;
 };
 
 const wwy = async () => {
@@ -614,7 +764,7 @@ const wwy = async () => {
 //试题列表删除
 const delti = (val: any) => {
   console.log(val);
-  AddFrom.questions.splice(val, 1);
+  Wrod.Wrodata.questions.splice(val, 1);
 };
 const onSubmit = () => {
   console.log('submit!');
@@ -654,13 +804,28 @@ const changePageSize = (val: number) => {
   from.query.psize = val;
   getlt();
 };
-const getlist = async () => {
-  const src = await databaseList(from.query);
-  console.log(src);
-  
-  fro.tableData = src.data.list;
-  fro.total = src.data.counts;
-};
+const tableHead = [
+  {
+    prop: 'title',
+    label: '题目',
+    type: 'buttons',
+    buttons: [
+      {
+        text: '表头',
+        type: 'primary',
+        event: 'goinfo',
+      },
+    ],
+  },
+  {
+    prop: 'type',
+    label: '题量类型',
+  },
+  {
+    prop: 'scores',
+    label: '分数',
+  },
+];
 const tableHeade = [
   {
     prop: 'title',
@@ -705,6 +870,26 @@ const tableHeader = [
     label: '创建时间',
   },
 ];
+const fr = reactive({
+  //修改所需
+  val: {},
+  //表单数据---查询功能
+  query: {
+    page: 1,
+    psize: 10,
+    key: '',
+    ismy: 0,
+    admin: '',
+  },
+  loading: true,
+  //总条数
+  total: 0,
+  //表格数据
+  tableData: [],
+  //批量删除按钮
+  disabled: true,
+  delarray: [],
+});
 const fro = reactive({
   //修改所需
   val: {},
@@ -779,6 +964,119 @@ const TestAdd = async (num: number) => {
     router.push('test');
   }
 };
+const data: any = reactive({
+  params: {
+    id: 0,
+    title: '',
+    info: '',
+    admin: 'ldq',
+    begintime: '',
+    endtime: '',
+    // 限制时长
+    limittime: '',
+    scores: 100,
+    state: null,
+    // 通过分数
+    pastscores: 60,
+    qorder: 0,
+    aorder: 0,
+    answershow: 1,
+    isshow: 1,
+    databaseid: 20,
+    // 可见老师
+    limits: [],
+    // 阅卷老师
+    markteachers: [],
+    // 考生范围
+    students: [],
+    // 试题添加数据
+    questions: [],
+  },
+  qor: [],
+  aor: [],
+  // 实体存入题库
+  region: [],
+  regions: [],
+  // 分值
+  score: '',
+  // 防作弊
+  checked1: '',
+  checked2: true,
+  // 弹可见老师
+  is: false,
+  // 带参数
+  stus: '',
+  // 弹出题库列表
+  state: false,
+  // 弹出框标题
+  name: '',
+  // 弹出添加对话框
+  Addis: false,
+  // 弹出添加试卷
+  isTitle: false,
+  Total: 0,
+  // 根据id获取单条试卷
+  DataList: [],
+  // 题库ID
+  dataID: 0,
+  num1: '',
+  num2: '',
+  num3: '',
+  num4: '',
+  num5: '',
+  dan: false,
+  duo: false,
+  pan: false,
+  tian: false,
+  wen: false,
+  arrType: <any>[],
+  isShow: false,
+  isShow1: false,
+  nums: 0,
+  // 考试ID
+  test: 0,
+  num11: 0,
+  num12: 0,
+  num13: 0,
+  num14: 0,
+  num15: 0,
+  arrTime: [],
+  obj: {},
+  Tips: '',
+  index: -1,
+  isImport: false,
+});
+const {
+  isImport,
+  obj,
+  arrTime,
+  num11,
+  num12,
+  num13,
+  num14,
+  num15,
+  dan,
+  duo,
+  pan,
+  tian,
+  wen,
+  num1,
+  num2,
+  num3,
+  num4,
+  num5,
+  Total,
+  params,
+  region,
+  is,
+  stus,
+  regions,
+  state,
+  name,
+  Addis,
+  isTitle,
+  index,
+}: any = toRefs(data);
 const shortcuts = [
   {
     text: '上周',
@@ -808,6 +1106,30 @@ const shortcuts = [
     },
   },
 ];
+// 数据回显
+const Echo = async () => {
+  console.log({ id: Number(id) });
+  const res: any = await getTest(Number(id));
+  console.log(res);
+  if (res.errCode === 10000) {
+    AddFrom.title = res.data.title;
+    Wrod.Wrodata.questions = res.data.questions;
+    console.log(AddFrom.questions);
+
+    AddFrom.info = res.data.info;
+    Wrod.Wrodata.isshow = 1;
+    data.arrTime.push(res.data.begintime);
+    data.arrTime.push(res.data.endtime);
+  } else {
+    ElMessage.error(res.errMsg);
+  }
+};
+// nextTick(() => {
+if (Number(id) != 1) {
+  Echo();
+}
+// });
+
 const num = ref(1);
 const handleChange = (value: number) => {
   console.log(value);
@@ -822,6 +1144,12 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
+/deep/ .el-transfer-panel {
+  margin-right: 200px;
+}
+/deep/ .el-transfer__buttons {
+  display: none;
+}
 .ty {
   div {
     div {
@@ -862,7 +1190,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   // line-height: 50%;
-  height: 50%;
+  height: 50px;
+  border-top: 2px solid #dcdfe6;
   .el-button {
     // line-height: 20%;
     margin-left: 20px;
@@ -954,9 +1283,12 @@ onMounted(() => {
   height: 100%;
   .ty {
     width: 100%;
-    height: 700px;
+    // height: 700px;
+    max-height: 700px;
     overflow: auto;
-
+    .yt {
+      margin-top: 20px;
+    }
     // background-color: aqua;
     // margin: 10px;
     // border: 1px solid red;
