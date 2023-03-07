@@ -5,7 +5,6 @@
         v-model="dialogVisible"
         title="修改"
         width="30%"
-        
       >
         <el-form-item label="角色名称" :label-width="formLabelWidth">
           <el-input v-model="form.name"  />

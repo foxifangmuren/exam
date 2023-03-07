@@ -33,6 +33,7 @@
         </template>
       </el-dialog>
     </div>
+  
     <!-- 内容 -->
     <div class="content">
       <el-form :inline="true" class="demo-form-inline">
@@ -52,6 +53,10 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
         </el-form-item>
       </el-form>
+        <!-- 批量删除 -->
+    <div>
+      <el-button type="danger" @click="batchdel">批量删除</el-button>
+    </div>
       <div>
         <el-table
           ref="multipleTableRef"
@@ -94,6 +99,7 @@ import {
   classeslist,
   classesadd,
   classesdel,
+  delAll
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
 import { log } from 'console';
@@ -133,9 +139,14 @@ const data = reactive({
   options: [],
   //分页 总页数
   total: 0,
+  ids:[],
 });
 // 解构数据
-const { params } = toRefs(data);
+const { params,ids } = toRefs(data);
+//全选
+const handleSelectionChange = (val: any) => {
+  data.ids = val.map((item: any) => item.id);
+};
 let obj = ref({})
 const props = {
   expandTrigger: 'hover',
@@ -154,9 +165,6 @@ interface User {
 }
 const multipleSelection = ref<User[]>([]);
 
-const handleSelectionChange = (val: User[]) => {
-  multipleSelection.value = val;
-};
 const value: any = ref('');
 //级联调接口
 const departmentList = async () => {
@@ -228,6 +236,27 @@ const del = (ids: number) => {
       ElMessage.error('已取消删除');
     });
 };
+// 批量删除
+const dells =async ()=>{
+    const res:any = await delAll({ids:ids.value})
+    console.log(res);
+    if(res.errCode === 10000){
+        ElMessage.success("删除成功")
+        getclasseslist()
+    }else{
+        ElMessage.error(res.errMsg)
+    }
+}
+const batchdel = async()=>{
+   const conf = await ElMessageBox.confirm('是否永久删除此文件', '提示', {
+    cancelButtText: '取消',
+    confirmButtonText: '确定',
+    type: 'warning',
+  }).catch((error: any) => {
+    ElMessage.error('已取消删除');
+  });
+  if (conf) dells();
+}
 
 //分页
 const handleSizeChange = (val: number) => {
