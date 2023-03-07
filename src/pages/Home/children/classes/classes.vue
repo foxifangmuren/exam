@@ -54,7 +54,7 @@
         </el-form-item>
       </el-form>
         <!-- 批量删除 -->
-    <div>
+    <div v-if="va !=''">
       <el-button type="danger" @click="batchdel">批量删除</el-button>
     </div>
       <div>
@@ -143,9 +143,12 @@ const data = reactive({
 });
 // 解构数据
 const { params,ids } = toRefs(data);
+const va:any = ref('')
 //全选
 const handleSelectionChange = (val: any) => {
   data.ids = val.map((item: any) => item.id);
+  va.value = val;
+  multipleSelection.value = val
 };
 let obj = ref({})
 const props = {
@@ -158,12 +161,7 @@ const handleChange = (e: any) => {
   data.value = e;
 };
 
-interface User {
-  date: string;
-  name: string;
-  address: string;
-}
-const multipleSelection = ref<User[]>([]);
+const multipleSelection = ref<any[]>([]);
 
 const value: any = ref('');
 //级联调接口
