@@ -39,10 +39,10 @@
             </div>
             <div class="answersbox" v-if="item.type==='判断题'">
               <div class="answersbox1">
-                 <div class="judge">
-                  <span class="quan"></span><span>正确</span>
+                 <div class="judge" :class="item.studentanswer=='正确'?'quan active':'quan'">
+                  <span class="quan"  ></span><span>正确</span>
                  </div>
-                 <div class="judge">
+                 <div class="judge" :class="item.studentanswer=='错误'?'quan active':'quan'">
                   <span class="quan"></span><span>错误</span>
                  </div>
               </div>
@@ -65,7 +65,7 @@
                  </div>
               </div>
             </div>
-            <div style="margin-top: 20px;"> <span v-if="item.type!=='问答题'">正确答案 </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
+            <div style="margin-top: 20px; height: 40px; line-height: 40px; background-color: #f7fbff;" > <span v-if="item.type!=='问答题'" style="color:#90adca">正确答案： </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
               <span v-if="item.type==='判断题'" class="correct1">{{ item.answer }}</span>
               <span v-if="item.type==='填空题'" class="correct1">{{ item.answer }}</span>
               <br>
@@ -157,7 +157,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
   margin-left: -20px;
 }
 .judge{
-
+  height: 40px;
   display: flex;
   align-items: center;
   .quan{

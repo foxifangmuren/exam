@@ -72,7 +72,7 @@
       <div class="sheet">
         <h3>答题卡</h3>
         <div class="board">
-          <div class="boardbox" style="background-color: #ccc;"></div><div>已答</div>
+          <div class="boardbox" style="background-color: #f0f8ff;"></div><div>已答</div>
           <div class="boardbox" style="background-color: #fff; border: 1px solid #ccc;"></div><div>未答</div>
         </div>
         <div class="conten">
@@ -115,7 +115,6 @@
 import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
 import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect} from 'vue'
-import { head } from 'lodash';
 const route = useRoute()
 const router = useRouter()
 const obj:any = reactive({
@@ -125,7 +124,7 @@ const obj:any = reactive({
   answered:0,
   endTime:''
 })
-
+let ass = JSON.parse(sessionStorage.getItem('model') as any)
 // 替换方法
 const rep = (str: string, index: number) => {
   return str.replace(
@@ -219,14 +218,10 @@ const changRadio=(type:String,item: any,index:any)=>{
     }
     console.log(obj.list)
   }
-   
-    
   }
   const tiao=(index:any)=>{
     // console.log(index)
     document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
-    console.log(document.getElementsByClassName('concent')[index])
-    console.log(document.querySelectorAll('input'))
   }
 const getList =async ()=>{
   let res:any = await getteststart({testid:route.query.testid})
@@ -234,6 +229,31 @@ const getList =async ()=>{
   if(res.errCode===10000){
 
     obj.list = res.data
+    let daima = JSON.parse(
+      localStorage.getItem("examInfo" + obj.list.id) as string
+    );
+    if (daima != null && daima != ""&&ass.id==daima.studentId) {
+      if (obj.list.id === daima.id) {
+        obj.list = daima;
+        // 填空题回显数据
+        nextTick(() => {
+          document.querySelectorAll(".input").forEach((item: any) => {
+            let _index = item.getAttribute("data-index");
+            document
+              .querySelectorAll(".input" + _index)
+              .forEach((ite: any, index: number) => {
+                ite.value =
+                  daima.questions[_index].studentanswer.split("|")[index] ===
+                  undefined
+                    ? ""
+                    : (daima.questions[_index].studentanswer || "").split("|")[index];
+              });
+          });
+        });
+      } else {
+        obj.list = res.data;
+      }
+    }
     if (list.value.limittime > 0) {
       var timer = setInterval(() => {
         //获取当前时间
@@ -273,6 +293,10 @@ const getList =async ()=>{
   }
   console.log(obj.list)
 }
+getList()
+onBeforeMount(() => {
+  getList()
+})
 onUpdated(()=>{
   document.querySelectorAll(".input").forEach((item: any) => {
         item.oninput = function () {
@@ -288,12 +312,21 @@ onUpdated(()=>{
       });
 })
 
-onBeforeMount(() => {
-  getList()
-})
-nextTick(()=>{
-  console.log(document.querySelectorAll('input'))
-})
+console.log(obj.list)
+const setItem=()=>{
+  localStorage.setItem(
+    "examInfo" + obj.list.id,
+    JSON.stringify({...obj.list,studentId:ass.id})
+  );
+}
+
+// 浏览器属性事件
+// /添加监听事件，监听后退，前进
+window.onbeforeunload= function () {
+  setItem()
+};
+
+
 
 const {list,isActive,answered,endTime} = toRefs(obj)
 </script>
@@ -324,7 +357,8 @@ html{
         background-color: #f1f5fb;
   }
   .box7{
-    background-color: #ccc;
+    background-color: #f0f8ff;
+    color: #aab4fd;
   }
 .box2{
   font-size: 13px;
