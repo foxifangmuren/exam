@@ -85,7 +85,7 @@ const routes:any = [
       },
       //考试添加
       {
-        path: '/testadd',
+        path: '/testadd/:id',
         name:tesadd,
         component: tesadd,
       },
