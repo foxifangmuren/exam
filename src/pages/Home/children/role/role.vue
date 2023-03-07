@@ -1,275 +1,365 @@
 <template>
-  <div class="box">
-    <!-- 头部 -->
-    <div class="header">
-      <span class="head">角色管理</span>
-      <el-button type="primary" @click="dialogFormVisible = true"
-        >添加角色</el-button
-      >
+  <div class="roleBox">
+    <div class="top">
+      <span class="title">角色管理</span>
+      <el-button type="primary" @click="edit(0)">添加角色</el-button>
     </div>
-
-    <!-- 添加弹出框 -->
-    <el-dialog v-model="dialogFormVisible" title="添加">
-      <el-form :model="form">
-        <el-form-item label="角色名称" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" />
-        </el-form-item>
-        <el-form-item :label-width="formLabelWidth">
-          <div v-for="(item, index) in state.list" :key="item.id">
-            <el-checkbox
-              v-model="item.ced"
-              :indeterminate="item.isIndeterminate"
-              @change="handleCheckAllChange(index)"
-              >{{ item.name }}</el-checkbox
-            >
-            <el-checkbox-group
-              v-model="item.checkedCities"
-              style="margin-left: 50px"
-            >
-              <el-checkbox
-                @change="handleCheckedCitiesChange(index)"
-                v-for="item2 in item.children"
-                :key="item2.id"
-                :label="item2.id"
-                >{{ item2.name }}</el-checkbox
-              >
-            </el-checkbox-group>
-          </div>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="primary" @click="add"> 添加 </el-button>
-        </span>
-      </template>
-    </el-dialog>
     <!-- 表格 -->
-    <div class="content">
-      <div>
-        <el-table
-          ref="multipleTableRef"
-          :data="data.tableData"
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-          stripe
-        >
-          <el-table-column property="name" label="学生姓名" />
-          <el-table-column label="操作" width="120" #default="scope">
-            <span class="zi" style="cursor: pointer" @click="update(scope.row)">编辑</span>
-            <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
-              >删除</span
+    <div class="buttom">
+      <el-table
+        :data="tableData"
+        v-loading="loading"
+        :header-cell-style="{ background: '#fafafa' }"
+        style="width: 100%; margin-top: 20px; font-size: 13px"
+      >
+        <el-table-column prop="name" label="名称" />
+        <el-table-column fixed="right" label="操作" width="120" >
+          <template #default="scope">
+            <el-button link type="primary" size="small" @click="edit(scope.row)"
+              >编辑</el-button
             >
-          </el-table-column>
-        </el-table>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="del(scope.row.id)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <div class="paging">
+        <div class="demo-pagination-block">
+          <el-pagination
+            v-model:currentPage="paging.page"
+            v-model:page-size="paging.psize"
+            :page-sizes="[10, 20, 30, 40]"
+            :small="small"
+            :disabled="disabled"
+            background
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="Data.counts"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </div>
       </div>
     </div>
-    <!-- 分页 -->
-    <div class="demo-pagination-block">
-      <el-pagination
-        v-model:current-page="data.params.page"
-        v-model:page-size="data.params.psize"
-        :page-sizes="[5, 10, 15, 20]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="data.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+    <!-- 添加弹出框 -->
+    <div>
+      <el-dialog
+        v-model="dialogVisible"
+        top="5vh"
+        :title="tips"
+        width="70%"
+        :close-on-click-modal="false"
+        :before-close="handleClose"
+        v-if="dialogVisible"
+      >
+        <div>
+          <el-form
+            :model="Data"
+            status-icon
+            ref="formRef"
+            class="demo-ruleForm"
+          >
+            <el-form-item label="角色名称:" :rules="[{ required: true, message: '请输入角色名称' }]" prop="name">
+              <el-input
+                style="width: 280px"
+                v-model="Data.name"
+                type="text"
+                autocomplete="off"
+              />
+            </el-form-item>
+          </el-form>
+        </div>
+        <!-- 多选框 -->
+        <div v-loading="loadinged" class="power">
+          <div>权限</div>
+          <!-- 考试 -->
+          <div v-for="(item, index) in addData" :key="item.id">
+            <div>
+              <el-checkbox
+                v-model="item.checked"
+                style="margin-left: 35px; margin-top: 10px"
+                :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange(index)"
+              >
+                {{ item.name }}
+              </el-checkbox>
+            </div>
+            <div style="margin-left: 70px">
+              <el-checkbox-group
+                v-model="item.checkeds"
+                @change="handleCheckedCitiesChange($event, index)"
+              >
+                <el-checkbox
+                  v-for="items in item.children"
+                  :label="items.id"
+                  :key="items.id"
+                >
+                  {{ items.name }}</el-checkbox
+                >
+              </el-checkbox-group>
+            </div>
+          </div>
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="resetForm">取消</el-button>
+            <el-button type="primary" @click="submitForm(formRef)"
+              >确定</el-button
+            >
+          </span>
+        </template>
+      </el-dialog>
     </div>
-    <roleUp ref="roup" @rouleList="rouleList"></roleUp>
   </div>
 </template>
+<script lang='ts' setup>
+// 引入调接口数据
+import { rolelist, roleadd,  roledel } from "../../../../api/admin";
+import {menuList} from "../../../../api/role"
+// 引入vue样式
+import { ref, reactive, toRefs, onMounted } from "vue";
+// 引入element ui样式
+import { ElMessage, ElMessageBox,FormInstance } from "element-plus";
+// 权限控制按钮是否隐藏方法导入
+// import { isButton } from "../../utils/isButton";
 
-<script setup lang="ts">
-import { log } from 'console';
-import roleUp from '../../../../components/role/roleUp.vue'
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { onMounted, reactive, ref, toRefs } from 'vue';
-import { rolelist, roledel, roleadd } from '../../../../api/admin';
-import { menuList } from '../../../../api/role';
-const dialogFormVisible = ref(false);
-const formLabelWidth = '140px';
-const roup =ref<any>(null)
-const data = reactive({
-  //表格数据
+// 定义的数据
+const Data: any = reactive({
+  name: <any>"",
+  id: 0,
+  // 多选框
+  isIndeterminate: false,
+  // 添加的数据
+  addData: <any>[],
+  // 数组里加对象
+  objData: <any>[],
+  // 表格数据
+  paging: { page: 1, psize: 10 },
   tableData: [],
-  //列表参数
-  params: {
-    page: 1,
-    psize: 10,
-  },
-  key: '',
-  //搜索
-  value: [],
-  //分页 总页数
-  total: 0,
-  ids: [],
+  // 分页总条数
+  counts: 0,
+  // 表格加载
+  loading: true,
+  // 复选框加载
+  loadinged: true,
+  // 提示
+  tips: "添加",
 });
 // 解构数据
-const { params } = toRefs(data);
+const {
+  loadinged,
+  isIndeterminate,
+  addData,
+  objData,
+  paging,
+  tableData,
+  loading,
+  tips,
+} = toRefs(Data);
 
+// 添加角色
+const dialogVisible = ref(false);
+// 点击空处不会消失对话框
+const handleClose = () => {
+  dialogVisible.value = false;
+};
+// 填写名称
+const formRef = ref<any>();
+// 多选框
 const handleCheckAllChange = (index: number) => {
-  console.log(123);
-  let ids = state.list[index].children.map((item: any) => item.id);
-  console.log(ids);
-  if (
-    state.list[index].checkedCities &&
-    state.list[index].checkedCities.length > 0
-  ) {
-    state.list[index].checkedCities = [];
+  // console.log(11,index);
+  // console.log('123',Data.addData[index])
+  if (Data.addData[index].checked) {
+    console.log(Data.addData[index].checked);
+    Data.addData[index].checkeds = [...Data.addData[index].children].map(
+      (item) => item.id
+    );
   } else {
-    state.list[index].checkedCities = ids;
+    Data.addData[index].checkeds = [];
   }
+  Data.objData = Data.addData[index].checkeds;
+  // console.log(22,Data.addData[index].checkeds);
 };
-const handleCheckedCitiesChange = (index: number) => {
-  console.log(state.list[index].children);
-  let cheeckLen = state.list[index].checkedCities.length;
-  let allLen = state.list[index].children.length;
-  console.log(allLen);
-  state.list[index].isIndeterminate = false;
-  if (cheeckLen == allLen) {
-    state.list[index].ced = true;
-  } else if (cheeckLen > 0) {
-    state.list[index].isIndeterminate = true;
-  } else {
-    state.list[index].ced = false;
-  }
+const handleCheckedCitiesChange = (value: string[], index: number) => {
+  console.log(value)
+  Data.addData[index].checked = value.length === Data.addData[index].children.length;
+  objData.value = [...Data.addData[index].checkeds];
+  // console.log([...objData.value]);
 };
-const state = reactive<any>({
-  list: [],
-});
-const getMenuList = async () => {
-  let res: any = await menuList(null);
-  if (res.errCode === 10000) {
-    state.list = res.data.list;
-  }
-};
-
-const form = reactive({
-  id: 0,
-  name: '',
-  menus: '',
-});
-const props = {
-  expandTrigger: 'hover',
-  checkStrictly: true,
-  value: 'id',
-  label: 'name',
-};
-
-interface User {
-  date: string;
-  name: string;
-  address: string;
-}
-const multipleSelection = ref<User[]>([]);
-
-const handleSelectionChange = (val: User[]) => {
-  multipleSelection.value = val;
-};
-const value: any = ref('');
-
-//班级列表
-const rouleList = async () => {
-  const res: any = await rolelist({
-    ...params.value,
-    depid: data.value ? data.value[data.value.length - 1] : 0,
-    key: data.key,
-  });
-  console.log('班级列表', res);
-  if (res.errCode === 10000) {
-    data.tableData = res.data.list;
-    data.total = res.data.counts;
-  }
-};
-//添加
+// 添加请求接口
 const add = async () => {
-  // console.log(data.params.depname)
-  console.log();
-  console.log(form);
-  const res: any = await roleadd(form);
-  console.log('班级添加', res);
+  let menus: any = [];
+  Data.addData.forEach((element: any) => {
+    if (element.checkeds) {
+      menus = [
+        ...menus,
+        ...[...element.checkeds].map((item: any) => ({ id: item })),
+      ];
+    }
+  });
+  if (menus.length < 1) {
+    ElMessage("请至少选择一个权限");
+    return;
+  }
+  const res: any = await roleadd({
+    id: Data.id,
+    name: Data.name,
+    menus: menus,
+  });
   if (res.errCode === 10000) {
-    ElMessage.success('添加成功');
-    dialogFormVisible.value = false;
-    rouleList();
+    ElMessage.success(tips.value + "成功");
+    dialogVisible.value = false;
+    List();
+  } else {
+    ElMessage.error(res.errMsg);
+    dialogVisible.value = true;
   }
 };
-let obj = ref({})
-//点击修改
-const update = (data:any)=>{
-  roup.value.dialogVisible = true
-  console.log(roup.value)
-  roup.value.form.name = data
-  obj.value = data
-}
-//删除的点击
-const del = (ids: number) => {
-  ElMessageBox.confirm('是否永久删除此文件', '提示', {
-    cancelButtText: '取消',
-    confirmButtonText: '确定',
-    type: 'warning',
+// 添加提交
+const submitForm = (formEl: any | undefined) => {
+  if (!formEl) return
+  formEl.validate((valid:any) => {
+    if (valid) {
+      add();
+    } else {
+      return false
+    }
   })
-    .then((res: any) => {
-      dell(ids);
+}
+// 取消
+const resetForm = () => {
+  Data.name = "";
+  dialogVisible.value = false;
+};
+// 修改回显接口
+const getRoleData = async (roleid: any) => {
+  Data.loadinged = true;
+  const res: any = await menuList({ roleid });
+  if (res.errCode === 10000) {
+    Data.addData = res.data.list;
+  } else {
+    ElMessage.error(res.errMsg);
+  }
+  Data.loadinged = false;
+  Data.addData.forEach((element: any) => {
+    element.checked = element.checked == 1;
+    if (element.children) {
+      element.checkeds = [...element.children]
+        .filter((item: any) => item.checked == 1)
+        .map((ite: any) => ite.id);
+    }
+    if (element.checkeds.length == element.children.length) {
+      element.checked = true;
+    }
+  });
+};
+// 编辑
+const edit = (e: any) => {
+  Data.addData = [];
+  tips.value = "添加";
+  dialogVisible.value = true;
+  getRoleData(e.id);
+  if (e.id) {
+    Data.name = e.name;
+    Data.id = e.id;
+    tips.value = "修改";
+  } else {
+    Data.name = "";
+  }
+};
+// 删除
+const del = (ids: number) => {
+  ElMessageBox.confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+    cancelButtonText: "取消",
+    confirmButtonText: "确认",
+    type: "warning",
+  })
+    .then((res:any) => {
+      delInfo(ids);
     })
-    .catch((error: any) => {
-      ElMessage.error('已取消删除');
+    .catch((error:any) => {
+      ElMessage.error("已取消删除");
     });
 };
-//删除接口
-const dell = async (ids: number) => {
+// 删除请求接口
+const delInfo = async (ids: number) => {
   const res: any = await roledel({ id: ids });
-  // console.log('删除',res)
+  // console.log(res);
   if (res.errCode === 10000) {
-    ElMessage.success('删除成功');
-    rouleList();
+    ElMessage.success("删除成功");
+    List();
   } else {
     ElMessage.error(res.errMsg);
   }
 };
-//分页
+// 列表
+const List = async () => {
+  const res: any = await rolelist({ ...Data.paging });
+  // console.log(res);
+  if (res.errCode === 10000) {
+    Data.tableData = res.data.list;
+    Data.counts = res.data.counts;
+  }
+  Data.loading = false;
+};
+// 页面加载
+onMounted(() => {
+  List();
+});
+// 分页
+const small = ref<boolean>(false);
+const disabled = ref<boolean>(false);
 const handleSizeChange = (val: number) => {
-  rouleList();
+  paging.value.psize = val;
+  List();
 };
 const handleCurrentChange = (val: number) => {
-  rouleList();
+  paging.value.page = val;
+  List();
 };
-
-//页面加载
-onMounted(() => {
-  //角色列表
-  rouleList();
-  //权限列表
-  getMenuList();
-});
 </script>
+<style scoped lang='less'>
+.roleBox{
+    width: 100%;
+    .top{
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 10px;
+        .title{
+            font-size: 20px;
+        }
+        button{
+            font-size: 12px;
+        }
+    }
+    .buttom{
+        height: 91vh;
+        overflow-y: scroll;
+    }
+    // 分页
+    .paging{
+        width: 100%;
+        margin-top: 15px;
+        .el-pagination{
+            justify-content: center;
+        }
+        .demo-pagination-block + .demo-pagination-block {
+            margin-top: 10px;
+          }
+          .demo-pagination-block .demonstration {
+            margin-bottom: 16px;
+          }
+    }
+    .power{
+        margin-left: 38px;
+        height: 55vh !important;
+        overflow-y: scroll !important;
+    }
+}
 
-<style scoped>
-.box {
-  margin-left: 5px;
-  background-color: #fff;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-}
-.head {
-  font-size: 20px;
-}
-
-.content {
-  margin-top: 10px;
-}
-.zi {
-  font-size: 6px;
-  margin-right: 10px;
-  color: rgb(85, 149, 227);
-}
-
-.demo-pagination-block {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-}
 </style>
