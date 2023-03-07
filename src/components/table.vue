@@ -35,8 +35,8 @@
                 link
                 :type="btn.type"
                 @click="$emit(btn.event, scope.row)"
-                >{{ scope.row.incomplete > 0 ? "阅卷" : "查看" }}</el-button
-              >
+                >{{ scope.row.incomplete > 0 ? "阅卷" : "查看" }}</el-button >
+                
             </span>
             <!-- 板块表头跳转 -->
             <span v-else-if="btn.text == '表头'">
@@ -60,9 +60,8 @@
         </div>
         <!-- 文本(阅卷未判人数) -->
         <div v-if="item.label == '开放时间'">
-          <span>{{
-            scope.row.endtime == null ? "不限" : scope.row.addtime
-          }}</span>
+            <span v-if=" scope.row.endtime == null">不限</span>
+            <span v-else >{{ scope.row.addtime.slice(0,16) +"至"+scope.row.endtime.slice(0,16)}}</span>
         </div>
         <!-- 颜色更改(阅卷未判人数) -->
         <div v-if="item.label == '未判人数'">
@@ -71,6 +70,11 @@
           </span>
           <span v-else style="color: green"> 已经全部阅完 </span>
         </div>
+        <!-- 阅卷状态行为 -->
+        <span v-if="item.label=='状态'">
+            <span v-if="scope.row.state=='已阅卷'" style="color:red;">{{scope.row.state}}</span>
+            <span v-if="scope.row.state=='未阅卷'" >{{scope.row.state}}</span>
+        </span>
         <!-- 如果没有值显示 TODO -->
       </template>
     </el-table-column>
