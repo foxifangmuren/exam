@@ -60,7 +60,6 @@
         <el-button @click="download">导出excel</el-button>
       </el-form-item>
     </el-form>
-
     <!-- 表格 接受：表格数据（tableData）表格头部（tableHeader） 是否有复选框（isTypeSelection） -->
     <MyTable
       :tableData="from.tableData"
@@ -69,7 +68,7 @@
       @delarrinfo="delarrinfo"
       @goinfo="goinfo"
       @del="datadel"
-      
+      @goadd="goadd"
     ></MyTable>
     <!--  分页 接受：总条数（total） 页数（page） 条数（psize） 方法（changPageSize）（changPage） -->
     <MyPages :total="from.total" :page="from.query.page" :psize="from.query.psize"  @changePageSize="changePageSize" @changePage="changePage" ></MyPages>
@@ -77,8 +76,8 @@
     <MyCDatadrawer :list="from.data" ref="mycdatadrawer"></MyCDatadrawer>
     <!-- 批量添加弹框 -->
     <MyDialog @getlist="getlist" ref="adddata"></MyDialog>
-    <!-- 添加侧边框 -->
-    <Adddrawer @getlist="getlist" ref="draweraddinfo"></Adddrawer>
+    <!-- 添加侧边框 刷新列表方法（getlist） 传递id（id） 传递数据（questionsdata） 显示隐藏（ref="draweraddinfo"）-->
+    <Adddrawer @getlist="getlist" :id="testid" :questionsdata="questionsdata" ref="draweraddinfo"></Adddrawer>
   </div>
 </template>
 
@@ -97,9 +96,16 @@ import { questions, exportExcel, databasequestiondel,testdel} from "@/api/databa
 import { ElMessageBox } from "element-plus";
 //试题添加
 const draweraddinfo=ref<any>()
+const questionsdata=ref({})
+//试题修改
+const goadd=(val:any)=>{
+  //显示弹框
+  draweraddinfo.value.drawer=true
+  //赋值
+  questionsdata.value=val
+}
+//试题添加
 const addtest=()=>{
-  console.log('添加试题');
-  console.log(draweraddinfo,"暴露属性");
   draweraddinfo.value.drawer=true
 }
 //详情列表的渲染
@@ -139,7 +145,8 @@ const from = reactive({
   disabled: true,
   delarray:[]
 });
-//批量删除
+//批量删除----待优化，只可初次删除
+
 const delarrinfo=(val:any)=>{
   console.log(val);
   
@@ -198,7 +205,7 @@ const tableHeader = [
       {
         text: "编辑",
         type: "primary",
-        event: "goinfotow",
+        event: "goadd",
       },
       {
         text: "删除",
@@ -271,7 +278,7 @@ const download = async () => {
 }
 .margin_top {
   margin-top: 30px;
-  background-color: rgb(255, 202, 202);
+  // background-color: rgb(255, 202, 202);
 }
 .Dataitem_title {
   display: flex;

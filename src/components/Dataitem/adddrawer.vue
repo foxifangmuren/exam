@@ -2,11 +2,12 @@
 <div>
     <el-drawer
     v-model="drawer"
-    title="试题添加"
+    :title="title"
     direction="rtl"
     size="45%"
+    @close="clear"
   >
-  <!-- 内容区域 -->
+   <!-- 内容区域 -->
   <div>
       <!-- 题干 -->
           <el-form ref="ruleFormRef"
@@ -38,53 +39,77 @@
         <!-- 选择题单选  -->
         <div v-if="ruleForm.type=='单选题'">
             <!-- 选择项 -->
-            <el-form-item label="单选">
-              <el-input v-model="ruleForm.desc" type="textarea" />
-              
+            <el-form-item label="选项">
+              <!-- 选项  -->
+              <el-form-item v-for="(domain, index) in ruleForm.answers" :key="index" :label="data.letter[index]">
+                <!-- 输入框的值 -->
+                <el-input v-model="domain.content" />
+                <!-- 删除图标 -->
+                <el-icon style="font-size: 22px; color: #f56c6c;"><CircleClose  @click.prevent="removeDomain(index)"/></el-icon>
+              </el-form-item>
+              <!--按钮区域-->
+              <el-form-item>
+                <el-icon style="margin-left: 50px; font-size: 22px; color: #48a2ff;"><CirclePlus @click="addDomain" /></el-icon>
+              </el-form-item>
             </el-form-item>
             <!-- 答案 -->
             <el-form-item label="答案">
               <el-radio-group v-model="ruleForm.answer">
-                <el-radio label="A">A</el-radio>
-                <el-radio label="B">B</el-radio>
-                <el-radio label="C">C</el-radio>
-                <el-radio label="D">D</el-radio>
+                <el-radio :label="data.letter[index]" v-for="(item, index) in ruleForm.answers" :key="index">
+                  {{ data.letter[index] }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
         </div>
         <!-- 多选题  -->
         <div v-if="ruleForm.type=='多选题'">
-           <el-form-item label="Activity form">
-              <el-input v-model="ruleForm.desc" type="textarea" />
+            <!-- 选择项 -->
+            <el-form-item label="选项">
+              <!-- 选项  -->
+              <el-form-item v-for="(domain, index) in ruleForm.answers" :key="index" :label="data.letter[index]">
+                <!-- 输入框的值 -->
+                <el-input v-model="domain.content" />
+                <!-- 删除图标 -->
+                <el-icon style="font-size: 22px; color: #f56c6c;"><CircleClose  @click.prevent="removeDomain(index)"/></el-icon>
+              </el-form-item>
+              <!--按钮区域-->
+              <el-form-item>
+                <el-icon style="margin-left: 50px; font-size: 22px; color: #48a2ff;"><CirclePlus @click="addDomain" /></el-icon>
+              </el-form-item>
+            </el-form-item>
+            <!-- 答案 -->
+            <el-form-item label="答案">
+                <el-checkbox-group v-model="check" @change="changeCheckbox">
+                  <el-checkbox :label="data.letter[index]" v-for="(item, index) in ruleForm.answers" :key="index" />
+                </el-checkbox-group>
             </el-form-item>
         </div>
         <!-- 判断题  -->
         <div v-if="ruleForm.type=='判断题'">
             <el-form-item label="判断题">
-               <el-button-group>
-                  <el-button  type="primary" plain @click="ruleForm.answer ='正确'">正确</el-button>
-                  <el-button  type="primary" plain @click ="ruleForm.answer ='错误'"> 错误 </el-button>
-                </el-button-group>
+               <el-radio-group v-model="ruleForm.answer" size="large">
+                <el-radio-button label="正确" />
+                <el-radio-button label="错误" />
+              </el-radio-group>
             </el-form-item>
         </div>
         <!-- 填空问答 -->
         <div v-if='ruleForm.type=="填空题"?true:(ruleForm.type=="问答题"?true:false)'>
             <el-form-item label="解析">
-              <el-input rows="5" style="width:300px" v-model="ruleForm.desc" type="textarea" />
+              <el-input rows="5" style="width:300px" v-model="ruleForm.explains" type="textarea" />
             </el-form-item>
         </div>
       </div>
       <!-- 分值 -->
       <el-form-item label="分值：">
-          <el-input-number v-model="ruleForm.scores" class="mx-4" min="0"  controls-position="right" @change="handleChange" />
+          <el-input-number v-model="ruleForm.scores" class="mx-4" :min="0"  controls-position="right"  />
       </el-form-item>
       <!-- 按钮区域 -->
       <el-form-item>
         <el-button type="primary" @click="submitForm()">保存</el-button>
-        <el-button @click="resetForm(ruleFormRef)">保存并取消</el-button>
-        <el-button @click="resetForm(ruleFormRef)">取消</el-button>
+        <el-button @click="save">保存并取消</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-form-item>
-
       </el-form>
   </div>
   </el-drawer> 
@@ -100,31 +125,64 @@
  *    刷新列表
  *    传值父级
  */
-import { onBeforeUnmount,reactive, ref, shallowRef } from 'vue'
+import { ElMessage } from 'element-plus'
+import { onBeforeUnmount,reactive, ref, shallowRef,watch } from 'vue'
 import {addDataitem} from "@/api/databaselist"
-import { useRoute } from "vue-router";
 
-//地址栏数据
-const route = useRoute();
-const title: any = ref(route.query.title);
-const testid:any = ref(route.query.id);
-
+//选择题部分
+const removeDomain = (index:any) => {
+  ruleForm.answers.splice(index,1)
+}
+const addDomain = () => {
+  console.log(ruleForm.answers);
+  if(ruleForm.answers.length==26){
+      ElMessage({
+        message: '只能添加这些选项',
+        type: 'warning',
+      })
+      return
+  }
+    ruleForm.answers.push({
+        id: 0,
+        answerno: data.letter[ruleForm.answers.length],
+        questionid: 0,
+        content: ''
+    })
+    
+}
+let check=ref([])//复选框正确答案的值
+// 多选框内容改变
+const changeCheckbox = (e: any) => {
+  console.log(e);
+  ruleForm.answer = e.join("|");
+};
+//暴露属性显示隐藏
 const drawer = ref(false)
-defineExpose({
-  drawer
+defineExpose({ drawer})
+//修改接受传递过来的参数
+const props:any=defineProps({
+    questionsdata:{
+      type:Object,
+      defind:null,
+    },
+    id:{
+      type:String,
+      defind:null
+    }
 })
+watch(props,(nweProps,oldProps)=>{
+  console.log(props.questionsdata);
+  for(let item in ruleForm){
+    ruleForm[item]=props.questionsdata[item]
+  }
+})
+//标题更改
+const title=ref('添加试题')
 //刷新列表
 const emit=defineEmits(['getlist'])
-//分值
-const num = ref(1)
-const handleChange = (value: number) => {
-  console.log(value)
-}
-
 //富文本编辑器
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import { log } from 'console'
     const editorRef = shallowRef()
     // 组件销毁时，也及时销毁编辑器
     onBeforeUnmount(() => {
@@ -134,7 +192,7 @@ import { log } from 'console'
     })
  
     const handleCreated = (editor:any) => {
-      console.log("记录 editor 实例，重要！",editor);
+      // console.log("记录 editor 实例，重要！",editor);
       editorRef.value = editor // 记录 editor 实例，重要！
     }
 //表单数据对象
@@ -142,15 +200,43 @@ const ruleFormRef = ref<any>({
  
 })
 //数据存放
-const ruleForm = reactive({
+const ruleForm:any = reactive({
+    id:0,
     databaseid:0,
+    scores:"",
     title: "",
     type: "单选题",
     answer: "",
     tags: "",
     explains: "",
-    answers: []
+    answers: [
+                {
+                    "id": 0,
+                    "answerno": "A",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "B",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "C",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "D",
+                    "questionid": 0,
+                    "content": ""
+                },
+    ]
 })
+
 // 正则校验
 const rules = reactive<any>({
   desc: [
@@ -159,19 +245,125 @@ const rules = reactive<any>({
 })
 //成功时候的按钮
 const submitForm = async () => {
-  console.log(testid.value);
-  ruleForm.databaseid=testid.value
-    console.log(ruleForm,"1212");
-    const src=await addDataitem(ruleForm)
-    console.log(src);
-    drawer.value=false
-    emit('getlist')
+    //拿去id
+    ruleForm.databaseid=props.id
+    if(ruleForm.type=='问答题'){
+      ruleForm.answer='：略'
+    }
+      //发送请求
+      const src=await addDataitem(ruleForm).then((src:any)=>{
+         ElMessage({
+          message: "添加成功",
+          type: 'success',
+        })
+      })
+      //关闭弹框
+      drawer.value=false
+      //刷新列表
+      emit('getlist')
+}
+//保存并取消
+const save=async ()=>{
+   //拿去id
+    ruleForm.databaseid=props.id
+    if(ruleForm.type=='问答题'){
+      ruleForm.answer='：略'
+    }
+      //发送请求
+      const src=await addDataitem(ruleForm).then((src:any)=>{
+         ElMessage({
+          message: "添加成功",
+          type: 'success',
+        })
+      })
+      //刷新列表
+      emit('getlist')
+      //刷新列表
+      clear()
+}
+//取消
+const cancel=()=>{
+  //关闭弹框
+   drawer.value=false
+  //清空列表
+   clear()
 }
 //失败时候的按钮
 const resetForm = (formEl: any| undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
+//关闭回调
+const clear=()=>{
+   for(let item in ruleForm){
+     if(item =='type'){
+       ruleForm[item]='单选题'
+     }else if(item =='answers'){
+       ruleForm[item]=[
+           {
+                    "id": 0,
+                    "answerno": "A",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "B",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "C",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "D",
+                    "questionid": 0,
+                    "content": ""
+                },
+       ]
+     }else{
+       ruleForm[item]=""
+     }
+    
+  }
+  
+}
+const data = reactive({
+  letter: [
+    //选项的名
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "G",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+  ],
+  leng: [],
+});
 </script>
 <style scoped>
 /* 富文本编辑器 */
@@ -187,4 +379,12 @@ const resetForm = (formEl: any| undefined) => {
   :deep(.w-e-scroll){
     height: 300px;
   }
+  :deep(.el-form-item__content ){
+    display: block;
+  }
+  /* :deep(.el-input){
+    width: 80%;
+    margin-right: 20px;
+    margin-bottom: 20px;
+  } */
 </style>
