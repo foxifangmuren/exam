@@ -26,10 +26,6 @@
                 </div>
               </div>
               <div class="answersbox1" v-if="item.type=='判断题'">
-                <!-- <div :class="item.studentanswer==null?'box2':item.studentanswer.indexOf(item1.answerno)>-1?'active box2':'box2'">
-                  <div :class="item.studentanswer==null?'box3':item.studentanswer.indexOf(item1.answerno)>-1?'box5 box3':'box3'">{{ item1.answerno }}</div>
-                  <div class="box4">{{ item1.content}}</div>
-                </div> -->
                 <div :class="item.studentanswer==='正确'?'active box2':'box2'" @click="judge('正确',index)">
                   <div class="left">
                   <div class="opt">
@@ -48,17 +44,17 @@
                 </div>
               </div>
               <div class="answersbox1"  v-for="(item1,index1) in item.answers" :key="index1" @click="changRadio('多选题',item1,index)" v-if="item.type=='多选题'">
-                <div :class="item.studentanswer==null?'box2':item.studentanswer.indexOf(item1.answerno)>-1?'active box2':'box2'">
+                <div :class="item.studentanswer==null?'box9':item.studentanswer.indexOf(item1.answerno)>-1?'active box9':'box9'">
                   <div :class="item.studentanswer==null?'box3':item.studentanswer.indexOf(item1.answerno)>-1?'box5 box3':'box3'">{{ item1.answerno }}</div>
                   <div class="box4">{{ item1.content}}</div>
                 </div>
               </div>
-              <div class="answersbox1" v-if="item.type=='问答题'">
+              <div class="answersbox9" v-if="item.type=='问答题'">
                 <el-input
                   v-model="item.studentanswer"
                   :rows="5"
                   type="textarea"
-                  placeholder="Please input"
+                  placeholder=""
                 />
               </div>
              
@@ -104,7 +100,7 @@
        
       </div>
     </div>
-    <div class="timeBox" v-show="list.limittime > 0">
+    <div class="timeBox" v-if="list.limittime > 0">
       <el-icon><AlarmClock /></el-icon>
       <p class="title">倒计时</p>
       <p class="time">{{ endTime }}</p>
@@ -114,7 +110,7 @@
 <script lang="ts" setup>
 import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
-import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect} from 'vue'
+import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect,onUnmounted} from 'vue'
 const route = useRoute()
 const router = useRouter()
 const obj:any = reactive({
@@ -122,8 +118,30 @@ const obj:any = reactive({
   isActive:false,
   abc:'123',
   answered:0,
-  endTime:''
+  endTime:0
 })
+// 试题打乱方法
+const shuffle = (arr: any) => {
+  for (let i = 0; i < arr.length; i++) {
+    var randomIndex = Math.floor(Math.random() * (i + 1));
+    var itemAtIndex = arr[randomIndex];
+    arr[randomIndex] = arr[i];
+    arr[i] = itemAtIndex;
+  }
+  return arr;
+};
+// 是否打乱试题
+if (obj.list.qorder === 1) {
+      obj.list.questions = shuffle(obj.list.questions);
+    }
+    // 是否打乱选项
+    if (obj.list.aorder === 1) {
+      obj.list.questions.forEach((item: any) => {
+        if (item.type === "单选题" || item.type === "多选题") {
+          item.answers = shuffle(item.answers);
+        }
+      });
+    }
 let ass = JSON.parse(sessionStorage.getItem('model') as any)
 // 替换方法
 const rep = (str: string, index: number) => {
@@ -190,7 +208,7 @@ const hand= async()=>{
   let res:any = await studentansweradd(studentAnswerModel)
   console.log(res)
   if(res.errCode===10000){
-    router.push('/stutest')
+    router.push({path:'examresults',query:{id:obj.list.id}})
   }
 }
 //判断题判断对错
@@ -326,28 +344,54 @@ window.onbeforeunload= function () {
   setItem()
 };
 
-
+// 卸载钩子
+onUnmounted(() => {
+  setItem()
+});
 
 const {list,isActive,answered,endTime} = toRefs(obj)
 </script>
 <style lang="less" scoped>
+.left{
+  display: flex;
+  align-items: center;
+}
+.answersbox9{
+  width: 1000px;
+}
+.opt{
+  width: 20px;
+  height: 20px;
+  border: 1px solid #3d80eb;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  margin-right: 20px;
+}
 html{
   font-size: 13px;
 }
+.answersbox1{
+  margin-left: 20px;
+}
+
 .timeBox{
   position: fixed;
   top: 50px;
   right: 300px;
-  width: 80px;
+  width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100px;
+  height: 120px;
+  border-radius: 10px;
+  color: #fff;
   .el-icon{
-    font-size: 40px;
-    margin: 0 auto;
+
+    font-size: 35px;
+    margin: 10px auto;
   }
-  background-color: rgb(236, 21, 21);
+  background-color: rgb(247, 88, 74);
   p{
     padding: 5px;
   }
@@ -355,19 +399,45 @@ html{
 .active{
         border: 1px solid #3d80eb;
         background-color: #f1f5fb;
+        width: 1000px;
   }
   .box7{
     background-color: #f0f8ff;
     color: #aab4fd;
   }
-.box2{
-  font-size: 13px;
-  width: 75%;
+  .box9{
+    font-size: 13px;
+  width: 60%;
   height: 40px;
   display: flex;
   align-items: center;
   // background-color: #fff;
   align-items: center;
+  padding-left: 10px;
+  line-height: 40px;
+  margin-bottom: 20px; 
+  .box3{
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #fff;
+    // border-radius: 50%;
+    text-align: center;
+    line-height: 35px;
+  }
+  .box5{
+    background-color: #3d80eb;
+  }
+  }
+.box2{
+  font-size: 13px;
+  width: 60%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  // background-color: #fff;
+  align-items: center;
+  padding-left: 10px;
   line-height: 40px;
   margin-bottom: 20px;
  
@@ -492,7 +562,7 @@ html{
       margin-top:30px;
       font-size: 15px;
       .answers{
-        margin:20px;
+        margin:20px 0;
       }
     }
     .line{

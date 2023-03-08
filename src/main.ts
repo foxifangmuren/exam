@@ -17,6 +17,7 @@ import VueAxios from 'vue-axios';
 import './assets/icon/iconfont.css';
 createApp(App)
   .use(VueAxios, axios)
+  
   .use(ElementPlus, { locale: zhCn })
   .use(router)
   .mount('#app');

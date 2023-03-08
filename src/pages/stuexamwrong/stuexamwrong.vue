@@ -65,7 +65,7 @@
                  </div>
               </div>
             </div>
-            <div style="margin-top: 20px; height: 40px; line-height: 40px; background-color: #f7fbff;" > <span v-if="item.type!=='问答题'" style="color:#90adca">正确答案： </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
+            <div style="margin-top: 20px; width: 60%; padding-left: 10px; height: 40px; line-height: 40px; background-color: #f7fbff;" > <span v-if="item.type!=='问答题'" style="color:#90adca">正确答案： </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
               <span v-if="item.type==='判断题'" class="correct1">{{ item.answer }}</span>
               <span v-if="item.type==='填空题'" class="correct1">{{ item.answer }}</span>
               <br>
@@ -204,9 +204,10 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
         background-color: #d30e0e30;
   }
   .box2{
-  width: 75%;
+  width: 60%;
   height: 40px;
   display: flex;
+  padding-left: 10px;
   align-items: center;
   // background-color: #fff;
   align-items: center;
