@@ -57,7 +57,7 @@ import { fa } from 'element-plus/es/locale';
 import {defineProps} from "vue"
 const dialogVisible = ref(false);
 
-const emits = defineEmits(['classList']);
+const emits = defineEmits(['getclasseslist']);
 
 const formSize = ref('default');
 const ruleFormRef = ref<any>();
@@ -141,7 +141,7 @@ const submitForm = async (formEl: any | undefined) => {
         dialogVisible.value = false;
         ruleForm.depid1 = '';
         // ruleForm.list = data.list1
-        emits('classList');
+        emits('getclasseslist');
       } else {
         ElMessage(res.errMsg);
       }
@@ -158,7 +158,7 @@ const handleClose = (formEl: any | undefined) => {
 
   // },{immediate:true})
 
-  emits('classList');
+  emits('getclasseslist');
   // console.log(data.list1)
   ruleForm.depid1 = '';
   ruleForm.list.id = 0;
@@ -180,7 +180,7 @@ const qu = (formEl: any | undefined) => {
   ruleForm.depid1 = '';
   ruleForm.list.id = 0;
   ruleForm.list.name = '';
-  emits('classList');
+  emits('getclasseslist');
 };
 const { list, depList, depid1 } = toRefs(ruleForm);
 </script>
