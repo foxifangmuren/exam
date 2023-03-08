@@ -5,57 +5,11 @@
       <span class="head">学生管理</span>
       <div>
         <el-button>批量添加</el-button>
-        <el-button type="primary" v-show="1" @click="dialogFormVisible = true"
+        <el-button type="primary" v-show="1" @click="add"
           >添加学生</el-button
         >
       </div>
     </div>
-    <!-- 添加 -->
-    <el-dialog v-model="dialogFormVisible" title="添加">
-      <el-form :model="form">
-        <el-form-item label="姓名" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="电话" :label-width="formLabelWidth">
-          <el-input v-model="form.photo" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="部门" :label-width="formLabelWidth">
-          <el-cascader
-            v-model="form.depid"
-            :options="data.options"
-            :props="props"
-            @change="handleChange"
-            clearable
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="班级" :label-width="formLabelWidth">
-          <el-cascader
-            v-model="form.classid"
-            :options="data.Class"
-            :props="props"
-            @change="handleChange"
-            clearable
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="备注" :label-width="formLabelWidth">
-          <el-input v-model="form.remarks" type="textarea" />
-        </el-form-item>
-        <el-form-item label="账号" :label-width="formLabelWidth">
-          <el-input v-model="form.username" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.pass" autocomplete="off" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="primary" @click="add">
-            添加
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
 
     <!-- 搜索框 -->
     <div class="content">
@@ -135,12 +89,14 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <studentAdd ref="studadd"  @studentList="studentList"></studentAdd>
     <studentUp ref="studup" @studentList="studentList"></studentUp>
     <studentPass ref="studpass" @studentList="studentList"></studentPass>
   </div>
 </template>
 
 <script setup lang="ts">
+import studentAdd from '../../../../components/student/studentAdd.vue'
 import studentPass from '../../../../components/student/studentPass.vue'
 import studentUp from '../../../../components/student/studentUp.vue'
 import { onMounted, reactive, ref, toRefs } from 'vue';
@@ -154,6 +110,7 @@ import {
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
 import { objectPick } from '@vueuse/shared';
+let studadd = ref<any>(null)
 let studup = ref<any>(null)
 let studpass = ref<any>(null)
 const dialogFormVisible = ref(false);
@@ -197,7 +154,7 @@ const form = reactive({
   pass: '', //密码
   remarks:'',//备注
   photo:'',  //手机号
-  depid:'', //部门
+  depid:3069, //部门
 });   
 const props = {
   expandTrigger: 'hover',
@@ -247,20 +204,14 @@ const studentList = async () => {
 };
 //添加
 const add = async () => {
-  // console.log(form.classid)
-  const res: any = await studentadd(form);
-  console.log('班级添加', res);
-  if (res.errCode === 10000) {
-    ElMessage.success('添加成功');
-    dialogFormVisible.value = false
-    studentList();
-  }
+  studadd.value.dialogVisible = true
+
 };
 //修改
 const update = (data:any) => {
   studup.value.dialogVisible = true
   console.log(studup.value)
-  studup.value.form.list = data
+  studup.value.ruleForm.list = data
   obj.value = data
 }
 //点击修改密码
