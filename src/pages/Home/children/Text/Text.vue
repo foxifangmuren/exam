@@ -305,6 +305,8 @@ const value1 = ref<[Date, Date]>([
 ]);
 const show: any = ref(false);
 const anse = (row:any) => {
+  console.log(row);
+  
   if (row.studentcounts == 0) {
     ElMessage({
       message: "没有学生考试",
@@ -317,7 +319,7 @@ const anse = (row:any) => {
     });
   } 
   else {
-    router.push({ path: "/analyse", query: { testid: row.testid } });
+    router.push({ path: "/analyse", query: { data: row.id } });
   }
 };
 const props = {

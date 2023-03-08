@@ -1,5 +1,12 @@
 <template>
-
+  <div>
+    <el-drawer
+      v-model="drawer"
+      :title="title"
+      direction="rtl"
+      size="45%"
+      @close="clear"
+    >
       <!-- 内容区域 -->
       <div>
         <!-- 题干 -->
@@ -113,6 +120,8 @@
       </el-form-item>
       </el-form>
   </div>
+  </el-drawer>
+  </div>
 </template>
 <script lang="ts" setup>
 /**
@@ -124,76 +133,75 @@
  *    刷新列表
  *    传值父级
  */
-import { ElMessage } from 'element-plus'
-import { onBeforeUnmount,reactive, ref, shallowRef,watch } from 'vue'
-import {addDataitem} from "@/api/databaselist"
-import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import { ElMessage } from 'element-plus';
+import { onBeforeUnmount, reactive, ref, shallowRef, watch } from 'vue';
+import { addDataitem } from '@/api/databaselist';
+import '@wangeditor/editor/dist/css/style.css'; // 引入 css
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
 //选择题部分
-const removeDomain = (index:any) => {
-  ruleForm.answers.splice(index,1)
-}
+const removeDomain = (index: any) => {
+  ruleForm.answers.splice(index, 1);
+};
 const addDomain = () => {
   console.log(ruleForm.answers);
-  if(ruleForm.answers.length==26){
-      ElMessage({
-        message: '只能添加这些选项',
-        type: 'warning',
-      })
-      return
+  if (ruleForm.answers.length == 26) {
+    ElMessage({
+      message: '只能添加这些选项',
+      type: 'warning',
+    });
+    return;
   }
-    ruleForm.answers.push({
-        id: 0,
-        answerno: data.letter[ruleForm.answers.length],
-        questionid: 0,
-        content: ''
-    })
-    
-}
-let check=ref([])//复选框正确答案的值
+  ruleForm.answers.push({
+    id: 0,
+    answerno: data.letter[ruleForm.answers.length],
+    questionid: 0,
+    content: '',
+  });
+};
+let check = ref([]); //复选框正确答案的值
 // 多选框内容改变
 const changeCheckbox = (e: any) => {
   console.log(e);
-  ruleForm.answer = e.join("|");
+  ruleForm.answer = e.join('|');
 };
 //暴露属性显示隐藏
-const drawer = ref(false)
-defineExpose({ drawer})
+const drawer = ref(false);
+defineExpose({ drawer });
 //修改接受传递过来的参数
-const props:any=defineProps({
-    questionsdata:{
-      type:Object,
-      defind:null,
-    },
-    id:{
-      type:String,
-      defind:null
-    }
-})
-watch(props,(nweProps,oldProps)=>{
+const props: any = defineProps({
+  questionsdata: {
+    type: Object,
+    defind: null,
+  },
+  id: {
+    type: String,
+    defind: null,
+  },
+});
+watch(props, (nweProps, oldProps) => {
   console.log(props.questionsdata);
-  for(let item in ruleForm){
-    ruleForm[item]=props.questionsdata[item]
+  for (let item in ruleForm) {
+    ruleForm[item] = props.questionsdata[item];
   }
-})
+});
 //标题更改
-const title=ref('添加试题')
+const title = ref('添加试题');
 //刷新列表
-const emit=defineEmits(['getlist'])
+const emit = defineEmits(['getlist']);
 //富文本编辑器
 
-    const editorRef = shallowRef()
-    // 组件销毁时，也及时销毁编辑器
-    onBeforeUnmount(() => {
-        const editor = editorRef.value
-        if (editor == null) return
-        editor.destroy()
-    })
- 
-    const handleCreated = (editor:any) => {
-      // console.log("记录 editor 实例，重要！",editor);
-      editorRef.value = editor // 记录 editor 实例，重要！
-    }
+const editorRef = shallowRef();
+// 组件销毁时，也及时销毁编辑器
+onBeforeUnmount(() => {
+  const editor = editorRef.value;
+  if (editor == null) return;
+  editor.destroy();
+});
+
+const handleCreated = (editor: any) => {
+  // console.log("记录 editor 实例，重要！",editor);
+  editorRef.value = editor; // 记录 editor 实例，重要！
+};
 //表单数据对象
 const ruleFormRef = ref<any>({});
 //数据存放

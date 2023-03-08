@@ -5,12 +5,12 @@
         <div class="one">
           <div>返回</div>
           <span>|</span>
-          <div>数据分析:考试名</div>
+          <div>数据分析:{{ datas.title }}</div>
         </div>
         <div class="one">
-          <div>总分</div>
+          <div>总分:{{ datas.scores }}</div>
           <span>|</span>
-          <div>通过分数</div>
+          <div>通过分数:{{ datas.pastscores }}</div>
           <span>|</span>
           <div>考试时长</div>
           <span>|</span>
@@ -72,17 +72,33 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { onMounted, toRefs, ref, reactive } from 'vue';
+import { getTest } from '../../../../api/stutest';
 import * as echarts from 'echarts';
-const tableData = [
+const route = useRoute();
+const router = useRouter();
+const testid = ref(route.query.data);
+
+const k = async () => {
+  console.log(testid.value);
+  const res = await getTest({ id: testid.value });
+  console.log(res);
+
+  form.datas = res.data;
+  console.log(form.datas);
+};
+
+const tableData: any = [
   {
     date: '',
     name: '',
     address: '',
   },
 ];
-const form = reactive({
+const form:any = reactive({
   name: '',
+  datas: [],
 });
 const activeName = ref('first');
 
@@ -90,6 +106,7 @@ const handleClick = (tab: any, event: any) => {
   console.log(tab, event);
 };
 onMounted(() => {
+  k();
   var chartDom: any = document.getElementById('main');
   var myChart = echarts.init(chartDom);
   var option;
@@ -163,9 +180,9 @@ onMounted(() => {
           show: false,
         },
         data: [
-          { value:0, name: '未考' },
-          { value:0 , name: '及格' },
-          { value:0 , name: '粑粑' },
+          { value: 0, name: '未考' },
+          { value: 0, name: '及格' },
+          { value: 0, name: '粑粑' },
           { value: 1, name: '不及格' },
         ],
       },
@@ -174,6 +191,7 @@ onMounted(() => {
 
   optio && myChar.setOption(optio);
 });
+const { datas } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
