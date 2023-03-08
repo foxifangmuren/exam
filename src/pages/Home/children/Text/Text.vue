@@ -110,7 +110,7 @@
           <span>|</span>
           <el-link type="primary" @click="yueJuanTan = true">阅卷老师</el-link>
           <br />
-          <el-link type="primary" @click="anse">分析</el-link>
+          <el-link type="primary" @click="anse(scope.row)">分析</el-link>
           <span>|</span>
           <el-link type="primary" @click="updata(scope.row)">编辑</el-link>
           <span>|</span>
@@ -304,8 +304,21 @@ const value1 = ref<[Date, Date]>([
   new Date(2016, 9, 10, 9, 40),
 ]);
 const show: any = ref(false);
-const anse = () => {
-  router.push('analyse');
+const anse = (row:any) => {
+  if (row.studentcounts == 0) {
+    ElMessage({
+      message: "没有学生考试",
+      type: "error",
+    });
+  }else if(row.incomplete!=0){
+     ElMessage({
+      message: "该试卷未判完",
+      type: "error",
+    });
+  } 
+  else {
+    router.push({ path: "/analyse", query: { testid: row.testid } });
+  }
 };
 const props = {
   expandTrigger: 'hover', //次级菜单展开方式
