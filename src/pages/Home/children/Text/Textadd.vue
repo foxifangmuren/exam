@@ -190,36 +190,35 @@
         style="max-width: 800px"
       >
         <el-form-item label="通过分数:">
-          <el-input-number
-            v-model="AddFrom.scores"
-            class="mx-4"
-            :min="1"
-            controls-position="right"
-            @change="handleChange"
-          />
+          <el-input
+              v-model="params.pastscores"
+              type="number"
+              style="width: 90px"
+            />
         </el-form-item>
         <el-form-item label="考试时长:">
           <el-radio-group v-model="AddFrom.limittime" class="num">
-            <el-radio label="不限时时长" />
-            <el-radio label="限时时长" />
+            <el-radio :label="1" >不限时时长</el-radio>
+            <el-radio :label="2" >限时时长</el-radio>
+            <el-input
+                type="number"
+                style="width: 90px"
+                v-model="AddFrom.limittime"
+                v-if="AddFrom.isshow == 2"
+              />
           </el-radio-group>
-          <el-input-number
-            v-model="AddFrom.limittime"
-            class="mx-4"
-            :min="1"
-            controls-position="right"
-            @change="handleChange"
-          />
         </el-form-item>
         <el-form-item label="开放时间:">
           <div class="block">
             <el-date-picker
-              v-model="AddFrom.begintime"
+              v-model="arrTime"
               type="datetimerange"
               :shortcuts="shortcuts"
-              range-separator="To"
+              range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
+              @change="changeTime"
+                format="YYYY-MM-DD HH:mm"
             />
             <span>不填表示永久</span>
           </div>
@@ -234,13 +233,13 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="防作弊:">
-          <el-checkbox-group v-model="AddFrom.markteachers">
-            <el-checkbox label="试题顺序打乱" name="type" />
+            <el-checkbox  v-model="AddFrom.qorder" label="试题顺序打乱" :true-label="1" :false-label="0" name="type" />
             <el-checkbox
               label="选项顺序打乱（单选题，多选题，判断题）"
               name="type"
+              v-model="AddFrom.aorder"
+              :true-label="1" :false-label="0"
             />
-          </el-checkbox-group>
         </el-form-item>
       </el-form>
     </div>
@@ -553,6 +552,7 @@ import { reactive, ref, onMounted, toRefs } from 'vue';
 import { testadd } from '@/api/stutest';
 import { useRouter, useRoute } from 'vue-router';
 import { nextTick } from 'vue';
+import moment from "moment";
 // import Forth from '../../../../components/ppp.vue';
 import {
   questions,
@@ -796,6 +796,14 @@ const check = (done: () => void) => {
       });
   }
 };
+const changeTime = (e: any) => {
+  const begintime = moment(e[0]).format("YYYY-MM-DD HH:mm:ss.0");
+  const endtime = moment(e[1]).format("YYYY-MM-DD HH:mm:ss.0");
+  data.arrTime.push(begintime);
+  data.arrTime.push(endtime);
+  params.value.begintime = begintime;
+  params.value.endtime = endtime;
+};
 const changePage = (val: number) => {
   from.query.page = val;
   getlt();
@@ -940,8 +948,8 @@ const AddFrom: any = reactive({
   limittime: '',
   scores: '',
   pastscores: 60,
-  qorder: 1,
-  aorder: 1,
+  qorder: 0,
+  aorder: 0,
   answershow: 2,
   isshow: 1,
   databaseid: 20,
@@ -954,6 +962,7 @@ const AddFrom: any = reactive({
 });
 const TestAdd = async (num: number) => {
   AddFrom.state = num;
+  AddFrom.id=id
   const res: any = await testadd(AddFrom);
   console.log(res);
   if (res.errCode == '10000') {
@@ -961,7 +970,7 @@ const TestAdd = async (num: number) => {
       message: '添加成功',
       type: 'success',
     });
-    router.push('test');
+    router.push('/test');
   }
 };
 const data: any = reactive({
