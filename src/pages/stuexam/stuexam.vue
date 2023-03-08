@@ -26,10 +26,6 @@
                 </div>
               </div>
               <div class="answersbox1" v-if="item.type=='判断题'">
-                <!-- <div :class="item.studentanswer==null?'box2':item.studentanswer.indexOf(item1.answerno)>-1?'active box2':'box2'">
-                  <div :class="item.studentanswer==null?'box3':item.studentanswer.indexOf(item1.answerno)>-1?'box5 box3':'box3'">{{ item1.answerno }}</div>
-                  <div class="box4">{{ item1.content}}</div>
-                </div> -->
                 <div :class="item.studentanswer==='正确'?'active box2':'box2'" @click="judge('正确',index)">
                   <div class="left">
                   <div class="opt">
@@ -48,17 +44,17 @@
                 </div>
               </div>
               <div class="answersbox1"  v-for="(item1,index1) in item.answers" :key="index1" @click="changRadio('多选题',item1,index)" v-if="item.type=='多选题'">
-                <div :class="item.studentanswer==null?'box2':item.studentanswer.indexOf(item1.answerno)>-1?'active box2':'box2'">
+                <div :class="item.studentanswer==null?'box9':item.studentanswer.indexOf(item1.answerno)>-1?'active box9':'box9'">
                   <div :class="item.studentanswer==null?'box3':item.studentanswer.indexOf(item1.answerno)>-1?'box5 box3':'box3'">{{ item1.answerno }}</div>
                   <div class="box4">{{ item1.content}}</div>
                 </div>
               </div>
-              <div class="answersbox1" v-if="item.type=='问答题'">
+              <div class="answersbox9" v-if="item.type=='问答题'">
                 <el-input
                   v-model="item.studentanswer"
                   :rows="5"
                   type="textarea"
-                  placeholder="Please input"
+                  placeholder=""
                 />
               </div>
              
@@ -72,7 +68,7 @@
       <div class="sheet">
         <h3>答题卡</h3>
         <div class="board">
-          <div class="boardbox" style="background-color: #ccc;"></div><div>已答</div>
+          <div class="boardbox" style="background-color: #f0f8ff;"></div><div>已答</div>
           <div class="boardbox" style="background-color: #fff; border: 1px solid #ccc;"></div><div>未答</div>
         </div>
         <div class="conten">
@@ -104,7 +100,7 @@
        
       </div>
     </div>
-    <div class="timeBox" v-show="list.limittime > 0">
+    <div class="timeBox" v-if="list.limittime > 0">
       <el-icon><AlarmClock /></el-icon>
       <p class="title">倒计时</p>
       <p class="time">{{ endTime }}</p>
@@ -114,8 +110,7 @@
 <script lang="ts" setup>
 import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
-import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect} from 'vue'
-import { head } from 'lodash';
+import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect,onUnmounted} from 'vue'
 const route = useRoute()
 const router = useRouter()
 const obj:any = reactive({
@@ -123,9 +118,31 @@ const obj:any = reactive({
   isActive:false,
   abc:'123',
   answered:0,
-  endTime:''
+  endTime:0
 })
-
+// 试题打乱方法
+const shuffle = (arr: any) => {
+  for (let i = 0; i < arr.length; i++) {
+    var randomIndex = Math.floor(Math.random() * (i + 1));
+    var itemAtIndex = arr[randomIndex];
+    arr[randomIndex] = arr[i];
+    arr[i] = itemAtIndex;
+  }
+  return arr;
+};
+// 是否打乱试题
+if (obj.list.qorder === 1) {
+      obj.list.questions = shuffle(obj.list.questions);
+    }
+    // 是否打乱选项
+    if (obj.list.aorder === 1) {
+      obj.list.questions.forEach((item: any) => {
+        if (item.type === "单选题" || item.type === "多选题") {
+          item.answers = shuffle(item.answers);
+        }
+      });
+    }
+let ass = JSON.parse(sessionStorage.getItem('model') as any)
 // 替换方法
 const rep = (str: string, index: number) => {
   return str.replace(
@@ -155,8 +172,6 @@ const hand= async()=>{
     if (item.studentanswer && item.type === "多选题") {
       // 正确答案数组
       const answerArr = item.answer.split("|");
-      
-      
       // 学生答案
       const studentanswerArr = item.studentanswer.split("|").filter((ite:any)=>(ite!=''));
       console.log(answerArr,studentanswerArr);
@@ -191,7 +206,7 @@ const hand= async()=>{
   let res:any = await studentansweradd(studentAnswerModel)
   console.log(res)
   if(res.errCode===10000){
-    router.push('/stutest')
+    router.push({path:'examresults',query:{id:obj.list.id}})
   }
 }
 //判断题判断对错
@@ -219,14 +234,10 @@ const changRadio=(type:String,item: any,index:any)=>{
     }
     console.log(obj.list)
   }
-   
-    
   }
   const tiao=(index:any)=>{
     // console.log(index)
     document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
-    console.log(document.getElementsByClassName('concent')[index])
-    console.log(document.querySelectorAll('input'))
   }
 const getList =async ()=>{
   let res:any = await getteststart({testid:route.query.testid})
@@ -234,6 +245,31 @@ const getList =async ()=>{
   if(res.errCode===10000){
 
     obj.list = res.data
+    let daima = JSON.parse(
+      localStorage.getItem("examInfo" + obj.list.id) as string
+    );
+    if (daima != null && daima != ""&&ass.id==daima.studentId) {
+      if (obj.list.id === daima.id) {
+        obj.list = daima;
+        // 填空题回显数据
+        nextTick(() => {
+          document.querySelectorAll(".input").forEach((item: any) => {
+            let _index = item.getAttribute("data-index");
+            document
+              .querySelectorAll(".input" + _index)
+              .forEach((ite: any, index: number) => {
+                ite.value =
+                  daima.questions[_index].studentanswer.split("|")[index] ===
+                  undefined
+                    ? ""
+                    : (daima.questions[_index].studentanswer || "").split("|")[index];
+              });
+          });
+        });
+      } else {
+        obj.list = res.data;
+      }
+    }
     if (list.value.limittime > 0) {
       var timer = setInterval(() => {
         //获取当前时间
@@ -273,6 +309,10 @@ const getList =async ()=>{
   }
   console.log(obj.list)
 }
+getList()
+onBeforeMount(() => {
+  getList()
+})
 onUpdated(()=>{
   document.querySelectorAll(".input").forEach((item: any) => {
         item.oninput = function () {
@@ -288,33 +328,68 @@ onUpdated(()=>{
       });
 })
 
-onBeforeMount(() => {
-  getList()
-})
-nextTick(()=>{
-  console.log(document.querySelectorAll('input'))
-})
+console.log(obj.list)
+const setItem=()=>{
+  localStorage.setItem(
+    "examInfo" + obj.list.id,
+    JSON.stringify({...obj.list,studentId:ass.id})
+  );
+}
+
+// 浏览器属性事件
+// /添加监听事件，监听后退，前进
+window.onbeforeunload= function () {
+  setItem()
+};
+
+// 卸载钩子
+onUnmounted(() => {
+  setItem()
+});
 
 const {list,isActive,answered,endTime} = toRefs(obj)
 </script>
 <style lang="less" scoped>
+.left{
+  display: flex;
+  align-items: center;
+}
+.answersbox9{
+  width: 1000px;
+}
+.opt{
+  width: 20px;
+  height: 20px;
+  border: 1px solid #3d80eb;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  margin-right: 20px;
+}
 html{
   font-size: 13px;
 }
+.answersbox1{
+  margin-left: 20px;
+}
+
 .timeBox{
   position: fixed;
   top: 50px;
   right: 300px;
-  width: 80px;
+  width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100px;
+  height: 120px;
+  border-radius: 10px;
+  color: #fff;
   .el-icon{
-    font-size: 40px;
-    margin: 0 auto;
+
+    font-size: 35px;
+    margin: 10px auto;
   }
-  background-color: rgb(236, 21, 21);
+  background-color: rgb(247, 88, 74);
   p{
     padding: 5px;
   }
@@ -322,18 +397,45 @@ html{
 .active{
         border: 1px solid #3d80eb;
         background-color: #f1f5fb;
+        width: 1000px;
   }
   .box7{
-    background-color: #ccc;
+    background-color: #f0f8ff;
+    color: #aab4fd;
   }
-.box2{
-  font-size: 13px;
-  width: 75%;
+  .box9{
+    font-size: 13px;
+  width: 60%;
   height: 40px;
   display: flex;
   align-items: center;
   // background-color: #fff;
   align-items: center;
+  padding-left: 10px;
+  line-height: 40px;
+  margin-bottom: 20px; 
+  .box3{
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #fff;
+    // border-radius: 50%;
+    text-align: center;
+    line-height: 35px;
+  }
+  .box5{
+    background-color: #3d80eb;
+  }
+  }
+.box2{
+  font-size: 13px;
+  width: 60%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  // background-color: #fff;
+  align-items: center;
+  padding-left: 10px;
   line-height: 40px;
   margin-bottom: 20px;
  
@@ -458,7 +560,7 @@ html{
       margin-top:30px;
       font-size: 15px;
       .answers{
-        margin:20px;
+        margin:20px 0;
       }
     }
     .line{

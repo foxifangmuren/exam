@@ -9,6 +9,7 @@
           <div class="num">{{ index+1 }}</div>
           <div class="type">{{ item.type }}</div>
           <div class="score">分值 ：{{ item.scores }}</div>
+          <div :class="item.studentscores===0?'def1':'def'">得分：{{item.studentscores}}</div>
         </div>
         <div class="concent_box">
           <div>
@@ -39,10 +40,10 @@
             </div>
             <div class="answersbox" v-if="item.type==='判断题'">
               <div class="answersbox1">
-                 <div class="judge">
-                  <span class="quan"></span><span>正确</span>
+                 <div class="judge" :class="item.studentanswer=='正确'?'quan active':'quan'">
+                  <span class="quan"  ></span><span>正确</span>
                  </div>
-                 <div class="judge">
+                 <div class="judge" :class="item.studentanswer=='错误'?'quan active':'quan'">
                   <span class="quan"></span><span>错误</span>
                  </div>
               </div>
@@ -65,7 +66,7 @@
                  </div>
               </div>
             </div>
-            <div style="margin-top: 20px;"> <span v-if="item.type!=='问答题'">正确答案 </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
+            <div style="margin-top: 20px; width: 60%; padding-left: 10px; height: 40px; line-height: 40px; background-color: #f7fbff;" > <span v-if="item.type!=='问答题'" style="color:#90adca">正确答案： </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
               <span v-if="item.type==='判断题'" class="correct1">{{ item.answer }}</span>
               <span v-if="item.type==='填空题'" class="correct1">{{ item.answer }}</span>
               <br>
@@ -153,11 +154,31 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
   const {List,index1} = toRefs(obj)
 </script>
 <style lang="less" scoped>
+.def{
+  font-size: 12px;
+  border:1px solid rgb(76, 192, 164);
+  width: 55px;
+  color: rgb(76, 192, 164);
+  text-align: center;
+  line-height: 18px;
+  border-radius: 5px;
+  height: 18px;
+}
+.def1{
+  font-size: 12px;
+  border:1px solid rgb(238, 0, 0);
+  width: 55px;
+  color: rgb(238, 0, 0);
+  text-align: center;
+  line-height: 18px;
+  border-radius: 5px;
+  height: 18px;
+}
 .answersbox3{
   margin-left: -20px;
 }
 .judge{
-
+  height: 40px;
   display: flex;
   align-items: center;
   .quan{
@@ -204,9 +225,10 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
         background-color: #d30e0e30;
   }
   .box2{
-  width: 75%;
+  width: 60%;
   height: 40px;
   display: flex;
+  padding-left: 10px;
   align-items: center;
   // background-color: #fff;
   align-items: center;
