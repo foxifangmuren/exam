@@ -27,6 +27,7 @@
       :tableData="from.tableData"
       @del="del"
       @gopage="gopage"
+      @compile="compile"
     ></MyTable>
     <!-- 分页 -->
     <MyPages
@@ -48,7 +49,6 @@ import { ElMessageBox ,ElMessage} from "element-plus";
 import router from "@/router";
 //试卷详情
 const subdata=ref<any>()
-
 const gopage=async(val:any)=>{
   from.title=val.title
   const src=await subjectsinfo({id:val.id})
@@ -135,6 +135,7 @@ const tableHeader = [
       {
         type: "primary",
         text: "编辑",
+        event: "compile",
       },
       {
         type: "primary",
@@ -144,6 +145,15 @@ const tableHeader = [
     ],
   },
 ];
+//编辑
+const compile=(vla:any)=>{
+  // console.log(vla.id);
+   router.push(`/testadd/${vla.id}`);
+}
+//跳转详情页面
+const skip=()=>{
+  router.push("/testadd/1");
+}
 // 分页方法
 const changePage = (val: number) => {
   from.query.page = val;
@@ -190,10 +200,7 @@ const del = (val: any) => {
       ElMessage({ message: "已取消", type: "error", });
     });
 };
-//跳转详情页面
-const skip=()=>{
-  router.push("/testadd");
-}
+
 </script>
 
 

@@ -28,46 +28,36 @@
               <el-form-item>
                 <el-radio :label="2">不允许任何老师使用</el-radio>
               </el-form-item>
-              <el-radio v-model="ruleForm.limits" @click="teacher = true"
+              <el-radio v-model="ruleForm.limits" @click="gobialog"
                 >允许部分老师使用</el-radio
               >
             </el-radio-group>
           </el-form-item>
         </el-form>
       </div>
-      <div>
-        <el-dialog v-model="teacher" title="可见老师">
-          <div style="margin-left: 20px; margin-bottom: 20px">
-            <el-form-item label="部门">
-              <el-cascader clearable />
-            </el-form-item>
-          </div>
-          <div style="margin-left: 20px">
-            <el-transfer />
-          </div>
-
-          <template #footer>
-            <span class="dialog-footer">
-              <el-button @click="teacher = false">取消</el-button>
-              <el-button type="primary" @click="teacher = false">
-                确定
-              </el-button>
-            </span>
-          </template>
-        </el-dialog>
-      </div>
+      <!-- 穿梭框  -->
+      <MybialogVue ref="bialogVue"></MybialogVue>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">关闭</el-button>
           <el-button type="primary" @click="add"> 确定 </el-button>
         </span>
       </template>
+
+
     </el-dialog>
   </div>
 </template>
 <script setup lang="ts" >
 import { ref, reactive, watch } from "vue";
 import { addlist } from "@/api/databaselist";
+//穿梭框
+const bialogVue=ref<any>()
+const gobialog=()=>{
+  // console.log(bialogVue.value.);
+  bialogVue.value.teacher=true
+}
+//
 const ruleFormRef = ref<any>();
 const props = defineProps({
   val: {

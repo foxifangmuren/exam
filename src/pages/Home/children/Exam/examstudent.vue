@@ -18,12 +18,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="部门">
-        <el-tree-select v-model="from.query.dep" :data="data" :render-after-expand="false" clearable />
+         <el-cascader v-model="from.dep" @change="depinfo(from.dep)"  :options="from.deplist"  :props="props1" clearable />
       </el-form-item>
       <el-form-item label="班级">
-        <el-select v-model="from.query.classname" placeholder="请选择" :disabled="true" clearable >
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
+        <el-select v-model="from.query.classid" placeholder="请选择" :disabled="classname" clearable >
+          <el-option  v-for="(item,index) in from.classList" :label="item.name" :value="item.id" :key="index"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -46,34 +45,37 @@
       @changePage="changePage"
     ></MyPages>
     <!-- 侧栏弹框 -->
-    <el-drawer v-model="from.drawer" :title="from.Dtitle" :before-close="handleClose">
+    <el-drawer v-model="from.drawer" :title="from.Dtitle" :before-close="handleClose" size="50%">
       <!-- 弹框内容 -->
       <div>
         <!-- 流动布局 -->
-        <el-form ref="ruleFormRef" :model="from" status-icon label-width="120px" class="demo-ruleForm">
+        <el-form ref="ruleFormRef" :model="from" status-icon  class="demo_ruleForm">
           <div v-for="(item, index) in Dlist" :key="index">
             <!-- 学生答卷详情 -->
             <!-- 标题 -->
-            <p class="styles" ><span>{{index+1}}、</span> {{item.type}} <span>分值：{{item.scores}}</span></p>
+            <p class="styles" ><span>{{index+1}}</span> {{item.type}} <span>分值：{{item.scores}}</span></p>
             <!-- 题目 -->
-            <p class="styles">{{item.title}}</p>
+            <p class="styles">
+                <span v-html="item.title"></span>
+            </p>
             <!-- 回答 -->
             <p class="styles" :style="item.answer==null? 'color:red':''"> 回答：{{item.answer==null? '该学员未给出答案':item.answer}}</p>
             <!-- 老师阅卷 -->
-            <el-form-item class="margin_top" :rules="studentscores(item.scores)" :prop="'list.' + index + '.studentscores'" >
+            <el-form-item  class="margin_top"   >
               <!-- 评分 -->
-              <el-form-item label="打分" >
-                <el-input  v-model="item.studentscores" type="text" autocomplete="off"   />
-              </el-form-item>
+                <el-form-item class="item" label="打分" :rules="studentscores(item.scores)" :prop="'Dlist.' + index + '.studentscores'"   required>
+                    <el-input  style="margin-bottom:20px; width:200px" v-model="item.studentscores" type="text" autocomplete="off"   />
+                </el-form-item>
+
               <!-- 备注 -->
-              <el-form-item label="批准">
+              <el-form-item class="item"  style="margin-left:0px" label="批注">
                 <el-input  type="textarea" v-model="item.comments"/>
               </el-form-item>
             </el-form-item>
           </div>
           <!-- 按钮区域 -->
           <el-form-item>
-            <el-button type="primary" @click="submitForm()" >阅卷完毕</el-button >
+            <el-button type="primary" @click="submitForm(ruleFormRef)" >阅卷完毕</el-button >
             <el-button @click="resetForm(ruleFormRef)">取消</el-button>
           </el-form-item>
         </el-form>
@@ -85,26 +87,31 @@
 
 <script lang="ts" setup>
 /***
- * 分页格式---TODO （css样式，适应每一个页面）
+ * 部门接口的调取
+ * 阅卷的正则
  */
 import { ref, reactive, toRefs, toRaw } from "vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
 import { studentlist, studentinfo ,stydenupdata} from "@/api/exam";
+import {departmentlist,classeslist} from "@/api/admin";
 import { ElMessageBox,ElMessage,} from "element-plus";
+import { FormInstance } from "element-plus/es/components/form";
 //地址栏数据
 const route = useRoute();
 const title = ref(route.query.title);
 const testid = ref(route.query.id);
 //表格数据
 const from = reactive({
+  dep:[],
+  classList:[],
   query: {
     testid: 0,
     page: 1,
     psize: 10,
     state: "", //状态
     key: "",
-    dep: "",
+    classid:"",
   },
   //侧边栏标题
   Dtitle: "",
@@ -116,14 +123,44 @@ const from = reactive({
   drawer: false,
   //总条数
   total: 0,
+  //部门列表
+  deplist:[],
 });
+//请求列表
 const getlist = async (id: any) => {
   from.query.testid = id;
   const src = await studentlist(from.query);
   from.tableData = src.data.list;
   from.total = src.data.counts;
 };
+
 getlist(testid);
+//请求部门列表
+const getdeplist= async ()=>{
+  const src=await departmentlist({})
+  console.log(src);
+  from.deplist=src.data.list
+}
+getdeplist()
+const classname=ref(true)
+const depid=ref(0)
+const props1 = {
+  value: 'id',
+  label: 'name',
+  children:"children"
+};
+const depinfo=async (val:any)=>{
+  classname.value=!classname
+  if(val===null){
+    return false
+  }else{
+    let res = val.length-1
+    depid.value=val[res]
+    const src=await classeslist({depid:depid.value})
+    console.log(src);
+    from.classList=src.data.list
+  }
+};
 //表格头部
 const tableHeader = [
   {
@@ -170,9 +207,10 @@ const changePageSize = (val: number) => {
 //返回
 const goBack = () =>router.go(-1);
 //查询
-const onSubmit = () => getlist(testid);
-//树形控制
-const data = [];
+const onSubmit = () => {
+  console.log(from.query);
+  getlist(testid)
+};
 //侧边弹框
 const go = (val: any) => {
   console.log(val);
@@ -181,7 +219,7 @@ const go = (val: any) => {
       .then(() => {
         from.drawer = true;
         //注意传值，第一个参数是试卷，第二个是学生
-        getstdent(route.query.id, val.id);
+        getstdent(route.query.id, val.id);                                                                          
         from.Dtitle = val.name + "的试卷";
       })
       .catch(() => { });
@@ -204,45 +242,62 @@ const handleClose = (done: () => void) => done();
 const ruleFormRef = ref<any>()
   //域解析
   const {Dlist}=toRefs(from);
+  console.log(Dlist)
   const scoresValidator = (rule: any, value: any, callback: any) => {
-    let max=parseInt(rule.maxScores);
-    let _value=parseInt(value);
-    if( isNaN(_value)){
-        callback(new Error(`请输入分数`))
-    }
-    else if(_value<0 || _value>max){
-        callback(new Error(`分数必须大于0小于${max}`))
-    }
-    else{
-        callback();
-    }
-}
-//正则校验
+  console.log(rule, value, callback)
+
+      let max=parseInt(rule.maxScores);
+      let _value=parseInt(value);
+      if( isNaN(_value)){
+          callback(alert(`请输入分数`))
+      }
+      else if(_value<0 || _value>max){
+          callback(alert ( `分数必须大于0小于${max}`) )  
+      }
+      else{
+          callback();
+      }
+  }
   const studentscores=(scores:number)=>{
     return [{ validator:scoresValidator,maxScores:scores, trigger: 'blur' },];
   }
+
+//正则校验
+
   //提交
-  const submitForm = async() => {
-    let _list=toRaw(from.Dlist)
-    let _menus:Array<any>=[]
-    _list.forEach((element:any)=> _menus.push({scores:element.studentscores,answerid:element.answerid,comments:element.comments}) )
-    const src:any=await stydenupdata(_menus)
-    if(src.errCode=="10000"){
-      //关闭弹框
-      from.drawer=false
-      //提示信息
-      ElMessage({ message: '完成阅卷', type: "success", })
-      getlist(testid)
-    } 
-  }
+const submitForm =(formEl: FormInstance | undefined) => {
+ if (!formEl) return
+    formEl.validate(async (valid) => {
+      if (valid) {
+          
+                  let _list=toRaw(from.Dlist)
+                  let _menus:Array<any>=[]
+                  _list.forEach((element:any)=> _menus.push({scores:element.studentscores,answerid:element.answerid,comments:element.comments}) )
+                  const src:any=await stydenupdata(_menus)
+                  if(src.errCode=="10000"){
+                    //关闭弹框
+                    from.drawer=false
+                    //提示信息
+                    ElMessage({ message: '完成阅卷', type: "success", })
+                    getlist(testid)
+                  } 
+      } else {
+        console.log('error submit!')
+        return false
+      }
+    })
+}
   // 取消
-  const resetForm = (formEl: any | undefined) => {
+ const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()
   }
 </script>
 
 <style scoped>
+.item{
+  width: 500px;
+}
 .titile_header {
   font-size: 20px;
 }
@@ -265,8 +320,10 @@ const ruleFormRef = ref<any>()
 }
 .margin_top{
   margin-top: 30px;
-  background-color: rgb(255, 202, 202);
+  /* background-color: rgba(255, 202, 202, 0.596); */
+  padding: 30px 20px;
 }
+
 
 </style>
 

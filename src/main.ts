@@ -14,6 +14,7 @@ import MyDialog from "@/components/Dataitem/DataDialog.vue"
 import MyCDatadrawer from "@/components/Dataitem/Datadrawer.vue"
 import SubjectsdlogVue from './components/Subjects/Subjectsdlog.vue';
 import Adddrawer from "@/components/Dataitem/adddrawer.vue"
+import MybialogVue from './components/Dataitem/Mybialog.vue';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 //引入axios
 import axios from 'axios';
@@ -34,6 +35,8 @@ app.component('MyPages',MyPages)
 app.component('MyBialog',MyBialog)
 //批量添加弹框
 app.component('MyDialog',MyDialog)
+//穿梭框
+app.component('MybialogVue',MybialogVue)
 //试卷详情
 app.component('SubjectsdlogVue',SubjectsdlogVue)
 //侧边弹框

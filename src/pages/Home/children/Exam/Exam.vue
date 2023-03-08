@@ -14,7 +14,7 @@
       @go="goStudent"
     ></MyTable>
     <!--  分页 接受：总条数（total） 页数（page） 条数（psize） 方法（changPageSize）（changPage） -->
-    <MyPages :total="form.total" :page="form.query.page" :psize="form.query.psize" @changPageSize="handleSizeChange"  @changPage="handleCurrentChange" ></MyPages>
+    <MyPages :total="form.total" :page="form.query.page" :psize="form.query.psize" @changePageSize="handleSizeChange" @changePage="handleCurrentChange" ></MyPages>
   </div>
 </template>
 
@@ -66,8 +66,18 @@ const getlist = async () => {
 };
 getlist();
 //分页操作
-const handleSizeChange = (val: number) => { form.query.psize = val; getlist(); };
-const handleCurrentChange = (val: number) => { form.query.page = val; getlist();};
+const handleSizeChange = (val: number) => { 
+  console.log(val);
+  
+  form.query.psize = val; 
+  getlist() 
+};
+const handleCurrentChange = (val: number) => { 
+  console.log(val);
+
+  form.query.page = val; 
+  getlist()
+};
 //跳转页面
 const goStudent = (val:any) => {
   router.push("/Exam_student?id="+val.id+"&title="+val.title);
