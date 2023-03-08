@@ -1,17 +1,18 @@
 <template>
 <div>
      <el-dialog v-model="dialogVisible" title="批量导入试题" width="40%" >
-      <div style="height: 150px">
-        <el-steps direction="vertical" :active="1">
-          <el-step status="wait" title="下载试题模板，批量导入试题"></el-step>
+      <div >
+        <el-steps direction="vertical" :active="1" style="height: 150px">
+          <el-step status="wait" :title="'下载试题模板批量导入试题'" @click="dowtemplate">
+              
+          </el-step>
           <el-step title="上传填写好的试题表" status="wait" />
-          <p style="position: relative; top: -80px; left: 40px; color: red">
-            注：从其他Excel或者Word复制试题时请使用选择性粘贴Word：右键一选择性粘贴-文本，Excel:右键一选则行粘贴<br />一只勾选“值”
-          </p>
+            <p style="position: relative; top: -80px; left: 40px; color: red; padding:0 20px;">
+              注：从其他Excel或者Word复制试题时请使用选择性粘贴Word：右键一选择性粘贴-文本，Excel:右键一选则行粘贴一只勾选“值”
+            </p>
         </el-steps>
         <div>
-          <el-button size="default" @click="dowtemplate" >下载试题模板</el-button >
-          <el-upload
+            <el-upload
             name="file"
             class="upload-demo"
             action="http://estate.eshareedu.cn/exam/api/test/upload"
@@ -96,4 +97,5 @@ const adddataitem=async(file:any)=>{
 
 </script>
 <style scoped>
+
 </style>
