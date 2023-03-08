@@ -29,6 +29,7 @@
                 <el-radio :label="2">不允许任何老师使用</el-radio>
               </el-form-item>
               <el-radio v-model="ruleForm.limits" @click="gobialog"
+              :title="titl"
                 >允许部分老师使用</el-radio
               >
             </el-radio-group>
@@ -36,7 +37,7 @@
         </el-form>
       </div>
       <!-- 穿梭框  -->
-      <MybialogVue ref="bialogVue"></MybialogVue>
+      <MybialogVue ref="bialogVue" @confim="confim"></MybialogVue>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">关闭</el-button>
@@ -51,6 +52,9 @@
 <script setup lang="ts" >
 import { ref, reactive, watch } from "vue";
 import { addlist } from "@/api/databaselist";
+
+//穿梭框标题
+const titl=ref('可见老师')
 //穿梭框
 const bialogVue=ref<any>()
 const gobialog=()=>{
@@ -91,6 +95,14 @@ const ruleForm: any = reactive({
   isshow:1,
   limits: [],
 });
+//获取题库老师
+const confim=(val:any)=>{
+  console.log(val,"添加哪里");
+  val.map((item:any)=>{
+      ruleForm.limits.push({ id: item });
+  })
+  console.log(ruleForm.limits);
+}
 //非空校验
 const rules = reactive<any>({
   name: [{ required: true, message: "请输入题库名称", trigger: "blur" }],
@@ -104,7 +116,8 @@ const add = async () => {
   emit("getlist");
   //清空列表
   ruleForm.id = 0;
-  (ruleForm.title = ""), (ruleForm.isshow = 0);
+  ruleForm.title = "", 
+  ruleForm.isshow = 0;
   ruleForm.limits = 0;
 };
 </script>

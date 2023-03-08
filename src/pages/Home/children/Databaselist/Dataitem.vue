@@ -94,6 +94,7 @@ import { useRoute } from "vue-router";
 import router from "@/router";
 import { questions, exportExcel, databasequestiondel,testdel} from "@/api/databaselist";
 import { ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 //试题添加
 const draweraddinfo=ref<any>()
 const questionsdata=ref({})
@@ -224,7 +225,13 @@ const addall = () => {
 const datadel = (vla: any) => {
   ElMessageBox.confirm("确定删除该条数据吗?")
     .then(async () => {
-      const src = await databasequestiondel({ id: vla.id });
+      const src :any= await databasequestiondel({ id: vla.id });
+      if(src.errCode=="10000"){
+              ElMessage({
+                message: '删除成功',
+                type: 'success',
+              })
+      }
       //刷新列表
       getlist();
     })
