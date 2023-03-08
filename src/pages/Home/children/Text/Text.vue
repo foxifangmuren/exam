@@ -564,6 +564,9 @@ const { datas, data, Wrodata } = toRefs(form);
   display: flex;
   align-items: center;
 }
+.el-pagination{
+  margin-left: 475px;
+}
 .juan {
   height: 650px;
   margin-bottom: 50px;
