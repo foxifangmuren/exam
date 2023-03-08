@@ -172,8 +172,6 @@ const hand= async()=>{
     if (item.studentanswer && item.type === "多选题") {
       // 正确答案数组
       const answerArr = item.answer.split("|");
-      
-      
       // 学生答案
       const studentanswerArr = item.studentanswer.split("|").filter((ite:any)=>(ite!=''));
       console.log(answerArr,studentanswerArr);

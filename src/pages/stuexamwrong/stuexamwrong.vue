@@ -9,6 +9,7 @@
           <div class="num">{{ index+1 }}</div>
           <div class="type">{{ item.type }}</div>
           <div class="score">分值 ：{{ item.scores }}</div>
+          <div :class="item.studentscores===0?'def1':'def'">得分：{{item.studentscores}}</div>
         </div>
         <div class="concent_box">
           <div>
@@ -153,6 +154,26 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
   const {List,index1} = toRefs(obj)
 </script>
 <style lang="less" scoped>
+.def{
+  font-size: 12px;
+  border:1px solid rgb(76, 192, 164);
+  width: 55px;
+  color: rgb(76, 192, 164);
+  text-align: center;
+  line-height: 18px;
+  border-radius: 5px;
+  height: 18px;
+}
+.def1{
+  font-size: 12px;
+  border:1px solid rgb(238, 0, 0);
+  width: 55px;
+  color: rgb(238, 0, 0);
+  text-align: center;
+  line-height: 18px;
+  border-radius: 5px;
+  height: 18px;
+}
 .answersbox3{
   margin-left: -20px;
 }
