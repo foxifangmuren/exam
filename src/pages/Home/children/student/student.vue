@@ -108,14 +108,11 @@ import {
   classeslist,
   studentdel,
   studentdelall,
-  studentadd,
 } from '../../../../api/admin';
-import { ElMessageBox, ElMessage, Action } from 'element-plus';
+import { ElMessageBox, ElMessage } from 'element-plus';
 let studadd = ref<any>(null)
 let studup = ref<any>(null)
 let studpass = ref<any>(null)
-const dialogFormVisible = ref(false);
-const formLabelWidth = '140px';
 let obj = ref({})
 //引入添加学生的对话框
 
