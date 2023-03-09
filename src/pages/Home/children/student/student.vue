@@ -115,8 +115,8 @@
           <el-table-column property="username" label="账号" />
           <el-table-column property="addtime" label="添加时间" />
           <el-table-column label="操作" width="150" #default="scope">
-            <span class="zi" style="cursor: pointer">重置密码</span>
-            <span class="zi" style="cursor: pointer" v-show="2">修改</span>
+            <span class="zi" style="cursor: pointer" @click="pass(scope.row)">重置密码</span>
+            <span class="zi" style="cursor: pointer" @click="update(scope.row)">修改</span>
             <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
               >删除</span>
           </el-table-column>
@@ -135,11 +135,14 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <studentUp ref="studup" @studentList="studentList"></studentUp>
+    <studentPass ref="studpass" @studentList="studentList"></studentPass>
   </div>
 </template>
 
 <script setup lang="ts">
-import { log } from 'console';
+import studentPass from '../../../../components/student/studentPass.vue'
+import studentUp from '../../../../components/student/studentUp.vue'
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
   departmentlist,
@@ -150,8 +153,12 @@ import {
   studentadd,
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
+import { objectPick } from '@vueuse/shared';
+let studup = ref<any>(null)
+let studpass = ref<any>(null)
 const dialogFormVisible = ref(false);
 const formLabelWidth = '140px';
+let obj = ref({})
 //引入添加学生的对话框
 
 const data = reactive({
@@ -198,7 +205,6 @@ const props = {
   value: 'id',
   label: 'name',
 };
-
 const handleChange = (e: any) => {
   data.value = e;
 };
@@ -241,15 +247,27 @@ const studentList = async () => {
 };
 //添加
 const add = async () => {
-  console.log(form.classid)
-  // const res: any = await studentadd(form);
-  // console.log('班级添加', res);
-  // if (res.errCode === 10000) {
-  //   ElMessage.success('添加成功');
-  //   dialogFormVisible.value = false
-  //   studentList();
-  // }
+  // console.log(form.classid)
+  const res: any = await studentadd(form);
+  console.log('班级添加', res);
+  if (res.errCode === 10000) {
+    ElMessage.success('添加成功');
+    dialogFormVisible.value = false
+    studentList();
+  }
 };
+//修改
+const update = (data:any) => {
+  studup.value.dialogVisible = true
+  console.log(studup.value)
+  studup.value.form.list = data
+  obj.value = data
+}
+//点击修改密码
+const pass = (data:any)=>{
+  studpass.value.dialogVisible = true
+  studpass.value.data = data
+}
 //删除接口
 const dell = async (ids: number) => {
   const res: any = await studentdel({ id: ids });
@@ -329,7 +347,7 @@ onMounted(() => {
 <style scoped>
 .box {
   margin-left: 5px;
-  /* background-color: aquamarine; */
+  background-color: #fff;
 }
 .header {
   display: flex;

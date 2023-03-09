@@ -74,7 +74,6 @@
 import teacherAdd from '../../../../components/teacherAdd.vue'
 import taacherEdit from '../../../../components/teacherEdit.vue'
 import teapassEdit from '../../../../components/teapassEdit.vue'
-import { log } from 'console';
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
   departmentlist,
@@ -233,7 +232,7 @@ onMounted(() => {
 <style scoped>
 .box {
   margin-left: 5px;
-  /* background-color: aquamarine; */
+  background-color: #fff;
 }
 .header {
   display: flex;

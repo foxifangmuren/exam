@@ -42,6 +42,10 @@ export const classesadd = (params: any): Promise<AxiosResponse<any>> => {
 export const classesdel = (params: any): Promise<AxiosResponse<any>> => {
   return get('/classes/delete',params)
 }
+//班级批量删除
+export const delAll = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/classes/deleteall',params)
+}
 //学员列表 
 export const studentlist = (params: any): Promise<AxiosResponse<any>> => {
   return get('/student/list',params)
@@ -49,6 +53,10 @@ export const studentlist = (params: any): Promise<AxiosResponse<any>> => {
 //学员添加
 export const studentadd = (params: any): Promise<AxiosResponse<any>> => {
   return post('/student/add',params)
+}
+//学员修改密码
+export const changepass = (params: any): Promise<AxiosResponse<any>> => {
+  return post('/student/changepass',params)
 }
 //删除学员
 export const studentdel = (params: any): Promise<AxiosResponse<any>> => {
@@ -89,4 +97,11 @@ export const teacherAdd = (params: any): Promise<AxiosResponse<any>> => {
 //老师修改密码
 export const changePass = (params: any): Promise<AxiosResponse<any>> => {
   return post('/teacher/changePass',params)
+}
+export const SeleList = (params: any) => {
+  return get('/department/list', params)
+}
+// 获取试卷穿梭框数据
+export const ForList = (params: any) => {
+  return get('/teacher/list', params)
 }

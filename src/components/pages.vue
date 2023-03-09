@@ -15,6 +15,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import {ref} from "vue"
 /**
  * 分页封装
  * 将原本的分页数据每页显示条数进行更改
@@ -40,11 +41,9 @@
     const emits=defineEmits(['changePageSize','changePage'])
 
     const handleSizeChange = (val: number) => {
-        console.log(`${val} items per page`)
         emits('changePageSize',val)
     }
     const handleCurrentChange = (val: number) => {
-        console.log(`current page: ${val}`)
         emits("changePage",val)
     }
 </script>
