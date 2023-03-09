@@ -74,26 +74,12 @@ import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
   departmentlist,
   classeslist,
-  classesadd,
   classesdel,
   delAll
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
-import { log } from 'console';
-import { objectPick } from '@vueuse/shared';
 let up = ref<any>(null)
 let classadd = ref<any>(null)
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
-const handleClose = (done: () => void) => {
-  ElMessageBox.confirm('Are you sure to close this dialog?')
-    .then(() => {
-      done();
-    })
-    .catch(() => {
-      // catch error
-    });
-};
 const form = reactive({
   id: 0,
   name: '',
