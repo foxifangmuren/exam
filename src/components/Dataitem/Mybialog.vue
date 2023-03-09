@@ -1,6 +1,6 @@
 <template>
   <div>
-      <el-dialog v-model="teacher" title="可见老师" width="47%" :before-close="handleClose">
+      <el-dialog v-model="teacher" title="可见老师" width="47%" >
           <el-form>
               <el-form-item label="部门">
                   <el-select v-model="depid" class="m-2" @change="depChange" placeholder="请选择">

@@ -12,7 +12,6 @@
       <!-- 题干 -->
           <el-form ref="ruleFormRef"
             :model="ruleForm"
-            :rules="rules"
             label-width="120px"
             class="demo-ruleForm"
             status-icon
@@ -172,8 +171,7 @@ const title=ref('添加试题')
 //刷新列表
 const emit=defineEmits(['getlist'])
 //富文本编辑器
-import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+// import '@wangeditor/editor/dist/css/style.css' // 引入 css
     const editorRef = shallowRef()
     // 组件销毁时，也及时销毁编辑器
     onBeforeUnmount(() => {

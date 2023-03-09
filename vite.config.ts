@@ -10,5 +10,6 @@ export default defineConfig({
         },
         extensions: [".vue",'.js', '.json', '.ts']//使用别名省略的后缀名
     },
-    plugins: [vue()]
+    plugins: [vue()],
+    base:"./"
 })

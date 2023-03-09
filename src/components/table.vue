@@ -11,7 +11,7 @@
     <!-- 单选框 -->
     <el-table-column  v-else-if="radio">
       <template #default="scope">
-        <el-radio-group v-model="num" @click="ta(scope.row)" class="ml-4">
+        <el-radio-group   class="ml-4">
           <el-radio :label="scope.row.id" size="large"></el-radio>
         </el-radio-group>
       </template>

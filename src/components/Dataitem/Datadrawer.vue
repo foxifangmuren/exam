@@ -123,7 +123,7 @@ const drawer=ref(false)
 //接受参数--暴露
 defineExpose({drawer})
 interface Props{
-  list:Object
+  list:any
 }
 defineProps<Props>()
 const htmlEncode=(html:string)=>{
