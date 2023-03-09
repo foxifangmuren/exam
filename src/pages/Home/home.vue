@@ -47,8 +47,8 @@
               </div>
               <!-- 姓名 -->
               <div class="name" >{{data.List.name}}</div>
-              <div class="name" >部门:{{ data.List.depid }}</div>
-              <div class="name">班级:{{ data.List.classid }}</div>
+              <div class="name" >部门:{{ data.List.depname }}</div>
+              <div class="name">班级:{{ data.List.classname }}</div>
               <div class="butBox">
                 <el-button class="but" @click="goodbye">退出登录</el-button>
               </div>
@@ -121,7 +121,12 @@ const data = reactive({
   e: {},
   t: '',
   isShowPersonal:false,
-  List:{}
+  List:{
+    name:'',
+    depname:'',
+    classname:"",
+    username:""
+  }
 });
 const { isShowPersonal }: any = toRefs(data);
 const buttonRef = ref()
@@ -147,13 +152,6 @@ const state = reactive({
   sizeList: [""] as const,
 });
 const { circleUrl, sizeList } = toRefs(state);
-// const tiao=()=>{
-//   console.log(data.t);
-
-//   router.push(data.t)
-//   console.log(1);
-
-// }
 const persona=()=>{
   data.isShowPersonal = !isShowPersonal.value;
 }

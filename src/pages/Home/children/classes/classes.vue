@@ -176,7 +176,7 @@ const add = async () => {
 const update =(data:any)=>{
   up.value.dialogVisible = true
   console.log(up.value)
-  up.value.ruleForm.list = data
+  up.value.ruleForm.list = JSON.parse(JSON.stringify(data))
   obj.value = data
 }
 //请求删除接口

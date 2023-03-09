@@ -66,7 +66,7 @@ import {
   watch,
   toRaw,
 } from 'vue';
-import { departmentlist, classeslist, classesadd } from '../../api/admin';
+import { departmentlist, classeslist, studentadd } from '../../api/admin';
 import { ElMessage } from 'element-plus';
 const dialogVisible = ref(false);
 
@@ -161,7 +161,7 @@ const submitForm = async (formEl: any | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid: any, fields: any) => {
     if (valid) {
-      let res: any = await classesadd(ruleForm.list);
+      let res: any = await studentadd(ruleForm.list);
       // console.log(ruleForm.list)
       console.log(res);
       if (res.errCode === 10000) {
