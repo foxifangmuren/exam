@@ -4,7 +4,7 @@
     <div class="header">
       <span class="head">学生管理</span>
       <div>
-        <el-button>批量添加</el-button>
+        <el-button @click="adds">批量添加</el-button>
         <el-button type="primary" v-show="1" @click="add"
           >添加学生</el-button
         >
@@ -92,10 +92,12 @@
     <studentAdd ref="studadd"  @studentList="studentList"></studentAdd>
     <studentUp ref="studup" @studentList="studentList"></studentUp>
     <studentPass ref="studpass" @studentList="studentList"></studentPass>
+    <studentAdds @imports="imports" :isImport="isImport" @isImports="isImports"></studentAdds>
   </div>
 </template>
 
 <script setup lang="ts">
+import studentAdds from '../../../../components/student/studentAdds.vue'
 import studentAdd from '../../../../components/student/studentAdd.vue'
 import studentPass from '../../../../components/student/studentPass.vue'
 import studentUp from '../../../../components/student/studentUp.vue'
@@ -109,7 +111,6 @@ import {
   studentadd,
 } from '../../../../api/admin';
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
-import { objectPick } from '@vueuse/shared';
 let studadd = ref<any>(null)
 let studup = ref<any>(null)
 let studpass = ref<any>(null)
@@ -143,9 +144,10 @@ const data = reactive({
   ids: [],
   //添加学生
   isStu: false,
+  isImport:false,
 });
 // 解构数据
-const { params, ids, isStu, ClassOptions, Class } = toRefs(data);
+const { params, ids,isImport } = toRefs(data);
 const form = reactive({
   id: 0,
   name: '',//学生姓名
@@ -207,6 +209,17 @@ const add = async () => {
   studadd.value.dialogVisible = true
 
 };
+//弹出学生批量添加
+const adds = ()=>{
+  isImport.value = true
+}
+const imports = (e:any) => {
+  console.log('父组件',e);
+}
+const isImports = (e:any) => {
+  isImport.value = e
+}
+
 //修改
 const update = (data:any) => {
   studup.value.dialogVisible = true
