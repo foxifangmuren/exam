@@ -15,4 +15,36 @@ const del=(params:any)=>{
 const wy=(params:any)=>{
   return get('/subjects/get',params)
 }
-export {databaseList,addlist,del,wy}
+//试题列表
+const questions=(params:any)=>{
+    return get('databasequestion/list',params)
+}
+//根据单个ID导出我们的试题
+const exportExcel=(params:any)=>{
+    return get('databasequestion/exportExcel',params,{responseType: 'blob'})
+}
+//试题批量上传
+const Daddlist=(params:any)=>{
+    return post('databasequestion/addlist',params)
+}
+//试题删除信息
+const databasequestiondel=(params:any)=>{
+    return get('databasequestion/delete',params)
+}
+//批量删除
+const dells=(params:any)=>{
+    return post('database/deleteall',params)
+}
+//试题批量删除
+const testdel=(params:any)=>{
+    return post('databasequestion/deleteall',params)
+}
+//试题添加
+const addDataitem=(params:any)=>{
+    return post('databasequestion/add',params)
+}
+export {databaseList,addlist,del,questions,exportExcel,Daddlist,databasequestiondel,dells,
+    testdel,
+    addDataitem,
+    wy
+}

@@ -161,11 +161,11 @@ body{
       height: 390px;
       // background-color: aqua;
       margin: 27px auto 0;
-      /deep/input {
+      :deep(input) {
         height: 55px;
         border: 1px solid #ffffff;
       }
-      /deep/button {
+      :deep(button) {
         width: 100%;
         height: 53px;
       }

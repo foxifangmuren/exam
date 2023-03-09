@@ -77,7 +77,9 @@
       <el-table-column type="selection" width="55" />
       <el-table-column label="考试名称" width="180">
         <template #default="scope">
-          <el-link type="primary" prop="title"> {{ scope.row.title }}</el-link>
+          <el-link type="primary" prop="title" @click="tit(scope.row.id)">
+            {{ scope.row.title }}</el-link
+          >
         </template>
       </el-table-column>
       <el-table-column prop="state" label="状态" width="180">
@@ -108,9 +110,9 @@
           <span>|</span>
           <el-link type="primary" @click="yueJuanTan = true">阅卷老师</el-link>
           <br />
-          <el-link type="primary">分析</el-link>
+          <el-link type="primary" @click="anse(scope.row)">分析</el-link>
           <span>|</span>
-          <el-link type="primary">编辑</el-link>
+          <el-link type="primary" @click="updata(scope.row)">编辑</el-link>
           <span>|</span>
           <el-link type="danger" @click="unpublishe(scope.row, 2)"
             >删除</el-link
@@ -128,13 +130,70 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+    <el-dialog v-model="show" title="测试" width="80%">
+      <div class="ceshi">
+        <div>
+          <span>总分</span>
+          <span>{{ form.tidata.scores }}</span>
+        </div>
+        <div>
+          <span>通过分数</span>
+          <span>{{ form.tidata.pastscores }}</span>
+        </div>
+        <div>
+          <span>考试时长</span>
+          <span>100</span>
+        </div>
+        <div>
+          <span>开放时间</span>
+          <span>{{ form.tidata.begintime }}</span>
+        </div>
+      </div>
+      <div class="juan">
+        <div v-for="(item, index) in Wrodata.questions" :key="item.id">
+          <div class="titl">
+            {{ index + 1 }}{{ item.type }} <span>分值</span>{{ item.scores }}
+          </div>
+          <div>
+            {{ item.title }}
+          </div>
+          <div
+            v-for="ite in item.answers"
+            key="ite.id"
+            :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
+          >
+            <span>{{ ite.answerno }}:{{ ite.content }}</span>
+          </div>
+          <div class="liang" v-if="item.answer">正确答案:{{ item.answer }}</div>
+          <div
+            class="daan"
+            v-if="
+              item.type == '填空题'
+                ? true
+                : item.type == '问答题'
+                ? true
+                : false
+            "
+          >
+            答案解析：{{ item.explains }}
+          </div>
+        </div>
+        <el-button @click="down">导出excel</el-button>
+      </div>
+    </el-dialog>
     <!-- 学生弹出框 -->
     <div>
       <el-dialog v-model="studentTan" title="学生考试列表">
         <div style="margin-left: 20px; margin-bottom: 20px; display: flex">
           <div>
             <el-form-item label="部门">
-              <el-cascader clearable />
+              <el-cascader
+                v-model="dataq.value"
+                :options="dataq.options"
+                :props="props"
+                @change="handleChange"
+                clearable
+              ></el-cascader>
             </el-form-item>
           </div>
           <div style="margin-left: 20px">
@@ -161,7 +220,13 @@
       <el-dialog v-model="keJianTan" title="可见老师">
         <div style="margin-left: 20px; margin-bottom: 20px">
           <el-form-item label="部门">
-            <el-cascader clearable />
+            <el-cascader
+              v-model="dataq.value"
+              :options="dataq.options"
+              :props="props"
+              @change="handleChange"
+              clearable
+            ></el-cascader>
           </el-form-item>
         </div>
         <div style="margin-left: 20px">
@@ -182,7 +247,13 @@
       <el-dialog v-model="yueJuanTan" title="阅卷老师">
         <div style="margin-left: 20px; margin-bottom: 20px">
           <el-form-item label="部门">
-            <el-cascader clearable />
+            <el-cascader
+              v-model="dataq.value"
+              :options="dataq.options"
+              :props="props"
+              @change="handleChange"
+              clearable
+            ></el-cascader>
           </el-form-item>
         </div>
         <div style="margin-left: 20px">
@@ -205,24 +276,74 @@
 import { ElTable } from 'element-plus';
 import { reactive } from 'vue';
 import { TextList } from '../../../../api/admin';
+import { departmentlist } from '../../../../api/admin';
 import { ref, onMounted, toRefs } from 'vue';
-import { updateState, deleteall, del } from '../../../../api/stutest';
+import { updateState, deleteall, del, testget } from '../../../../api/stutest';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { exportExcel } from '@/api/Subjects';
+import { downLoadBlob } from '@/utils/download';
 import router from '@/router';
+const updata = (row:any)=>{
+  console.log(row);
+  
+  row.studentcounts > 0 ? ElMessage.error('本场考试已有学生参加，不可编辑') : router.push(`/testadd/${row.id}`);
+}
+//下载导出
+const down = async () => {
+  const src = await exportExcel({ id: vald.value.id }).then((src: any) => {
+    downLoadBlob(src, vald.value.title);
+  });
+};
+
 const studentTan = ref(false);
 const keJianTan = ref(false);
 //阅卷老师弹出框
-const yueJuanTan = ref(false)
+const yueJuanTan = ref(false);
 const value1 = ref<[Date, Date]>([
   new Date(2016, 9, 10, 8, 40),
   new Date(2016, 9, 10, 9, 40),
 ]);
+const show: any = ref(false);
+const anse = (row:any) => {
+  console.log(row);
+  
+  if (row.studentcounts == 0) {
+    ElMessage({
+      message: "没有学生考试",
+      type: "error",
+    });
+  }else if(row.incomplete!=0){
+     ElMessage({
+      message: "该试卷未判完",
+      type: "error",
+    });
+  } 
+  else {
+    router.push({ path: "/analyse", query: { data: row.id } });
+  }
+};
+const props = {
+  expandTrigger: 'hover', //次级菜单展开方式
+  checkStrictly: true, //是否严格的遵守父子节点不相互关联
+  value: 'id',
+  label: 'name',
+};
+const vald =ref()
+const tit = async (val: any) => {
+  console.log(val);
+  vald.value=val
+  show.value = true;
+  const res = await testget({ id: val });
+  console.log(res);
+  form.Wrodata = res.data;
+  form.tidata = res.data;
+};
 const handleSizeChange = (val: number) => {
   console.log(`${val} items per page`);
   TexLis();
 };
 const testadd = () => {
-  router.push('/testadd');
+  router.push('/testadd/1');
 };
 const handleCurrentChange = (val: number) => {
   TexLis();
@@ -235,7 +356,7 @@ const form: any = reactive({
     psize: 5,
     admin: '',
     key: '',
-    ismy: null,
+    ismy: 0,
     opentime: null,
     begindate: '',
     enddate: '',
@@ -245,6 +366,11 @@ const form: any = reactive({
   },
   datas: [],
   total: '',
+  tidata: [],
+  Wrodata: {
+    id: '',
+    isshow: 0,
+  },
 });
 //发布状态
 const va: any = ref('');
@@ -262,7 +388,36 @@ const handleSelectionChange = (val: any[]) => {
   va.value = val;
   multipleSelection.value = val;
 };
-
+const departmentList = async () => {
+  const res: any = await departmentlist(null);
+  console.log('部门级联', res);
+  if (res.errCode === 10000) {
+    dataq.options = res.data.list;
+  }
+};
+const dataq = reactive({
+  //表格数据
+  tableData: [],
+  //列表参数
+  params: {
+    name: '',
+    depname: '',
+    page: 1,
+    psize: 10,
+  },
+  key: '',
+  //搜索
+  value: [],
+  //部门
+  options: [],
+  //角色
+  options1: [],
+  //分页 总页数
+  total: 0,
+});
+const handleChange = (e: any) => {
+  data.value = e;
+};
 const unpublished = (data: any, num: any) => {
   if (i.value == '') {
     console.log(1);
@@ -378,13 +533,70 @@ const onSubmit = () => {
 };
 onMounted(() => {
   TexLis();
+  departmentList();
 });
-const { datas, data } = toRefs(form);
+const { datas, data, Wrodata } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
+/deep/ .el-transfer-panel {
+  margin-right: 200px;
+}
+/deep/ .el-transfer__buttons {
+  display: none;
+}
+.liang {
+  background-color: #eefaf6;
+  margin-top: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+/deep/.el-dialog {
+  // width: 100%;
+  // height: 100%;
+  margin-top: 50px;
+}
+.daan {
+  background-color: #f5faff;
+  color: #9dadbc;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.el-pagination{
+  margin-left: 475px;
+}
+.juan {
+  height: 650px;
+  margin-bottom: 50px;
+  overflow: auto;
+  .el-button {
+    position: absolute;
+    top: 50px;
+    right: 30px;
+    width: 80px;
+  }
+}
+.hei {
+  margin-top: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.ceshi {
+  div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  display: flex;
+}
 span {
   margin: 0 2px;
+}
+.titl {
+  margin-top: 20px;
 }
 .title {
   justify-content: space-between;

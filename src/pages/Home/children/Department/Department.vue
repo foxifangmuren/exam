@@ -67,6 +67,11 @@ import {
 } from '../../../../api/admin';
 //部门添加
 const add = () => {
+  all.id = ''
+  all.name = ''
+  all.adddata.pid =''
+  ruleForm.pid = ''
+  ruleForm.id = ''
   // console.log(show);
   show.value = true;
   all.name = '';

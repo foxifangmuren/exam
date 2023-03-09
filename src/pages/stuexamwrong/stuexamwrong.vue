@@ -9,13 +9,23 @@
           <div class="num">{{ index+1 }}</div>
           <div class="type">{{ item.type }}</div>
           <div class="score">分值 ：{{ item.scores }}</div>
+          <div :class="item.studentscores===0?'def1':'def'">得分：{{item.studentscores}}</div>
         </div>
         <div class="concent_box">
-          <div v-html="item.title" style="width: 400px;">
-            
+          <div>
+            <span
+            class="title"
+            v-if="item.type !== '填空题'"
+            v-html="item.title"
+          ></span>
+          <span
+            class="title"
+            v-if="item.type === '填空题'"
+            style="display: flex; flex-wrap: wrap"
+            v-html="rep(item.title, index)"
+          ></span>
           </div>
           <div class="answers">
-            <div class=""></div>
             <div class="answersbox" v-if="item.type==='单选题'" v-for="(item1,index) in item.answers" :key="index1">
               <div class="answersbox1">
                  <div :class="item.studentanswer==item1.answerno?item.answer==item1.answerno?'box2 active':'box2 active1':'box2'">
@@ -28,10 +38,26 @@
                  </div>
               </div>
             </div>
+            <div class="answersbox" v-if="item.type==='判断题'">
+              <div class="answersbox1">
+                 <div class="judge" :class="item.studentanswer=='正确'?'quan active':'quan'">
+                  <span class="quan"  ></span><span>正确</span>
+                 </div>
+                 <div class="judge" :class="item.studentanswer=='错误'?'quan active':'quan'">
+                  <span class="quan"></span><span>错误</span>
+                 </div>
+              </div>
+            </div>
+            <div class="answersbox3" v-if="item.type==='问答题'">
+              <div>
+                答：
+                <div class="answer"></div>
+              </div>
+            </div>
             <div class="answersbox" v-if="item.type==='多选题'" v-for="(item1,index) in item.answers" :key="index1">
               <div class="answersbox1">
-                 <div :class="item.studentanswer==item1.answerno?item.answer==item1.answerno?'box2 active':'box2 active1':'box2'">
-                  <div  :class="item.studentanswer==item1.answerno?'box3 box5':'box3'">
+                 <div :class=" item.answer.includes(item1.answerno)?item.studentanswer.includes(item1.answerno)?'box2 active':'box2':item.studentanswer.includes(item1.answerno)?'box2 active1':'box2'">
+                  <div  :class="item.answer.includes(item1.answerno)?item.studentanswer.includes(item1.answerno)?'box3 box5':'box3':item.studentanswer.includes(item1.answerno)?'box3 box5':'box3'">
                     {{ item1.answerno }}
                   </div>
                   <div class="box4">
@@ -40,8 +66,14 @@
                  </div>
               </div>
             </div>
+            <div style="margin-top: 20px; width: 60%; padding-left: 10px; height: 40px; line-height: 40px; background-color: #f7fbff;" > <span v-if="item.type!=='问答题'" style="color:#90adca">正确答案： </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
+              <span v-if="item.type==='判断题'" class="correct1">{{ item.answer }}</span>
+              <span v-if="item.type==='填空题'" class="correct1">{{ item.answer }}</span>
+              <br>
+              <span v-if="item.type=='问答题'">答案解析</span><span v-if="item.type=='问答题'||item.type=='填空题'">{{item.explains}}</span>
+            </div>
           </div>
-          <div> <span>正确答案 </span><span>{{ item.answer }}</span></div>
+          
         </div>
         <div class="line"></div>
         </div>
@@ -49,8 +81,8 @@
       <div class="sheet">
         <h3>答题卡</h3>
         <div class="board">
-          <div class="boardbox" style="background-color: #ccc;"></div><div>已答</div>
-          <div class="boardbox" style="background-color: #fff; border: 1px solid #ccc;"></div><div>未答</div>
+          <div class="boardbox" style="background-color: #97d3af;"></div><div>正确</div>
+          <div class="boardbox" style="background-color: #fcf2f0; border: 1px solid #ccc;"></div><div>错误</div>
         </div>
         <div class="conten">
           <!-- <div :class="item==true?'dui':'red'" @click="tiao(index)" v-for="(item,index) in index1" :key="item">{{ index+1 }}</div> -->
@@ -61,7 +93,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import {reactive,onMounted,toRefs} from 'vue'
+  import {reactive,onMounted,toRefs,nextTick} from 'vue'
   import {getForResult} from '../../api/stutest'
   import { useRoute,useRouter} from 'vue-router'
   const route = useRoute()
@@ -70,6 +102,14 @@
     index1:[],
     classs:String
   })
+  // 替换方法
+const rep = (str: string, index: number) => {
+  return str.replace(
+    /\[\]/g,
+    `<div style="min-width:50px;height:18px;border-bottom: 1px solid #999;padding:0 10px;margin:0 1px" data-index=${index} class="boxs boxs${index}"></div>`
+  );
+};
+
   const getList = async ()=>{
     let res:any = await getForResult({testid:route.query.testid})
     console.log(res)
@@ -89,7 +129,18 @@
       console.log(obj.List)
     }
     
-    console.log(obj.index1)
+    nextTick(() => {
+      const boxDom: any = document.querySelectorAll(".boxs");
+      boxDom.forEach((item: any) => {
+        var _index = item.getAttribute("data-index");
+        document
+          .querySelectorAll(".boxs" + _index)
+          .forEach((ite: any, index: number) => {
+            ite.innerHTML =
+              obj.List.questions[_index].studentanswer.split("|")[index];
+          });
+      });
+    });
     console.log(obj.List)
   }
   const tiao=(index:any)=>{
@@ -103,24 +154,81 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
   const {List,index1} = toRefs(obj)
 </script>
 <style lang="less" scoped>
+.def{
+  font-size: 12px;
+  border:1px solid rgb(76, 192, 164);
+  width: 55px;
+  color: rgb(76, 192, 164);
+  text-align: center;
+  line-height: 18px;
+  border-radius: 5px;
+  height: 18px;
+}
+.def1{
+  font-size: 12px;
+  border:1px solid rgb(238, 0, 0);
+  width: 55px;
+  color: rgb(238, 0, 0);
+  text-align: center;
+  line-height: 18px;
+  border-radius: 5px;
+  height: 18px;
+}
+.answersbox3{
+  margin-left: -20px;
+}
+.judge{
+  height: 40px;
+  display: flex;
+  align-items: center;
+  .quan{
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+}
+.answer{
+  width: 800px;
+  height: 50px;
+  background-color: #f5f7fa;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.correct{
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 50%;
+  text-align: center;
+  color: #fff;
+  background-color: #4cc0a4;
+  margin-right: 10px;
+}
  .active{
-        border: 1px solid #3d80eb;
-        background-color: #fff;
+        // border: 1px solid #3d80eb;
+        background-color: #f0faf6;
   }
   .red{
-    background-color: #eb3d3daa;
+    background-color: #fcf2f0;
+    color: #e9747f;
   }
   .dui{
-    background-color: #3deb896d;
+    background-color: #eefaf5;
+    color: #97d3af;
   }
   .active1{
     border: 1px solid #3d80eb;
         background-color: #d30e0e30;
   }
   .box2{
-  width: 75%;
+  width: 60%;
   height: 40px;
   display: flex;
+  padding-left: 10px;
   align-items: center;
   // background-color: #fff;
   align-items: center;
@@ -136,9 +244,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
     text-align: center;
     line-height: 35px;
   }
-  .box5{
-    background-color: #3d80eb;
-  }
+
 }
 .stu{
   width: 100%;
@@ -209,7 +315,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
         color:#fff;
         text-align:center;
         border-radius:5px 0 0 5px;
-        line-heigt:23px;      
+        line-height:23px;      
       }
       .type{
         width:70px;
@@ -219,7 +325,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
         border-radius:0 5px 5px 0;
         color:#3d80eb;
         text-align:center;
-        line-heigt:23px;      
+        line-height:23px;      
       }
       .score{
         color:#ccc;
