@@ -277,9 +277,6 @@ const dels = async () => {
   });
   if (conf) dells();
 };
-
-//添加
-
 //查询
 const onSubmit = () => {
   console.log('hello');
