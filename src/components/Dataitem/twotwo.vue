@@ -95,9 +95,6 @@
         </div>
         <!-- 填空问答 -->
         <div v-if='ruleForm.type=="填空题"?true:(ruleForm.type=="问答题"?true:false)'>
-            <el-form-item label="答案">
-              <el-input rows="5" style="width:300px" v-model="ruleForm.explains" type="textarea" />
-            </el-form-item>
             <el-form-item label="解析">
               <el-input rows="5" style="width:300px" v-model="ruleForm.explains" type="textarea" />
             </el-form-item>
@@ -119,15 +116,6 @@
 </div>
 </template>
 <script lang='ts' setup>
-/**
- * 添加和修改同时使用的该面
- * 功能
- *    Tab切换
- *    标题判断
- *    试题添加
- *    刷新列表
- *    传值父级
- */
 import { ElMessage } from 'element-plus'
 import { onBeforeUnmount,reactive, ref, shallowRef,watch } from 'vue'
 import {addDataitem} from "@/api/databaselist"
@@ -174,7 +162,7 @@ const props:any=defineProps({
     }
 })
 watch(props,(nweProps,oldProps)=>{
-  console.log(props.questionsdata);
+  // console.log(props.questionsdata);
   for(let item in ruleForm){
     ruleForm[item]=props.questionsdata[item]
   }
@@ -192,16 +180,10 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
         const editor = editorRef.value
         if (editor == null) return
         editor.destroy()
-    })
- 
+    }) 
     const handleCreated = (editor:any) => {
-      // console.log("记录 editor 实例，重要！",editor);
       editorRef.value = editor // 记录 editor 实例，重要！
     }
-//表单数据对象
-const ruleFormRef = ref<any>({
- 
-})
 //数据存放
 const ruleForm:any = reactive({
     id:0,
@@ -239,48 +221,62 @@ const ruleForm:any = reactive({
                 },
     ]
 })
-
-// 正则校验
-const rules = reactive<any>({
-  desc: [
-    { required: true, message: 'Please input activity form', trigger: 'blur' },
-  ],
+//创建一个对象
+const fromdata=reactive({
+     id:0,
+    databaseid:0,
+    scores:"",
+    title: "",
+    type: "单选题",
+    answer: "",
+    tags: "",
+    explains: "",
+    answers: [
+                {
+                    "id": 0,
+                    "answerno": "A",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "B",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "C",
+                    "questionid": 0,
+                    "content": ""
+                },
+                {
+                    "id": 0,
+                    "answerno": "D",
+                    "questionid": 0,
+                    "content": ""
+                },
+    ]
 })
 //成功时候的按钮
 const submitForm = async () => {
-    //拿去id
-    ruleForm.databaseid=props.id
-    if(ruleForm.type=='问答题'){
-      ruleForm.answer='：略'
-    }
-    //发送请求    
-      const src=await addDataitem(ruleForm).then((src:any)=>{
-         ElMessage({
-          message: "添加成功",
-          type: 'success',
-        })
-      })
+      fromdata.id=ruleForm.id
+      fromdata.databaseid=ruleForm.databaseid
+      fromdata.scores=ruleForm.scores
+      fromdata.title= ruleForm.title
+      fromdata.type= ruleForm.type
+      fromdata.tags=ruleForm.tags
+      fromdata.answer= ruleForm.answer
+      fromdata.explains=ruleForm.explains
+      fromdata.answers=ruleForm.answers
+      console.log(fromdata);
+      
       //关闭弹框
       drawer.value=false
-      //刷新列表
-      emit('getlist')
 }
 //保存并取消
 const save=async ()=>{
-   //拿去id
-    ruleForm.databaseid=props.id
-    if(ruleForm.type=='问答题'){
-      ruleForm.answer='：略'
-    }
-      //发送请求
-      const src=await addDataitem(ruleForm).then((src:any)=>{
-         ElMessage({
-          message: "添加成功",
-          type: 'success',
-        })
-      })
-      //刷新列表
-      emit('getlist')
+
       //刷新列表
       clear()
 }

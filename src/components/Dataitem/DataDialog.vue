@@ -89,6 +89,8 @@ const addFile=async(file:any)=>{
 const adddataitem=async(file:any)=>{
   //调用批量添加接口  
   const src =await Daddlist({databaseid:testid.value,list:from.addFile})
+  console.log(src);
+  
   //调用父组件方法
   emit('getlist')
   // 关闭弹框
