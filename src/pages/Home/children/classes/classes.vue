@@ -3,36 +3,11 @@
     <!-- 头部 -->
     <div class="header">
       <span class="head">班级管理</span>
-      <el-button type="primary" @click="dialogFormVisible = true"
+      <el-button type="primary" @click="add"
         >添加班级</el-button
       >
     </div>
-    <!-- 添加弹出框 -->
-    <div>
-      <el-dialog v-model="dialogFormVisible" title="添加">
-        <el-form :model="form">
-          <el-form-item label="班级名称" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="部门"  :label-width="formLabelWidth">
-              <el-cascader
-                v-model="form.depid"
-                :options="data.options"
-                :props="props"
-                @change="handleChange"
-                clearable
-              ></el-cascader>
-            </el-form-item>
-          
-        </el-form>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取消</el-button>
-            <el-button type="primary" @click="add"> 确定 </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
+    
   
     <!-- 内容 -->
     <div class="content">
@@ -40,7 +15,7 @@
         <el-form-item label="班级名称">
           <el-input v-model="data.key" placeholder="请输入关键字" />
         </el-form-item>
-        <el-form-item label="部门">
+        <el-form-item label="部门" prop="depid">
           <el-cascader
             v-model="data.value"
             :options="data.options"
@@ -88,10 +63,12 @@
       />
     </div>
     <classUp ref="up" @getclasseslist="getclasseslist"></classUp>
+    <classAdd ref="classadd" @getclasseslist="getclasseslist"></classAdd>
   </div>
 </template>
 
 <script setup lang="ts">
+import classAdd from '../../../../components/class/classAdd.vue'
 import classUp from '../../../../components/class/classUp.vue'
 import { onMounted, reactive, ref, toRefs } from 'vue';
 import {
@@ -105,6 +82,7 @@ import { ElMessageBox, ElMessage, Action } from 'element-plus';
 import { log } from 'console';
 import { objectPick } from '@vueuse/shared';
 let up = ref<any>(null)
+let classadd = ref<any>(null)
 const dialogFormVisible = ref(false)
 const formLabelWidth = '140px'
 const handleClose = (done: () => void) => {
@@ -192,21 +170,13 @@ const onSubmit = () => {
 
 //添加
 const add = async () => {
-  // console.log(data.params.depname)
-  const res: any = await classesadd(form);
-  console.log('班级添加', res);
-  if (res.errCode === 10000) {
-    ElMessage.success('添加成功');
-    dialogFormVisible.value = false
-    getclasseslist();
-  }
+  classadd.value.dialogVisible = true
 };
 //修改
 const update =(data:any)=>{
   up.value.dialogVisible = true
   console.log(up.value)
-  Object.assign(up.value.form.list ,data)
-  up.value.form.list = data
+  up.value.ruleForm.list = data
   obj.value = data
 }
 //请求删除接口
