@@ -14,7 +14,7 @@
           <span>|</span>
           <div>考试时长</div>
           <span>|</span>
-          <div>考试时间</div>
+          <div>考试时间:时间不限</div>
         </div>
       </div>
       <div class="two">

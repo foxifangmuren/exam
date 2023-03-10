@@ -11,6 +11,9 @@ import MyTable from "@/components/Table.vue"
 import MyPages from "@/components/pages.vue"
 import MyBialog from "@/components/Dataitem/Bialog.vue"
 import MyDialog from "@/components/Dataitem/DataDialog.vue"
+import MeTwo from "@/components/class/twotwo.vue"
+import MeTw from "@/components/Dataitem/Dillog_content.vue"
+import MeT from "@/components/Dataitem/Dilog.vue"
 import MyCDatadrawer from "@/components/Dataitem/Datadrawer.vue"
 import SubjectsdlogVue from './components/Subjects/Subjectsdlog.vue';
 import Adddrawer from "@/components/Dataitem/adddrawer.vue"
@@ -35,6 +38,8 @@ app.component('MyPages',MyPages)
 app.component('MyBialog',MyBialog)
 //批量添加弹框
 app.component('MyDialog',MyDialog)
+app.component('MeTw',MeTw)
+app.component('MeT',MeT)
 //穿梭框
 app.component('MybialogVue',MybialogVue)
 //试卷详情
@@ -43,5 +48,5 @@ app.component('SubjectsdlogVue',SubjectsdlogVue)
 app.component('MyCDatadrawer',MyCDatadrawer)
 //添加侧边栏
 app.component("Adddrawer",Adddrawer)
-
+app.component("MeTwo",MeTwo)
 app.mount('#app');
