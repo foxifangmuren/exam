@@ -36,6 +36,7 @@
           ref="multipleTableRef"
           :data="data.tableData"
           style="width: 100%"
+          :header-cell-style="{ background: '#fafafa' }"
           @selection-change="handleSelectionChange"
         >
           <el-table-column property="name" label="学生" />

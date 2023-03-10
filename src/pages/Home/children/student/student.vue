@@ -59,6 +59,7 @@
           ref="multipleTableRef"
           :data="data.tableData"
           style="width: 100%"
+          :header-cell-style="{ background: '#fafafa' }"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
@@ -67,7 +68,12 @@
           <el-table-column property="depname" label="所属部门" />
           <el-table-column property="classname" label="所在班级" />
           <el-table-column property="username" label="账号" />
-          <el-table-column property="addtime" label="添加时间" />
+          <el-table-column property="addtime" label="添加时间">
+            <template #default="scope">
+              <span>{{ scope.row.addtime.substr(0,16) }}</span>
+            </template>
+          </el-table-column>
+
           <el-table-column label="操作" width="150" #default="scope">
             <span class="zi" style="cursor: pointer" @click="pass(scope.row)">重置密码</span>
             <span class="zi" style="cursor: pointer" @click="update(scope.row)">修改</span>

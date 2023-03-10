@@ -37,6 +37,7 @@
           ref="multipleTableRef"
           :data="data.tableData"
           style="width: 100%"
+          :header-cell-style="{ background: '#fafafa' }"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />

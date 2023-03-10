@@ -79,6 +79,7 @@
       :data="datas"
       style="width: 100%"
       @selection-change="handleSelectionChange"
+      :header-cell-style="{ background: '#fafafa' }"
       ref="multipleTableRef"
     >
       <el-table-column type="selection" width="55" />

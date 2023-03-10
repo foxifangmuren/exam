@@ -38,6 +38,9 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="list.remarks" type="textarea" />
+        </el-form-item>
         <el-form-item label="账号" prop="username">
           <el-input v-model="list.username" />
         </el-form-item>
@@ -77,6 +80,7 @@ const ruleForm: any = reactive({
   depid1: [],
   list: {
     id: 0,
+    remarks:'',
     username:'',
     pass:'',
     name: '' ,
