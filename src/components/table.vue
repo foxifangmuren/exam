@@ -4,7 +4,7 @@
     :data="tableData"
     style="width: 100%"
     highlight-current-row
-    :header-cell-style="{ background: '#F7FBFE', color: '#000' }"
+    :header-cell-style="{ background: 'rgb(250, 250, 250)'}"
   >
     <!-- 复选框 -->
     <el-table-column type="selection" v-if="isTypeSelection" width="55" />
@@ -30,7 +30,7 @@
           <!-- 循环按钮数组 -->
           <span v-for="(btn, index) in item.buttons" :key="index">
             <!-- 阅卷按钮，最后按钮判断 -->
-            <span v-if="btn.text == 'exam'">
+            <span v-if="btn.text == 'exam'" style="width: 200px;">
               <el-button
                 link
                 :type="btn.type"
@@ -64,7 +64,19 @@
         <!-- 文本(阅卷未判人数) -->
         <div v-if="item.label == '开放时间'">
             <span v-if=" scope.row.endtime == null">不限</span>
-            <span v-else >{{ scope.row.addtime.slice(0,16) +"至"+scope.row.endtime.slice(0,16)}}</span>
+            <span v-else >{{ scope.row.addtime.slice(5,16) +"至"+scope.row.endtime.slice(5,16)}}</span>
+        </div>
+        <!-- 创建时间的更改 -->
+        <div v-if="item.label == '创建时间'" style="width:400px">
+            <span>{{ scope.row.addtime.slice(0,16)}}</span>
+        </div>
+        <!-- 更改时间 -->
+        <div v-if="item.label == '更新时间'" style="width:400px">
+            <span>{{ scope.row.addtime.slice(0,16)}}</span>
+        </div>
+        <!-- 考试时间  -->
+        <div v-if="item.label == '考试时间'" style="width:400px">
+            <span>{{ scope.row.readtime.slice(0,16)}}</span>
         </div>
         <!-- 颜色更改(阅卷未判人数) -->
         <div v-if="item.label == '未判人数'">
