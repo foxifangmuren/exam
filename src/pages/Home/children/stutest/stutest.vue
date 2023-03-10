@@ -39,7 +39,8 @@
               <span>{{ item.title }}</span>
             </div>
             <div class="contenbox_left_time">
-              考试时间： {{ item.begintime==null?'不限':item.begintime +'-'+ item.begintime }}
+              
+              考试时间： {{ item.begintime==null?'不限':moment(item.begintime).format("YYYY-MM-DD hh:mm") +'-'+ moment(item.endtime).format("YYYY-MM-DD hh:mm") }}
             </div>
           </div>
           <div class="contenbox_right">
@@ -57,6 +58,7 @@
   import{getList} from '../../../../api/stutest'
   import { useRouter } from 'vue-router'
 import { da } from 'element-plus/es/locale';
+import moment from 'moment';
   const router = useRouter()
   const obj:any = reactive({
     data:{
@@ -101,6 +103,7 @@ import { da } from 'element-plus/es/locale';
     List()
   }
   onMounted(() => {
+    // console.log()
     List()
   })
   const {data,list,total} = toRefs(obj)

@@ -195,7 +195,7 @@ const { datas } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
-/deep/.el-select {
+:deep(.el-select) {
   width: 200px;
 }
 // /deep/.el-input {

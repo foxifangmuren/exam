@@ -1262,10 +1262,11 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
-/deep/ .el-transfer-panel {
+
+:deep(.el-transfer-panel) {
   margin-right: 200px;
 }
-/deep/ .el-transfer__buttons {
+:deep(.el-transfer__buttons) {
   display: none;
 }
 .ty {

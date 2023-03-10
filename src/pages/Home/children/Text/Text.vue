@@ -506,10 +506,10 @@ const { datas, data, Wrodata } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
-/deep/ .el-transfer-panel {
+:deep(.el-transfer-panel) {
   margin-right: 200px;
 }
-/deep/ .el-transfer__buttons {
+:deep(.el-transfer__buttons) {
   display: none;
 }
 .liang {
@@ -519,7 +519,7 @@ const { datas, data, Wrodata } = toRefs(form);
   display: flex;
   align-items: center;
 }
-/deep/.el-dialog {
+:deep(.el-dialog) {
   // width: 100%;
   // height: 100%;
   margin-top: 50px;

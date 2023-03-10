@@ -398,14 +398,16 @@ html{
         border: 1px solid #3d80eb;
         background-color: #f1f5fb;
         width: 1000px;
+        
   }
   .box7{
     background-color: #f0f8ff;
     color: #aab4fd;
   }
   .box9{
+    border-radius: 5px;
     font-size: 13px;
-  width: 60%;
+  width: 1000px;
   height: 40px;
   display: flex;
   align-items: center;
@@ -425,11 +427,13 @@ html{
   }
   .box5{
     background-color: #3d80eb;
+    color: #fff;
   }
   }
 .box2{
   font-size: 13px;
-  width: 60%;
+  width: 1000px;
+  border-radius: 5px;
   height: 40px;
   display: flex;
   align-items: center;
@@ -446,16 +450,18 @@ html{
     background-color: #fff;
     border-radius: 50%;
     text-align: center;
+    
     line-height: 35px;
   }
   .box5{
+    color: #fff;
     background-color: #3d80eb;
   }
 }
 .stu{
   width: 100%;
   height: 100%;
-  background-color:#eee;
+  background-color:#fafbfd;
   .conten{
     display: flex;
     margin-top: 25px;
@@ -491,7 +497,7 @@ html{
         margin-bottom: 10px;
         color: #666;
       }
-      /deep/button{
+      :deep(button){
         width: 100%;
       }
     }
@@ -564,7 +570,7 @@ html{
       }
     }
     .line{
-      width: 60%;
+      width: 1100px;
       height: 1px;
       background-color:#ccc;
       margin-top:60px;
