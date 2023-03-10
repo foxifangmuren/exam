@@ -38,12 +38,12 @@
                 <h3>试题列表</h3>
               </div>
               <div>
-                <span>总分:0</span>
-                <span>已添加零题</span>
+                <span>总分:{{ Wrod.Total }}</span>
+                <span>已添加{{ Wrodata.questions.length }}题</span>
                 <el-button @click="Wrodata.isshow = 0">清空</el-button>
               </div>
             </div>
-            <div class="ty" v-if="Wrodata.isshow == 1">
+            <div class="ty" v-if="Wrodata.questions">
               <div
                 class="yt"
                 v-for="(item, index) in Wrodata.questions"
@@ -58,7 +58,9 @@
                   </div>
 
                   <div>
-                    <el-icon :size="20"><EditPen /></el-icon>
+                    <el-icon :size="20" @click="updataz(item)"
+                      ><EditPen
+                    /></el-icon>
                     <el-icon :size="20" @click="delti(index)"
                       ><DeleteFilled
                     /></el-icon>
@@ -104,7 +106,7 @@
             </div>
             <div class="san">
               <el-button @click="goadd">添加题目</el-button>
-              <el-button>批量导入</el-button>
+              <el-button @click="addall">批量导入</el-button>
               <el-button @click="dialoe = true">从题库中导入</el-button>
               <el-button @click="dialogTableVisible = true"
                 >选择已有试卷</el-button
@@ -114,7 +116,11 @@
         </el-form-item>
         <el-form-item label="试题存入题库">
           <el-select v-model="AddFrom.num" placeholder="请选择题库">
-            <el-option v-for="item in Wrod.datas.title" />
+            <el-option
+              v-for="(item, index) in dataq.zcc"
+              :key="index"
+              :value="item.title"
+            />
           </el-select>
           <el-button @click="dialogFormVisible = true">+创建试题库</el-button>
         </el-form-item>
@@ -178,7 +184,7 @@
         </el-dialog>
       </div>
     </div>
-    <div class="set">
+    <div class="set" v-if="route.query.type != 2">
       <div class="one">
         <span class="ones">3</span>
         <span>考试设置</span>
@@ -191,21 +197,21 @@
       >
         <el-form-item label="通过分数:">
           <el-input
-              v-model="params.pastscores"
-              type="number"
-              style="width: 90px"
-            />
+            v-model="params.pastscores"
+            type="number"
+            style="width: 90px"
+          />
         </el-form-item>
         <el-form-item label="考试时长:">
           <el-radio-group v-model="AddFrom.limittime" class="num">
-            <el-radio :label="1" >不限时时长</el-radio>
-            <el-radio :label="2" >限时时长</el-radio>
+            <el-radio :label="1">不限时时长</el-radio>
+            <el-radio :label="2">限时时长</el-radio>
             <el-input
-                type="number"
-                style="width: 90px"
-                v-model="AddFrom.limittime"
-                v-if="AddFrom.isshow == 2"
-              />
+              type="number"
+              style="width: 90px"
+              v-model="AddFrom.limittime"
+              v-if="AddFrom.isshow == 2"
+            />
           </el-radio-group>
         </el-form-item>
         <el-form-item label="开放时间:">
@@ -218,7 +224,7 @@
               start-placeholder="开始时间"
               end-placeholder="结束时间"
               @change="changeTime"
-                format="YYYY-MM-DD HH:mm"
+              format="YYYY-MM-DD HH:mm"
             />
             <span>不填表示永久</span>
           </div>
@@ -233,13 +239,20 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="防作弊:">
-            <el-checkbox  v-model="AddFrom.qorder" label="试题顺序打乱" :true-label="1" :false-label="0" name="type" />
-            <el-checkbox
-              label="选项顺序打乱（单选题，多选题，判断题）"
-              name="type"
-              v-model="AddFrom.aorder"
-              :true-label="1" :false-label="0"
-            />
+          <el-checkbox
+            v-model="AddFrom.qorder"
+            label="试题顺序打乱"
+            :true-label="1"
+            :false-label="0"
+            name="type"
+          />
+          <el-checkbox
+            label="选项顺序打乱（单选题，多选题，判断题）"
+            name="type"
+            v-model="AddFrom.aorder"
+            :true-label="1"
+            :false-label="0"
+          />
         </el-form-item>
       </el-form>
     </div>
@@ -261,7 +274,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="Teacher">
+    <div class="Teacher" v-if="route.query.type != 2">
       <div class="one">
         <span class="ones">5</span>
         <span>考试学生</span>
@@ -279,7 +292,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="Teacher">
+    <div class="Teacher" v-if="route.query.type != 2">
       <div class="one">
         <span class="ones">6</span>
         <span>协同设置</span>
@@ -334,7 +347,7 @@
         :isTypeSelection="true"
         :isshow="false"
         @goinfo="goinfo"
-        @delarrinfo="delarrinfo"
+        @delarrinf="delarrinf"
         :tableHeader="tableHead"
         :tableData="fr.tableData"
       ></MyTable>
@@ -533,6 +546,9 @@
         </template>
       </el-dialog>
     </div>
+    <MeTwo ref="draweraddinfo" @getdata="getdata" :data="datac"></MeTwo>
+    <MyDialog ref="adddata" @can="can"></MyDialog>
+    <MeTw ref="Refer" @confim="confim"></MeTw>
     <!-- <el-dialog v-model="dialogVisible1" v-if="dialogVisible1">
       <Forth @isshow="isshoww" @valuesss="valuessss"></Forth>
     </el-dialog> -->
@@ -548,11 +564,11 @@
 
 <script setup lang="ts">
 // import Drawer from '../../../../components/Drawer.vue';
-import { reactive, ref, onMounted, toRefs } from 'vue';
+import { reactive, ref, watchEffect, onMounted, toRefs } from 'vue';
 import { testadd } from '@/api/stutest';
 import { useRouter, useRoute } from 'vue-router';
 import { nextTick } from 'vue';
-import moment from "moment";
+import moment from 'moment';
 // import Forth from '../../../../components/ppp.vue';
 import {
   questions,
@@ -560,26 +576,57 @@ import {
   databasequestiondel,
   testdel,
 } from '@/api/databaselist';
+import { addsub } from '../../../../api/Subjects';
 import { examList } from '@/api/exam';
 import { departmentlist } from '../../../../api/admin';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { getList, getTest } from '@/api/Subjects';
+import { getList, getTest, subjectsinfo } from '@/api/Subjects';
 import { wy, databaseList } from '@/api/databaselist';
 import Adddrawer from '@/components/Dataitem/adddrawer.vue';
-const draweraddinfo = ref<any>();
 const mycdatadrawer = ref<any>();
 const goinfo = (vla: any) => {
   f.data = vla;
   mycdatadrawer.value.drawer = true;
 };
-const v = ref('');
+const datac = ref();
+const updataz = (zccc: any) => {
+  datac.value = zccc;
+  console.log(datac.value);
+  draweraddinfo.value.drawer = true;
+};
+const confim = (val: any) => {
+  emit('id', val);
+  console.log(val);
+  val.map((item: any) => {
+    state.user.limits.push({ id: item });
+  });
+};
+const draweraddinfo = ref<any>();
+const goadd = () => {
+  draweraddinfo.value.drawer = true;
+};
 
+const v = ref('');
+const adddata = ref<any>();
+const addall = () => {
+  adddata.value.dialogVisible = true;
+};
 const qi = () => {
   Wrod.Wrodata.questions = v.value;
+  console.log(Wrod.Wrodata.questions);
+
   nextTick(() => {
     Wrod.Wrodata.isshow = 1;
   });
   dialo.value = false;
+};
+const can = (x: any) => {
+  console.log(x);
+  Wrod.Wrodata.questions = x;
+  if (Wrod.Wrodata.questions) {
+    Wrod.Wrodata.isshow = 1;
+  }
+  // console.log();
 };
 const numberValidateForm = reactive({
   limits: [],
@@ -591,7 +638,7 @@ const dialogVisible1 = ref(false);
 const isshoww = (val: any) => {
   dialogVisible1.value = false;
 };
-const delarrinfo = (val: any) => {
+const delarrinf = (val: any) => {
   v.value = val;
   console.log(v);
 };
@@ -602,12 +649,14 @@ const router = useRouter();
 // route接收参数
 const route: any = useRoute();
 let id = route.params['id'];
+console.log(id);
+console.log(route.query);
 
-const goadd = () => {
-  isTitle.value = true;
-  // data.index = -1;
-  // data.obj ={};
-};
+// const goadd = () => {
+//   isTitle.value = true;
+//   // data.index = -1;
+//   // data.obj ={};
+// };
 // const isF = (e: any) => {
 //   isTitle.value = e;
 // };
@@ -632,7 +681,13 @@ const props = {
   value: 'id',
   label: 'name',
 };
+const getdata = (n: any) => {
+  console.log(n.value);
+  n = JSON.parse(JSON.stringify(n));
+  Wrod.Wrodata.questions.push(n);
+};
 const dataq = reactive({
+  zcc: [],
   //表格数据
   tableData: [],
   //列表参数
@@ -688,7 +743,7 @@ const changePageSiz = (val: number) => {
 const getlist = async () => {
   const src = await databaseList(fro.query);
   console.log(src);
-
+  dataq.zcc = src.data.list;
   fro.tableData = src.data.list;
   fro.total = src.data.counts;
 };
@@ -707,14 +762,23 @@ const Wrod: any = reactive({
   Wrodata: {
     id: '',
     isshow: 0,
+    questions: [],
   },
   data: {
     page: 1,
     psize: 8,
   },
   datas: {},
+  Total: '',
 });
-
+watchEffect(() => {
+  var num = 0;
+  var we = Wrod.Wrodata.questions.map((item: any, index: number) => {
+    num = Number(item.scores) + Number(num);
+    // console.log(num);
+  });
+  Wrod.Total = num;
+});
 const fm = reactive({
   //批量添加框
   dialogVisible: false,
@@ -797,8 +861,8 @@ const check = (done: () => void) => {
   }
 };
 const changeTime = (e: any) => {
-  const begintime = moment(e[0]).format("YYYY-MM-DD HH:mm:ss.0");
-  const endtime = moment(e[1]).format("YYYY-MM-DD HH:mm:ss.0");
+  const begintime = moment(e[0]).format('YYYY-MM-DD HH:mm:ss.0');
+  const endtime = moment(e[1]).format('YYYY-MM-DD HH:mm:ss.0');
   data.arrTime.push(begintime);
   data.arrTime.push(endtime);
   params.value.begintime = begintime;
@@ -961,16 +1025,42 @@ const AddFrom: any = reactive({
   num: '',
 });
 const TestAdd = async (num: number) => {
-  AddFrom.state = num;
-  AddFrom.id=id
-  const res: any = await testadd(AddFrom);
-  console.log(res);
-  if (res.errCode == '10000') {
-    ElMessage({
-      message: '添加成功',
-      type: 'success',
-    });
-    router.push('/test');
+  if (route.query.type != '2') {
+    AddFrom.state = num;
+    AddFrom.id = id;
+    if (AddFrom.id == 1) {
+      AddFrom.id = '';
+    }
+    console.log(AddFrom.id);
+
+    const res: any = await testadd(AddFrom);
+    console.log(res);
+    if (res.errCode == '10000') {
+      ElMessage({
+        message: '添加成功',
+        type: 'success',
+      });
+      router.push('/test');
+    }
+  } else {
+    console.log(AddFrom);
+    AddFrom.id = id;
+    if (AddFrom.id == 1) {
+      AddFrom.id = '';
+    } else if (AddFrom.id == 2) {
+      AddFrom.id = '';
+    }
+    console.log(AddFrom.id);
+
+    const res: any = await addsub(AddFrom);
+    console.log(res, '试题添加');
+    if (res.errCode == '10000') {
+      ElMessage({
+        message: '添加成功',
+        type: 'success',
+      });
+      router.push('/subjects');
+    }
   }
 };
 const data: any = reactive({
@@ -1117,22 +1207,41 @@ const shortcuts = [
 ];
 // 数据回显
 const Echo = async () => {
-  console.log({ id: Number(id) });
-  const res: any = await getTest(Number(id));
-  console.log(res);
-  if (res.errCode === 10000) {
-    AddFrom.title = res.data.title;
-    Wrod.Wrodata.questions = res.data.questions;
-    console.log(AddFrom.questions);
+  if (route.query.type != '2') {
+    console.log({ id: Number(id) });
+    const res: any = await getTest(Number(id));
+    console.log(res);
+    if (res.errCode === 10000) {
+      AddFrom.title = res.data.title;
+      Wrod.Wrodata.questions = res.data.questions;
+      console.log(AddFrom.questions);
 
-    AddFrom.info = res.data.info;
-    Wrod.Wrodata.isshow = 1;
-    data.arrTime.push(res.data.begintime);
-    data.arrTime.push(res.data.endtime);
+      AddFrom.info = res.data.info;
+      Wrod.Wrodata.isshow = 1;
+      data.arrTime.push(res.data.begintime);
+      data.arrTime.push(res.data.endtime);
+    } else {
+      ElMessage.error(res.errMsg);
+    }
   } else {
-    ElMessage.error(res.errMsg);
+    console.log({ id: Number(id) });
+    const res: any = await subjectsinfo({ id: Number(id) });
+    console.log(res);
+    if (res.errCode === 10000) {
+      AddFrom.title = res.data.title;
+      Wrod.Wrodata.questions = res.data.questions;
+      AddFrom.questions = Wrod.Wrodata.questions;
+
+      AddFrom.info = res.data.info;
+      Wrod.Wrodata.isshow = 1;
+      data.arrTime.push(res.data.begintime);
+      data.arrTime.push(res.data.endtime);
+    } else {
+      ElMessage.error(res.errMsg);
+    }
   }
 };
+
 // nextTick(() => {
 if (Number(id) != 1) {
   Echo();

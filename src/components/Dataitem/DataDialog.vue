@@ -48,7 +48,7 @@ import { ElMessageBox,} from "element-plus";
 
 //接受参数
 //接受参数---父组件的方法
-const emit =defineEmits(['getlist'])
+const emit =defineEmits(['getlist','can'])
 //接受参数---定义
 const dialogVisible = ref(false)
 //接受参数---暴漏
@@ -83,6 +83,8 @@ const beforeRemove: any['beforeRemove'] = (uploadFile: { name: any; }, uploadFil
 const addFile=async(file:any)=>{
   if(file.errCode===10000){
     from.addFile=file.data.map( (item:any)=>({...item,title:item.title}))
+    console.log( from.addFile);
+    
   }
 }
 //确定时调用接口===试题批量添加
@@ -91,6 +93,7 @@ const adddataitem=async(file:any)=>{
   const src =await Daddlist({databaseid:testid.value,list:from.addFile})
   //调用父组件方法
   emit('getlist')
+  emit('can',from.addFile)
   // 关闭弹框
   dialogVisible.value=false
 }

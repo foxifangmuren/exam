@@ -75,6 +75,8 @@ import { ElMessageBox, ElMessage } from "element-plus";
 //弹框区域
 let Refer = ref<any>(null);
 const popout = (val?: any) => {
+  console.log(val);
+  
   from.val = val;
   Refer.value.dialogVisible = true;
 };
