@@ -68,7 +68,7 @@
       <div class="button">
         <el-button type="danger"  @click="begin" v-if="Scores==='未通过'">查看答卷</el-button>
         <el-button type="warning" disabled v-if="Scores==='待阅卷'">等待阅卷</el-button>
-        <el-button type="success"  @click="begin" v-if="Scores==='已通过'">查看答案</el-button>
+        <el-button type="success"  @click="begin" v-if="Scores==='已通过'">查看答案</el-button> 
         
       </div>
     </div>
@@ -87,7 +87,8 @@ import moment from 'moment';
   const obj:any = reactive({
     time:'',
     data:[],
-    isShow:'',
+    isShow:true,
+    isShow1:true,
     questionTypes:[{name:"单选题",counts:0},{name:"多选题",counts:0},{name:"判断题",counts:0},{name:"填空题",counts:0},{name:"问答题",counts:0}],
     correct:[{name:"单选题",counts:0},{name:"多选题",counts:0},{name:"判断题",counts:0}],
     error:[{name:"单选题",counts:0},{name:"多选题",counts:0},{name:"判断题",counts:0}],
@@ -119,24 +120,14 @@ import moment from 'moment';
         item.counts = res.data.questions.filter((ite:any)=>ite.studentscores<=0&&ite.type===item.name).length
       })
       // console.log(obj.error1)
-      if(res.data.result==='未通过'){
+      console.log(res.data.result)
+      if(res.data.result=='未通过'){
         obj.isShow=true
       }else{
         obj.isShow = false
       }
       obj.Scores = res.data.result
       obj.data = res.data
-      if(res.data.begintime){
-        const begintime = new Date(res.data.begintime)
-        const endtime = new Date(res.data.endtime)
-        const time = new Date()
-        console.log(begintime,endtime,time)
-        if( begintime.getTime() < time.getTime() && endtime.getTime() > time.getTime()){
-          obj.isShow = false
-        }else{
-          obj.isShow = true
-        }
-      }
     }
   }
   //返回考试详情页面

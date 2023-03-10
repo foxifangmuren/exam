@@ -11,7 +11,7 @@ const config: McAxiosRequestConfig = {
     timeout,
     headers: {
         "Content-Type": "application/json",
-        "Authorization": <string>sessionStorage.getItem("token")
+        "Authorization": <string>sessionStorage.getItem("token") ||''
     }
 };
 

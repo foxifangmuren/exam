@@ -148,11 +148,11 @@ const tableHeader = [
 //编辑
 const compile=(vla:any)=>{
   // console.log(vla.id);
-   router.push(`/testadd/${vla.id}`);
+   router.push( {path:`/testadd/${vla.id}`, query:{type:2}});
 }
 //跳转详情页面
 const skip=()=>{
-  router.push("/testadd/1");
+  router.push( {path:`/testadd/2`, query:{type:2}});
 }
 // 分页方法
 const changePage = (val: number) => {

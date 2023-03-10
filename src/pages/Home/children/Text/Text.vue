@@ -21,9 +21,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="1">
-            <el-checkbox-group v-model="data.ismy" class="p">
-              <el-checkbox label="我创建的" name="type" />
-            </el-checkbox-group>
+            <el-checkbox v-model="checked" @change="check" name="type">
+              我创建的</el-checkbox
+            >
           </el-col>
           <el-col :span="4">
             <el-form-item label="开放时间" label-width="70px" class="o">
@@ -46,8 +46,15 @@
           </el-col>
           <el-col :span="2">
             <el-form-item label="状态">
-              <el-select v-model="data.begindate" placeholder="请选择">
-                <el-option label="Zone one" value="shanghai" />
+              <el-select
+                v-model="region"
+                placeholder="请选择"
+                @change="selectDoctor"
+                style="width: 100px"
+              >
+                <el-option label="所有" value="0" />
+                <el-option label="已发布" value="1" />
+                <el-option label="未发布" value="2" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -104,11 +111,11 @@
       <el-table-column prop="addtime" label="更新时间" />
       <el-table-column class="op" label="操作">
         <template #default="scope">
-          <el-link type="primary" @click="studentTan = true">学生</el-link>
+          <el-link type="primary" @click="open">学生</el-link>
           <span>|</span>
-          <el-link type="primary" @click="keJianTan = true">可见</el-link>
+          <el-link type="primary" @click="open">可见</el-link>
           <span>|</span>
-          <el-link type="primary" @click="yueJuanTan = true">阅卷老师</el-link>
+          <el-link type="primary" @click="open">阅卷老师</el-link>
           <br />
           <el-link type="primary" @click="anse(scope.row)">分析</el-link>
           <span>|</span>
@@ -182,93 +189,11 @@
       </div>
     </el-dialog>
     <!-- 学生弹出框 -->
-    <div>
-      <el-dialog v-model="studentTan" title="学生考试列表">
-        <div style="margin-left: 20px; margin-bottom: 20px; display: flex">
-          <div>
-            <el-form-item label="部门">
-              <el-cascader
-                v-model="dataq.value"
-                :options="dataq.options"
-                :props="props"
-                @change="handleChange"
-                clearable
-              ></el-cascader>
-            </el-form-item>
-          </div>
-          <div style="margin-left: 20px">
-            <el-form-item label="班级">
-              <el-cascader clearable />
-            </el-form-item>
-          </div>
-        </div>
-        <div style="margin-left: 20px">
-          <el-transfer />
-        </div>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="studentTan = false">取消</el-button>
-            <el-button type="primary" @click="studentTan = false">
-              确定
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
     <!-- 可见弹出框 -->
-    <div>
-      <el-dialog v-model="keJianTan" title="可见老师">
-        <div style="margin-left: 20px; margin-bottom: 20px">
-          <el-form-item label="部门">
-            <el-cascader
-              v-model="dataq.value"
-              :options="dataq.options"
-              :props="props"
-              @change="handleChange"
-              clearable
-            ></el-cascader>
-          </el-form-item>
-        </div>
-        <div style="margin-left: 20px">
-          <el-transfer />
-        </div>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="keJianTan = false">取消</el-button>
-            <el-button type="primary" @click="keJianTan = false">
-              确定
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
     <!-- 阅卷老师弹出框 -->
-    <div>
-      <el-dialog v-model="yueJuanTan" title="阅卷老师">
-        <div style="margin-left: 20px; margin-bottom: 20px">
-          <el-form-item label="部门">
-            <el-cascader
-              v-model="dataq.value"
-              :options="dataq.options"
-              :props="props"
-              @change="handleChange"
-              clearable
-            ></el-cascader>
-          </el-form-item>
-        </div>
-        <div style="margin-left: 20px">
-          <el-transfer />
-        </div>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="yueJuanTan = false">取消</el-button>
-            <el-button type="primary" @click="yueJuanTan = false">
-              确定
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
+      <MeTw ref="Refer" @confim="confim"></MeTw>
+      <MeT></MeT>
+    
   </div>
 </template>
 
@@ -283,11 +208,41 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { exportExcel } from '@/api/Subjects';
 import { downLoadBlob } from '@/utils/download';
 import router from '@/router';
-const updata = (row:any)=>{
+const updata = (row: any) => {
   console.log(row);
-  
-  row.studentcounts > 0 ? ElMessage.error('本场考试已有学生参加，不可编辑') : router.push(`/testadd/${row.id}`);
+
+  row.studentcounts > 0
+    ? ElMessage.error('本场考试已有学生参加，不可编辑')
+    : router.push(`/testadd/${row.id}`);
+};
+let Refer = ref<any>(false)
+const open = ()=>{
+  Refer.value.dialogVisible = true
 }
+let checked: any = ref(false);
+const check = (done: () => void) => {
+  if (checked.value == true) {
+    ElMessageBox.confirm(`确定要切换本人创建的吗?`)
+      .then(() => {
+        form.data.ismy = 1;
+        checked.value = true;
+        TexLis();
+      })
+      .catch(() => {
+        checked.value = false;
+      });
+  } else {
+    ElMessageBox.confirm(`确定要切换全部试题吗?`)
+      .then(() => {
+        form.data.ismy = 0;
+        TexLis();
+        checked.value = false;
+      })
+      .catch(() => {
+        checked.value = true;
+      });
+  }
+};
 //下载导出
 const down = async () => {
   const src = await exportExcel({ id: vald.value.id }).then((src: any) => {
@@ -304,22 +259,21 @@ const value1 = ref<[Date, Date]>([
   new Date(2016, 9, 10, 9, 40),
 ]);
 const show: any = ref(false);
-const anse = (row:any) => {
+const anse = (row: any) => {
   console.log(row);
-  
+
   if (row.studentcounts == 0) {
     ElMessage({
-      message: "没有学生考试",
-      type: "error",
+      message: '没有学生考试',
+      type: 'error',
     });
-  }else if(row.incomplete!=0){
-     ElMessage({
-      message: "该试卷未判完",
-      type: "error",
+  } else if (row.incomplete != 0) {
+    ElMessage({
+      message: '该试卷未判完',
+      type: 'error',
     });
-  } 
-  else {
-    router.push({ path: "/analyse", query: { data: row.id } });
+  } else {
+    router.push({ path: '/analyse', query: { data: row.id } });
   }
 };
 const props = {
@@ -328,10 +282,10 @@ const props = {
   value: 'id',
   label: 'name',
 };
-const vald =ref()
+const vald = ref();
 const tit = async (val: any) => {
   console.log(val);
-  vald.value=val
+  vald.value = val;
   show.value = true;
   const res = await testget({ id: val });
   console.log(res);
@@ -342,9 +296,22 @@ const handleSizeChange = (val: number) => {
   console.log(`${val} items per page`);
   TexLis();
 };
+const region = ref("");
+// 获取下拉菜单的值
+const selectDoctor = (val: any) => {
+  form.data.state = val;
+  TexLis();
+};
 const testadd = () => {
   router.push('/testadd/1');
 };
+const confim = (val:any)=>{
+  emit('id',val)
+  console.log(val);
+  val.map((item:any)=>{
+      state.user.limits.push({id:item})
+  })
+}
 const handleCurrentChange = (val: number) => {
   TexLis();
 
@@ -564,7 +531,7 @@ const { datas, data, Wrodata } = toRefs(form);
   display: flex;
   align-items: center;
 }
-.el-pagination{
+.el-pagination {
   margin-left: 475px;
 }
 .juan {
@@ -591,6 +558,31 @@ const { datas, data, Wrodata } = toRefs(form);
     justify-content: space-between;
   }
   display: flex;
+}
+.transfer-footer {
+  margin-left: 15px;
+  padding: 6px 5px;
+}
+
+.dialog-footer button:first-child {
+  margin-right: 10px;
+}
+
+:deep(.el-transfer) {
+  display: flex;
+  justify-content: space-between;
+}
+
+:deep(.el-transfer__buttons) {
+  display: none !important;
+}
+
+:deep(.el-transfer-panel) {
+  width: 300px;
+}
+
+:deep(.el-dialog .el-dialog__body) {
+  padding: 30px 20px !important;
 }
 span {
   margin: 0 2px;

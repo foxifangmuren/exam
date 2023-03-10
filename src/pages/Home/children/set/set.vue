@@ -97,6 +97,9 @@ const resetForm = (formEl: any | undefined) => {
 }
 </script>
 <style lang="less" scoped>
+.demo-ruleForm{
+  background-color: white;
+}
   .box{
     width: 400px;
     margin-top: 100px;

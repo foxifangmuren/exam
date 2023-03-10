@@ -123,7 +123,7 @@ const updata = (data:any)=>{
   Refer1.value.dialogVisible = true
   console.log(Refer1.value)
   Object.assign(Refer1.value.ruleForm.list ,data)
-  Refer1.value.ruleForm.list =data
+  Refer1.value.ruleForm.list =JSON.parse(JSON.stringify(data))
   obj.value = data
 }
 // 解构数据
