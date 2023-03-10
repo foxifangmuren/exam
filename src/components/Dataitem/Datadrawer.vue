@@ -16,7 +16,7 @@
             <span>分值：{{ list.scores }}</span>
           </div>
           <!-- 内容 -->
-          <div class="typecontent"><span v-html="list.title"></span></div>
+          <div class="typecontent"><span v-html="htmlEncode(list.title)"></span></div>
           <!-- 答案 -->
           <div v-for="(item, index) in list.answers" :key="index">
             <div
@@ -38,7 +38,7 @@
           </div>
           <!-- 内容 -->
           <div class="typecontent">
-            <span v-html="list.title"></span>
+            <div class="typecontent"><span v-html="htmlEncode(list.title)"></span></div>
           </div>
           <!-- 答案 -->
             <div v-for="(ite, index) in list.answers" :key="index">
@@ -57,7 +57,7 @@
             <span>分值：{{list.scores }}</span>
           </div>
           <!-- 内容 -->
-          <div  class="typecontent"><span v-html="list.title"></span></div>
+          <div class="typecontent"><span v-html="htmlEncode(list.title)"></span></div>
           <!-- 答案 -->
           <div>
             <div class="analysis">
@@ -74,7 +74,10 @@
             <span>分值：{{ list.scores}}</span>
           </div>
           <!-- 内容 -->
-          <div class="typecontent"><span v-html="list.title"></span></div>
+          <div class="typecontent">
+            <div class="typecontent"><span v-html="htmlEncode(list.title)"></span></div>
+
+          </div>
           <!-- 答案 -->
           <div>
             <div class="sueers">
@@ -91,7 +94,7 @@
             <span>分值：{{list.scores}}</span>
           </div>
           <!-- 内容 -->
-          <div class="typecontent"><span v-html="list.title"></span></div>
+          <div class="typecontent"><span v-html="htmlEncode(list.title)"></span></div>
           <!-- 答案 -->
           <div>
             <div class="sueers">
@@ -120,9 +123,17 @@ const drawer=ref(false)
 //接受参数--暴露
 defineExpose({drawer})
 interface Props{
-  list:Object
+  list:any
 }
 defineProps<Props>()
+const htmlEncode=(html:string)=>{
+  console.log(html);
+  if(!html) return ""
+  html=html.replace(/</g,"&lt;")
+  html=html.replace(/>/g,"&gt;")
+  html=html.replace(/\n/g,"<br>")
+  return html
+}
 </script>
 <style scoped lang="less">
 /* 试题详情布局 */
