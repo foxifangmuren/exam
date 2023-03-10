@@ -50,7 +50,8 @@
       <div>
         <!-- 流动布局 -->
         <el-form ref="ruleFormRef" :model="from" status-icon  class="demo_ruleForm">
-          <div v-for="(item, index) in Dlist" :key="index">
+          <!-- 有数据时 -->
+          <div  v-for="(item, index) in Dlist" :key="index">
             <!-- 学生答卷详情 -->
             <!-- 标题 -->
             <p class="styles" ><span>{{index+1}}</span> {{item.type}} <span>分值：{{item.scores}}</span></p>
@@ -73,6 +74,10 @@
               </el-form-item>
             </el-form-item>
           </div>
+          <!-- 数据为空时 -->
+          <div v-if="Dlist.length==0">
+              <el-empty description="抱歉数据丢失了" />
+          </div>
           <!-- 按钮区域 -->
           <el-form-item>
             <el-button type="primary" @click="submitForm(ruleFormRef)" >阅卷完毕</el-button >
@@ -80,7 +85,6 @@
           </el-form-item>
         </el-form>
       </div>
-
     </el-drawer>
   </div>
 </template>
@@ -289,6 +293,8 @@ const submitForm =(formEl: FormInstance | undefined) => {
 }
   // 取消
  const resetForm = (formEl: FormInstance | undefined) => {
+    //关闭弹框
+    from.drawer=false
     if (!formEl) return
     formEl.resetFields()
   }
