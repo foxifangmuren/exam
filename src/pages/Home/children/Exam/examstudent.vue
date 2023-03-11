@@ -51,16 +51,19 @@
         <!-- 流动布局 -->
         <el-form ref="ruleFormRef" :model="from" status-icon  class="demo_ruleForm">
           <!-- 有数据时 -->
+          {{Dlist}}
           <div  v-for="(item, index) in Dlist" :key="index">
             <!-- 学生答卷详情 -->
             <!-- 标题 -->
             <p class="styles" ><span>{{index+1}}</span> {{item.type}} <span>分值：{{item.scores}}</span></p>
             <!-- 题目 -->
             <p class="styles">
-                <span v-html="item.title"></span>
+                <span v-html="replace(item.title,'[]','————,')"></span>
             </p>
             <!-- 回答 -->
-            <p class="styles" :style="item.answer==null? 'color:red':''"> 回答：{{item.answer==null? '该学员未给出答案':item.answer}}</p>
+            <p class="styles" :style="item.studentanswer==''? 'color:red':''"> 
+              回答：{{item.studentanswer==''? '该学员未给出答案':item.studentanswer}}
+            </p>
             <!-- 老师阅卷 -->
             <el-form-item  class="margin_top"   >
               <!-- 评分 -->
@@ -298,6 +301,17 @@ const submitForm =(formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()
   }
+//替换[]
+const replace=(Str:any, character:any, turnInto:any)=> {
+    while (Str.indexOf(character) !== -1) {//利用indexOf函数查询特定字符串下标
+        Str = Str.replace(character, turnInto);// 替换
+    }
+    console.log("替换后的字符串为:" + Str);
+    return Str;
+}
+const rep = (str: string) => {
+ return str.replace(/\|/g, `,`);
+};
 </script>
 
 <style scoped>
@@ -321,8 +335,8 @@ const submitForm =(formEl: FormInstance | undefined) => {
   margin: 20px auto;
 }
 .styles{
-  height: 40px;
-  line-height: 80px;
+    margin-top: 40px;
+    margin-right: 30px;
 }
 .margin_top{
   margin-top: 30px;

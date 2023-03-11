@@ -37,7 +37,7 @@
               />
               <Editor
                 style="overflow-y: hidden"
-                v-model="ruleForm.title"
+                v-model="html"
                 @onCreated="handleCreated"
               />
             </div>
@@ -55,7 +55,7 @@
                   :label="data.letter[index]"
                 >
                   <!-- 输入框的值 -->
-                  <el-input v-model="domain.content" />
+                  <el-input v-model="domain.content"  />
                   <!-- 删除图标 -->
                   <el-icon style="font-size: 22px; color: #f56c6c"
                     ><CircleClose @click.prevent="removeDomain(index)"
@@ -93,7 +93,7 @@
                   :label="data.letter[index]"
                 >
                   <!-- 输入框的值 -->
-                  <el-input v-model="domain.content" />
+                  <el-input v-model="domain.content"   />
                   <!-- 删除图标 -->
                   <el-icon style="font-size: 22px; color: #f56c6c"
                     ><CircleClose @click.prevent="removeDomain(index)"
@@ -137,14 +137,12 @@
                   : false
               "
             >
-              <el-form-item label="答案">
-                <el-input
-                  rows="5"
-                  style="width: 300px"
-                  v-model="ruleForm.explains"
-                  type="textarea"
-                />
+              <el-form-item  label="正确答案" v-show="answerdata.length>0"  v-if="ruleForm.type == '填空题' ">
+                <div v-for="(item,index) in answerdata" :key="index">
+                    <el-input v-model="item.contetn" class='ti' @change="gogogo(item)" />
+                </div>
               </el-form-item>
+
               <el-form-item label="解析">
                 <el-input
                   rows="5"
@@ -186,11 +184,12 @@
  *    传值父级
  */
 import { ElMessage } from "element-plus";
-import { onBeforeUnmount, reactive, ref, shallowRef, watch } from "vue";
+import { onBeforeUnmount, onUpdated, reactive, ref, shallowRef, watch ,nextTick} from "vue";
 import { addDataitem } from "@/api/databaselist";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
+// import { nextTick } from "process";
 
 //选择题部分
 const removeDomain = (index: any) => {
@@ -294,7 +293,26 @@ const ruleForm: any = reactive({
     },
   ],
 });
+//填空题处理区域
+const html:any=ref('')
+const answerdata:any=ref<any>([])
+const abc:any=ref<any>([])
 
+watch(html,(newValue)=>{
+     answerdata.value=[]
+     let res=newValue.match(/\[\]/g);
+      if(res){
+        let len=res?.length
+        for(let index=0; index < len; index++ ){
+            answerdata.value.push({contetn:""})            
+        }
+      }
+})
+const gogogo=(val:any)=>{
+  abc.value.push(val.contetn)
+  ruleForm.answer=abc.value.join('|')
+  // console.log( ruleForm.answer);
+}
 // 正则校验
 const rules = reactive<any>({
   desc: [
@@ -305,6 +323,7 @@ const rules = reactive<any>({
 const submitForm = async () => {
   //拿去id
   ruleForm.databaseid = props.id;
+  ruleForm.title=html
   if (ruleForm.type == "问答题") {
     ruleForm.answer = "：略";
   }
@@ -324,6 +343,7 @@ const submitForm = async () => {
 const save = async () => {
   //拿去id
   ruleForm.databaseid = props.id;
+   ruleForm.title=html
   if (ruleForm.type == "问答题") {
     ruleForm.answer = "：略";
   }
@@ -436,7 +456,7 @@ const data = reactive({
   height: 300px;
 }
 :deep(.el-form-item__label) {
-  margin-left: -80px;
+  margin-left: -50px;
 }
 :deep(.el-input__wrapper) {
   width: 800px;
