@@ -28,7 +28,8 @@
         </el-form-item>
         <el-form-item label="班级">
           <el-cascader
-            :options="data.Class"
+            v-model="data.value"
+            :options="data.classlist"
             :props="props"
             @change="handleChange"
             clearable
@@ -39,7 +40,7 @@
             @change="changeClass"
           >
             <el-option
-              v-for="item in Class"
+              v-for="item in classlist"
               :label="item.name"
               :value="item.classid"
               :key="item.classid"
@@ -126,7 +127,7 @@ const data = reactive({
   tableData: [],
   //列表参数
   params: {
-    classid: 0,
+    classid: '',
     name: '',
     depname: '',
     page: 1,
@@ -136,11 +137,11 @@ const data = reactive({
   key: '',
   //搜索
   value: [],
+  value1:[],
   //部门
   options: [],
   //班级
-  ClassOptions: [],
-  Class: [],
+  classlist: [],
   //分页 总页数
   total: 0,
   ids: [],
@@ -177,7 +178,7 @@ const getclasseslist = async () => {
   const res: any = await classeslist(data.params);
   console.log('班级列表', res);
   if (res.errCode === 10000) {
-    data.Class = res.data.list;
+    data.classlist = res.data.list;
   }
 };
 const changeClass = (e: any) => {
@@ -189,6 +190,7 @@ const studentList = async () => {
     ...params.value,
     depid: data.value ? data.value[data.value.length - 1] : 0,
     key: data.key,
+    classid: data.value ? data.value[data.value.length - 1] : 0,
   });
   console.log('学员列表', res);
   if (res.errCode === 10000) {
