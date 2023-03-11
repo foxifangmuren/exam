@@ -71,7 +71,6 @@ import { da } from 'element-plus/es/locale';
   const GetTest1 =async ()=>{
     loading.value = true
     let res:any = await getTest({id:route.query.id})
-    console.log(res)
     if(res.errCode ===10000){
       loading.value = false
       
@@ -80,7 +79,6 @@ import { da } from 'element-plus/es/locale';
         const begintime = new Date(res.data.begintime)
         const endtime = new Date(res.data.endtime)
         const time = new Date()
-        console.log(begintime,endtime,time)
         if( begintime.getTime() < time.getTime() && endtime.getTime() > time.getTime()){
           obj.isShow = false
         }else{

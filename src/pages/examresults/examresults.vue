@@ -79,10 +79,7 @@
   import { useRoute,useRouter } from 'vue-router'
   import { onMounted,reactive ,toRefs,ref} from 'vue'
   import {Back} from '@element-plus/icons-vue'
-import { da, fa } from 'element-plus/es/locale';
-import { error } from 'console';
 import moment from 'moment';
-import { is } from 'dom7';
   const route = useRoute()
   const router = useRouter()
   const loading = ref(true)
@@ -102,10 +99,7 @@ import { is } from 'dom7';
   const GetTest1 =async ()=>{
     loading.value = true
     let res:any = await getForResult({testid:route.query.id})
-    console.log(res)
-    // console.log()
     obj.time=moment(res.data.stuEndTime).diff(moment(res.data.studentStartTime), 'minutes')
-    console.log(obj.time)
     loading.value = false
     if(res.errCode ===10000){
       obj.questionTypes.forEach((item:any)=>{
@@ -117,15 +111,12 @@ import { is } from 'dom7';
       obj.correct1.forEach((item:any)=>{
         item.counts = res.data.questions.filter((ite:any)=>ite.studentscores>0&&ite.type===item.name).length
       })
-      // console.log(obj.correct1)
       obj.error.forEach((item:any)=>{
         item.counts = res.data.questions.filter((ite:any)=>ite.answer!=ite.studentanswer.replace('|','')&&ite.type===item.name).length
       })
       obj.error1.forEach((item:any)=>{
         item.counts = res.data.questions.filter((ite:any)=>ite.studentscores<=0&&ite.type===item.name).length
       })
-      // console.log(obj.error1)
-      console.log(res.data.result)
       if(res.data.result=='未通过'){
         obj.isShow=true
       }else if(res.data.result=='待阅卷'){

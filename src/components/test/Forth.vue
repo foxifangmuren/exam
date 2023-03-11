@@ -30,7 +30,6 @@
 <script setup lang="ts">
 import { ref, reactive, defineEmits } from "vue";
 import { SeleList, ForList } from "../../api/test";
-import { ElMessageBox } from "element-plus";
 const emit = defineEmits(["sub", "limitss", "valuesss", "isshow"]);
 const dialogVisible1 = ref(false);
 const value:any = ref([]);
@@ -72,6 +71,7 @@ const submit = () => {
     return { id: item };
   });
   emit("valuesss", arr);
+  console.log(arr)
   emit("sub", false);
   emit("isshow", false);
 };

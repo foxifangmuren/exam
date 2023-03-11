@@ -90,7 +90,6 @@ let Refer1 = ref<any>(null)
 let Refer2 = ref<any>(null)
 const add = ()=>{
   Refer.value.dialogVisible = true
-  console.log(123)
 }
 
 const loading = ref(true)
@@ -125,9 +124,7 @@ const pass = (data:any)=>{
 }
 //点击修改按钮
 const updata = (data:any)=>{
-  // console.log(data)
   Refer1.value.dialogVisible = true
-  console.log(Refer1.value)
   Object.assign(Refer1.value.ruleForm.list ,data)
   Refer1.value.ruleForm.list =JSON.parse(JSON.stringify(data))
   obj.value = data
@@ -158,7 +155,6 @@ const value: any = ref('');
 //部门级联调接口
 const departmentList = async () => {
   const res: any = await departmentlist(null);
-  console.log('部门级联', res);
   if (res.errCode === 10000) {
     data.options = res.data.list;
   }
@@ -166,10 +162,8 @@ const departmentList = async () => {
 // 角色级联列表
 const getclasseslist = async ()=>{
   const res:any = await rolelist(null)
-  console.log('角色列表',res)
   if(res.errCode === 10000){
     data.options1 = res.data.list
-    console.log(data.options1) 
   }
 }
 //师资列表
@@ -180,7 +174,6 @@ const teacherList = async () => {
     depid: data.value ? data.value[data.value.length - 1] : 0,
     key: data.key,
   });
-  console.log('班级列表', res);
   loading.value = false
   if (res.errCode === 10000) {
     data.tableData = res.data.list;
@@ -190,7 +183,6 @@ const teacherList = async () => {
 //删除接口
 const dell = async (ids: number) => {
   const res: any = await teacherdel({ id: ids });
-  // console.log('学生删除',res)
   if (res.errCode === 10000) {
     ElMessage.success('删除成功');
     teacherList();
@@ -214,7 +206,6 @@ const del = (ids: number) => {
 };
 //查询
 const onSubmit = () => {
-  console.log('hello');
   teacherList();
 };
 

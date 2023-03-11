@@ -168,7 +168,6 @@ const rep = (str: string, index: number) => {
   const getList = async ()=>{
     loading.value = true
     let res:any = await getForResult({testid:route.query.testid})
-    console.log(res)
     loading.value = false
     if(res.errCode===10000){
       obj.List = res.data
@@ -183,14 +182,12 @@ const rep = (str: string, index: number) => {
         return item;
       }
     });
-      console.log(obj.List)
     }
     
     nextTick(() => {
       const boxDom: any = document.querySelectorAll(".boxs");
       boxDom.forEach((item: any) => {
         var _index = item.getAttribute("data-index");
-        console.log(_index)
         document
           .querySelectorAll(".boxs" + _index)
           .forEach((ite: any, index: number) => {
@@ -199,10 +196,8 @@ const rep = (str: string, index: number) => {
           });
       });
     });
-    console.log(obj.List)
   }
   const tiao=(index:any)=>{
-    // console.log(index)
 document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
 
   }
