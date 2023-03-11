@@ -10,7 +10,7 @@
     
   
     <!-- 内容 -->
-    <div class="content">
+    <div class="content" v-loading="loading">
       <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="班级名称">
           <el-input v-model="data.key" placeholder="请输入关键字" />
@@ -81,6 +81,18 @@ import {
 import { ElMessageBox, ElMessage, Action } from 'element-plus';
 let up = ref<any>(null)
 let classadd = ref<any>(null)
+const loading = ref(true)
+const dialogFormVisible = ref(false)
+const formLabelWidth = '140px'
+const handleClose = (done: () => void) => {
+  ElMessageBox.confirm('Are you sure to close this dialog?')
+    .then(() => {
+      done();
+    })
+    .catch(() => {
+      // catch error
+    });
+};
 const form = reactive({
   id: 0,
   name: '',
@@ -139,6 +151,7 @@ const departmentList = async () => {
 };
 //班级列表
 const getclasseslist = async () => {
+  loading.value = true
   const res: any = await classeslist({
     ...params.value,
     depid: data.value ? data.value[data.value.length - 1] : 0,
@@ -146,6 +159,7 @@ const getclasseslist = async () => {
   });
   console.log('班级列表', res);
   if (res.errCode === 10000) {
+    loading.value = false
     data.tableData = res.data.list;
     data.total = res.data.counts;
   }

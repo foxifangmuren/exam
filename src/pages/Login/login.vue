@@ -6,7 +6,7 @@
       </div>
       <h2>考试系统</h2>
       <div class="boxs">
-        <el-form :model="form" ref="ruleFormRef" :rules="rules" v-show="isShow">
+        <el-form v-loading="loading" :model="form" ref="ruleFormRef" :rules="rules" v-show="isShow">
           <el-form-item prop="usename">
             <el-input v-model="form.usename" placeholder="用户名" />
           </el-form-item>
@@ -43,6 +43,7 @@ import { login } from '../../api/admin';
 import { reactive, toRefs, ref, } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
+import type { FormInstance, FormRules } from 'element-plus';
 const router = useRouter();
 const obj = reactive({
   form: {
@@ -51,6 +52,8 @@ const obj = reactive({
   },
   isShow: true,
 });
+
+const loading = ref(false)
 //切换事件
 const soft = () => {
   obj.isShow = !obj.isShow;
@@ -74,16 +77,29 @@ const log = async (formEl: any) => {
       type:'success'
     })
       // console.log('submit!')
+      loading.value = true
       const res: any = await login(obj.form.usename, obj.form.pass);
       console.log(res);
-      sessionStorage.setItem('token', res.data.token);
-      sessionStorage.setItem('data', JSON.stringify(res.data.menu));
-      sessionStorage.setItem('model', JSON.stringify(res.data.model));
-      if (res.data.type == 'student') {
-        router.push('/stutest');
-      } else if (res.data.type == 'teacher') {
-        router.push('/Home');
+      if(res.errCode===10000){
+        sessionStorage.setItem('token', res.data.token);
+        sessionStorage.setItem('data', JSON.stringify(res.data.menu));
+        sessionStorage.setItem('model', JSON.stringify(res.data.model));
+        sessionStorage.setItem('type',res.data.type)
+        if (res.data.type == 'student') {
+          router.push('/stutest');
+        } else if (res.data.type == 'teacher') {
+          router.push('/Home');
+        }
+        loading.value = false
+        ElMessage({
+          message: '登录成功',
+          type: 'success',
+        })
+      }else{
+        loading.value = false
+        ElMessage.error(res.errMsg)
       }
+     
     } else {
       console.log('error submit!', fields);
     }

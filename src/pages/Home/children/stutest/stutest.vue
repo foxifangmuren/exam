@@ -24,7 +24,7 @@
       </div>
       
     </div>
-    <div class="conten">
+    <div class="conten"  v-loading="loading">
         <div class="contenbox" @click="getexamprepare(item)" v-for="item in list" :key="item.id">
           <div class="contenbox_left">
             <div class="contenbox_left_top">
@@ -39,7 +39,8 @@
               <span>{{ item.title }}</span>
             </div>
             <div class="contenbox_left_time">
-              考试时间： {{ item.begintime==null?'不限':item.begintime +'-'+ item.begintime }}
+              
+              考试时间： {{ item.begintime==null?'不限':moment(item.begintime).format("YYYY-MM-DD hh:mm") +'-'+ moment(item.endtime).format("YYYY-MM-DD hh:mm") }}
             </div>
           </div>
           <div class="contenbox_right">
@@ -53,10 +54,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import {reactive,toRefs,onMounted} from 'vue'
+  import {reactive,toRefs,ref,onMounted} from 'vue'
   import{getList} from '../../../../api/stutest'
   import { useRouter } from 'vue-router'
 import { da } from 'element-plus/es/locale';
+import moment from 'moment';
+const loading = ref(true)
   const router = useRouter()
   const obj:any = reactive({
     data:{
@@ -69,8 +72,10 @@ import { da } from 'element-plus/es/locale';
     total:0
   })
   const List= async()=>{
+    loading.value = true
     let res:any = await getList(obj.data)
     console.log(res)
+    loading.value = false
     if(res.errCode===10000){
       obj.list = res.data.list
       obj.total = res.data.counts
@@ -101,6 +106,7 @@ import { da } from 'element-plus/es/locale';
     List()
   }
   onMounted(() => {
+    // console.log()
     List()
   })
   const {data,list,total} = toRefs(obj)

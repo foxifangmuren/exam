@@ -12,7 +12,6 @@
       <!-- 题干 -->
           <el-form ref="ruleFormRef"
             :model="ruleForm"
-            :rules="rules"
             label-width="120px"
             class="demo-ruleForm"
             status-icon
@@ -284,7 +283,7 @@ const submitForm = async () => {
       console.log(fromdata);
       emit('getdata',fromdata)
       //关闭弹框
-      // drawer.value=false
+      drawer.value=false
       
 }
 //保存并取消

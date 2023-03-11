@@ -76,6 +76,7 @@
       >
     </div>
     <el-table
+      v-loading="loading"
       :data="datas"
       style="width: 100%"
       @selection-change="handleSelectionChange"
@@ -107,21 +108,38 @@
       <el-table-column prop="pastscores" label="通过分数" />
       <el-table-column prop="studentcounts" label="考试人数" />
       <el-table-column prop="studentScores" label="通过人数" />
-      <el-table-column prop="begintime" label="开放时间" />
+      <el-table-column label="开放时间">
+        <template #default="scope">
+          {{
+            scope.row.begintime == null
+              ? '不限'
+              : moment(scope.row.begintime).format('YYYY-MM-DD hh:mm') +
+                '至' +
+                moment(scope.row.endtime).format('YYYY-MM-DD hh:mm')
+          }}
+        </template>
+      </el-table-column>
+
       <el-table-column prop="admin" label="创建人" />
       <el-table-column prop="addtime" label="更新时间" />
       <el-table-column class="op" label="操作">
         <template #default="scope">
-          <el-link type="primary" @click="open">学生</el-link>
-          <span>|</span>
-          <el-link type="primary" @click="open">可见</el-link>
-          <span>|</span>
-          <el-link type="primary" @click="open">阅卷老师</el-link>
+          <el-link type="primary" @click="getstudent(scope.row.id)"
+            >学生</el-link
+          >
+          <el-divider direction="vertical" />
+          <el-link type="primary" @click="getTeacher(scope.row.id)"
+            >可见</el-link
+          >
+          <el-divider direction="vertical" />
+          <el-link type="primary" @click="dialogyueTeacher = true"
+            >阅卷老师</el-link
+          >
           <br />
           <el-link type="primary" @click="anse(scope.row)">分析</el-link>
-          <span>|</span>
+          <el-divider direction="vertical" />
           <el-link type="primary" @click="updata(scope.row)">编辑</el-link>
-          <span>|</span>
+          <el-divider direction="vertical" />
           <el-link type="danger" @click="unpublishe(scope.row, 2)"
             >删除</el-link
           >
@@ -160,17 +178,28 @@
       <div class="juan">
         <div v-for="(item, index) in Wrodata.questions" :key="item.id">
           <div class="titl">
-            {{ index + 1 }}{{ item.type }} <span>分值</span>{{ item.scores }}
+            {{ index + 1 }}&nbsp;.&nbsp;&nbsp;{{ item.type }} <span>分值</span>&nbsp;{{ item.scores }}
           </div>
           <div>
             {{ item.title }}
           </div>
           <div
+            v-if="
+              item.type == '单选题'
+                ? true
+                : item.type == '多选题'
+                ? true
+                : false
+            "
             v-for="ite in item.answers"
             key="ite.id"
             :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
           >
-            <span>{{ ite.answerno }}:{{ ite.content }}</span>
+            <span
+              ><el-radio :label="ite.answerno" size="large"></el-radio>:{{
+                ite.content
+              }}</span
+            >
           </div>
           <div class="liang" v-if="item.answer">正确答案:{{ item.answer }}</div>
           <div
@@ -192,13 +221,45 @@
     <!-- 学生弹出框 -->
     <!-- 可见弹出框 -->
     <!-- 阅卷老师弹出框 -->
-      <MeTw ref="Refer" @confim="confim"></MeTw>
-      <MeT></MeT>
-    
+    <!-- 学生列表 -->
+    <el-dialog title="可见学生" v-model="dialogstudent" width="50%">
+      <Students
+        :dialogstudent="dialogstudent"
+        v-if="dialogstudent == true"
+        @studentCancel="studentCancel"
+        @studentConfirm="studentConfirm"
+        @studentClose="studentClose"
+      ></Students>
+    </el-dialog>
+
+    <!-- 可见老师 -->
+    <el-dialog title="可见老师" v-model="dialogTeacher" width="50%">
+      <Teacher
+        :dialogTeacher="dialogTeacher"
+        v-if="dialogTeacher == true"
+        @teacherConfirm="teacherConfirm"
+        @teacherClose="teacherClose"
+      ></Teacher>
+    </el-dialog>
+    <!-- 阅卷老师 -->
+    <el-dialog title="阅卷老师" v-model="dialogyueTeacher" width="50%">
+      <TascherList
+        :dialogyueTeacher="dialogyueTeacher"
+        v-if="dialogyueTeacher == true"
+        @teacherCancel="teacherCancel"
+        @teacherConfirm="yueteacherConfirm"
+      ></TascherList>
+    </el-dialog>
+    <MeTw ref="Refer" @confim="confim"></MeTw>
+    <MeT></MeT>
+    <MybialogVue ref="bialogVue" @confim="confim"></MybialogVue>
   </div>
 </template>
 
 <script setup lang="ts">
+import Students from '../../../../components/test/studentList.vue';
+import Teacher from '../../../../components/test/teacherList.vue';
+import TascherList from '../../../../components/test/teacherList.vue'; //阅卷老师
 import { ElTable } from 'element-plus';
 import { reactive } from 'vue';
 import { TextList } from '../../../../api/admin';
@@ -207,8 +268,72 @@ import { ref, onMounted, toRefs } from 'vue';
 import { updateState, deleteall, del, testget } from '../../../../api/stutest';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { exportExcel } from '@/api/Subjects';
+import moment from 'moment';
 import { downLoadBlob } from '@/utils/download';
 import router from '@/router';
+const bialogVue = ref<any>();
+let testid = ref(0);
+const dialogstudent = ref(false);
+// 学生弹框
+const getstudent = (id: any) => {
+  dialogstudent.value = true;
+  testid.value = id;
+};
+// 点击关闭弹框
+const studentClose = (val: any) => {
+  dialogstudent.value = val;
+};
+// d点确认按钮
+const studentConfirm = (val: any) => {
+  dialogstudent.value = val;
+};
+// 点击学生完成按钮
+const studentCancel = (val: any) => {
+  dialogstudent.value = val;
+};
+// 老师弹框
+let dialogTeacher = ref(false);
+const getTeacher = (val: any) => {
+  dialogTeacher.value = true;
+};
+// 老师点击确认
+const teacherConfirm = (val: any) => {
+  dialogTeacher.value = val;
+};
+
+// 阅卷老师点击4
+const yueteacherConfirm = (val: any) => {
+  dialogyueTeacher.value = val;
+};
+// 老师点击关闭
+const teacherClose = (val: any) => {
+  dialogTeacher.value = val;
+};
+// 老师点击取消
+const teacherCancel = (val: any) => {
+  dialogTeacher.value = val;
+};
+
+// 阅卷老师弹框
+const dialogyueTeacher = ref(false);
+//穿梭框
+const gobialog = () => {
+  // console.log(bialogVue.value.);
+  bialogVue.value.teacher = true;
+};
+const ruleForm: any = reactive({
+  id: 0,
+  title: '',
+  isshow: 1,
+  limits: [],
+});
+const confim = (val: any) => {
+  console.log(val, '添加哪里');
+  val.map((item: any) => {
+    ruleForm.limits.push({ id: item });
+  });
+  console.log(ruleForm.limits);
+};
 const updata = (row: any) => {
   console.log(row);
 
@@ -216,7 +341,8 @@ const updata = (row: any) => {
     ? ElMessage.error('本场考试已有学生参加，不可编辑')
     : router.push(`/testadd/${row.id}`);
 };
-let Refer = ref<any>(false)
+let Refer = ref<any>(false);
+const loading = ref(true)
 const open = ()=>{
   Refer.value.dialogVisible = true
 }
@@ -297,7 +423,7 @@ const handleSizeChange = (val: number) => {
   console.log(`${val} items per page`);
   TexLis();
 };
-const region = ref("");
+const region = ref('');
 // 获取下拉菜单的值
 const selectDoctor = (val: any) => {
   form.data.state = val;
@@ -306,13 +432,7 @@ const selectDoctor = (val: any) => {
 const testadd = () => {
   router.push('/testadd/1');
 };
-const confim = (val:any)=>{
-  emit('id',val)
-  console.log(val);
-  val.map((item:any)=>{
-      state.user.limits.push({id:item})
-  })
-}
+
 const handleCurrentChange = (val: number) => {
   TexLis();
 
@@ -332,6 +452,8 @@ const form: any = reactive({
     isread: null,
     result: '',
   },
+  begintime: '',
+  endtime: '',
   datas: [],
   total: '',
   tidata: [],
@@ -444,7 +566,10 @@ const unpublished = (data: any, num: any) => {
 };
 const unpublishe = (data: any, num: number) => {
   console.log(num);
-
+  if (num == 1) {
+    e.value = '修改';
+  } else if (num == 2) {
+  }
   ElMessageBox.confirm('此操作将修改选中的考试状态, 是否继续?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
@@ -478,13 +603,16 @@ const unpublishe = (data: any, num: number) => {
         message: e.value + '成功',
       });
     })
+
     .catch(() => {});
 };
 
 //考试列表
 const TexLis = async () => {
+  loading.value = true
   const res = await TextList(form.data);
   form.datas = res.data.list;
+  loading.value = false
   res.data.list.forEach((item: any) => {
     item.addtime = item.addtime.slice(0, 16);
     // console.log(item.addtime);
@@ -507,10 +635,10 @@ const { datas, data, Wrodata } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
-/deep/ .el-transfer-panel {
+:deep(.el-transfer-panel) {
   margin-right: 200px;
 }
-/deep/ .el-transfer__buttons {
+:deep(.el-transfer__buttons) {
   display: none;
 }
 .liang {
@@ -520,7 +648,7 @@ const { datas, data, Wrodata } = toRefs(form);
   display: flex;
   align-items: center;
 }
-/deep/.el-dialog {
+:deep(.el-dialog) {
   // width: 100%;
   // height: 100%;
   margin-top: 50px;

@@ -9,8 +9,9 @@
       </div>
     </div>
     <div class="zong">
-      <div class="left">
+      <div class="left" v-loading="loading">
         <el-tree
+          
           :data="tabledata.arr"
           :props="defaultProps"
           @node-click="handleNodeClick"
@@ -66,6 +67,7 @@ import {
   departmentdelete,
 } from '../../../../api/admin';
 //部门添加
+const loading = ref(true)
 const add = () => {
   all.id = ''
   all.name = ''
@@ -159,8 +161,13 @@ const rules = reactive<any>({
   ],
 });
 const De = async () => {
-  const res = await departmentlist(null);
-  tabledata.arr = res.data.list;
+  loading.value = true
+  const res:any = await departmentlist(null);
+  if(res.errCode===10000){
+    tabledata.arr = res.data.list;
+    loading.value = false
+  }
+  
   // console.log(tabledata.arr);
 };
 const show = ref(false);

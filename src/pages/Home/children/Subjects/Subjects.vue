@@ -22,6 +22,7 @@
     </el-form>
     <!-- 表格 -->
     <MyTable
+      v-loading="loading"
       :isTypeSelection="false"
       :tableHeader="tableHeader"
       :tableData="from.tableData"
@@ -55,6 +56,7 @@ const gopage=async(val:any)=>{
   from.data=src.data
   subdata.value.dialogTableVisible=true
 }
+const loading = ref(true)
 //请求列表
 const from = reactive({
   query: {
@@ -71,7 +73,9 @@ const from = reactive({
   title:'',
 });
 const getlt = async () => {
+  loading.value = true
   const src = await getList(from.query);
+  loading.value = false
   from.tableData = src.data.list;
   from.total = src.data.counts;
 };
@@ -204,8 +208,11 @@ const del = (val: any) => {
 </script>
 
 
-<style scoped>
+<style lang="less" scoped>
 .title_header {
+  p{
+    font-size: 20px;
+  }
   display: flex;
   justify-content: space-between;
 }

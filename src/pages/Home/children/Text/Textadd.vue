@@ -40,7 +40,39 @@
               <div>
                 <span>总分:{{ Wrod.Total }}</span>
                 <span>已添加{{ Wrodata.questions.length }}题</span>
-                <el-button @click="Wrodata.isshow = 0">清空</el-button>
+                <el-button @click="clear">清空</el-button>
+              </div>
+            </div>
+            <div class="testContent" v-show="Wrod.Wrodata.questions.length > 0">
+              <div class="dan" v-if="dan == true">
+                <span style="margin-left: 10px">单选题{{ num11 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num1" />分
+                </p>
+              </div>
+              <div class="dan" v-if="duo">
+                <span style="margin-left: 10px">多选题{{ num12 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num2" />分
+                </p>
+              </div>
+              <div class="dan" v-if="pan">
+                <span style="margin-left: 10px">判断题{{ num15 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num3" />分
+                </p>
+              </div>
+              <div class="dan" v-if="tian">
+                <span style="margin-left: 10px">填空题{{ num13 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num4" />分
+                </p>
+              </div>
+              <div class="jian" v-if="wen">
+                <span style="margin-left: 10px">问答题{{ num14 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num5" />分
+                </p>
               </div>
             </div>
             <div class="ty" v-if="Wrodata.questions">
@@ -51,10 +83,10 @@
               >
                 <div class="abc">
                   <div>
-                    {{ index + 1 }}.{{
+                    {{ index + 1 }}&nbsp;.&nbsp;{{
                       item.type
                     }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>分值</span>&nbsp;
-                    <el-input v-model="item.scores"></el-input>
+                    <el-input v-model="item.scores" type="number"></el-input>
                   </div>
 
                   <div>
@@ -66,16 +98,16 @@
                     /></el-icon>
                   </div>
                 </div>
-                <div>&nbsp;&nbsp;{{ item.title }}</div>
+                <div style="padding: 7px 0px" v-html="rep(item.title)"></div>
                 <div
                   v-for="ite in item.answers"
                   :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
                   key="ite.id"
                 >
-                  <span
-                    >&nbsp;&nbsp;{{ ite.answerno }}: &nbsp;{{
-                      ite.content
-                    }}</span
+                  <span>
+                    &nbsp;&nbsp;
+                    <el-radio :label="ite.answerno" size="large"></el-radio
+                    >&nbsp;&nbsp;: &nbsp;{{ ite.content }}</span
                   >
                 </div>
                 <div
@@ -268,8 +300,8 @@
         style="max-width: 1100px"
       >
         <el-form-item label="可见老师">
-          <el-badge :value="0" class="item" type="primary">
-            <el-button>+选择</el-button>
+          <el-badge :value="paramsss.nnu" class="item" type="primary">
+            <el-button @click="dialogTeacher = true">+选择</el-button>
           </el-badge>
         </el-form-item>
       </el-form>
@@ -286,8 +318,8 @@
         style="max-width: 1100px"
       >
         <el-form-item label="考试范围">
-          <el-badge :value="0" class="item" type="primary">
-            <el-button @click="dialogVisible1 = true">+选择</el-button>
+          <el-badge :value="paramsss.nuu" class="item" type="primary">
+            <el-button @click="dialogStudent = true">+选择</el-button>
           </el-badge>
         </el-form-item>
       </el-form>
@@ -304,8 +336,8 @@
         style="max-width: 1100px"
       >
         <el-form-item label="阅卷老师">
-          <el-badge :value="0" class="item" type="primary">
-            <el-button @click="yueJuanTan = true">+选择</el-button>
+          <el-badge :value="paramsss.num" class="item" type="primary">
+            <el-button @click="dialogyueTeacher = true">+选择</el-button>
           </el-badge>
         </el-form-item>
       </el-form>
@@ -459,117 +491,64 @@
         <el-button type="primary" @click="wwy">确定</el-button>
       </div>
     </el-dialog>
-    <div>
-      <el-dialog v-model="studentTan" title="学生考试列表">
-        <div style="margin-left: 20px; margin-bottom: 20px; display: flex">
-          <div>
-            <el-form-item label="部门">
-              <el-cascader
-                v-model="dataq.value"
-                :options="dataq.options"
-                :props="props"
-                @change="handleChange"
-                clearable
-              ></el-cascader>
-            </el-form-item>
-          </div>
-          <div style="margin-left: 20px">
-            <el-form-item label="班级">
-              <el-cascader clearable />
-            </el-form-item>
-          </div>
-        </div>
-        <div style="margin-left: 20px">
-          <el-transfer />
-        </div>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="studentTan = false">取消</el-button>
-            <el-button type="primary" @click="studentTan = false">
-              确定
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
-    <!-- 可见弹出框 -->
-    <div>
-      <el-dialog v-model="keJianTan" title="可见老师">
-        <div style="margin-left: 20px; margin-bottom: 20px">
-          <el-form-item label="部门">
-            <el-cascader
-              v-model="dataq.value"
-              :options="dataq.options"
-              :props="props"
-              @change="handleChange"
-              clearable
-            ></el-cascader>
-          </el-form-item>
-        </div>
-        <div style="margin-left: 20px">
-          <el-transfer />
-        </div>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="keJianTan = false">取消</el-button>
-            <el-button type="primary" @click="keJianTan = false">
-              确定
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
-    <!-- 阅卷老师弹出框 -->
-    <div>
-      <el-dialog v-model="yueJuanTan" title="阅卷老师">
-        <div style="margin-left: 20px; margin-bottom: 20px">
-          <el-form-item label="部门">
-            <el-cascader
-              v-model="dataq.value"
-              :options="dataq.options"
-              :props="props"
-              @change="handleChange"
-              clearable
-            ></el-cascader>
-          </el-form-item>
-        </div>
-        <div style="margin-left: 20px">
-          <el-transfer />
-        </div>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="yueJuanTan = false">取消</el-button>
-            <el-button type="primary" @click="yueJuanTan = false">
-              确定
-            </el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
+
+    <!-- 可见老师 -->
+    <el-dialog
+      title="可见老师"
+      v-model="dialogTeacher"
+      v-if="dialogTeacher"
+      width="50%"
+    >
+      <Forth
+        v-model="dialogTeacher"
+        @limitss="limitss"
+        @sub="sub"
+        @valuesss="valuesss"
+      ></Forth>
+    </el-dialog>
+    <!-- 学生范围 -->
+    <el-dialog
+      title="可见学生"
+      v-model="dialogStudent"
+      v-if="dialogStudent"
+      width="50%"
+    >
+      <studentList
+        v-model="dialogStudent"
+        @studentConfirm="studentConfirm"
+      ></studentList>
+    </el-dialog>
+
+    <!-- 阅卷老师 -->
+    <el-dialog
+      title="阅卷老师"
+      v-model="dialogyueTeacher"
+      v-if="dialogyueTeacher"
+      width="50%"
+    >
+      <TascherList
+        v-model="dialogyueTeacher"
+        @deplenght="deplenght"
+        @teacherConfirm="teacherConfirm"
+      ></TascherList>
+    </el-dialog>
     <MeTwo ref="draweraddinfo" @getdata="getdata" :data="datac"></MeTwo>
     <MyDialog ref="adddata" @can="can"></MyDialog>
-    <MeTw ref="Refer" @confim="confim"></MeTw>
-    <!-- <el-dialog v-model="dialogVisible1" v-if="dialogVisible1">
-      <Forth @isshow="isshoww" @valuesss="valuessss"></Forth>
-    </el-dialog> -->
-    <!-- <Drawer
-      :isTitle="isTitle"
-      v-if="isTitle"
-      :index="index"
-      @isF="isF"
-      :obj="obj"
-    ></Drawer> -->
+    <MeTw ref="Refer"></MeTw>
   </div>
 </template>
 
 <script setup lang="ts">
 // import Drawer from '../../../../components/Drawer.vue';
-import { reactive, ref, watchEffect, onMounted, toRefs } from 'vue';
+import { reactive, ref, watchEffect, onMounted, toRefs, watch } from 'vue';
 import { testadd } from '@/api/stutest';
 import { useRouter, useRoute } from 'vue-router';
 import { nextTick } from 'vue';
 import moment from 'moment';
-// import Forth from '../../../../components/ppp.vue';
+import TascherList from '../../../../components/test/teacherList.vue';
+import studentList from '../../../../components/test/studentList.vue';
+import Testpaperlist from '../../../../components/test/testpaperlist.vue';
+import Forth from '../../../../components/test/Forth.vue';
 import {
   questions,
   exportExcel,
@@ -594,24 +573,64 @@ const updataz = (zccc: any) => {
   console.log(datac.value);
   draweraddinfo.value.drawer = true;
 };
-const confim = (val: any) => {
-  emit('id', val);
-  console.log(val);
-  val.map((item: any) => {
-    state.user.limits.push({ id: item });
-  });
-};
 const draweraddinfo = ref<any>();
 const goadd = () => {
   draweraddinfo.value.drawer = true;
 };
-
+const dialogTeacher = ref(false); //可见老师
+const dialogyueTeacher = ref(false); //阅卷老师
+const dialogStudent = ref(false);
 const v = ref('');
 const adddata = ref<any>();
 const addall = () => {
   adddata.value.dialogVisible = true;
 };
+const studentConfirm = (bool: any, val: any) => {
+  console.log(bool, val);
+  dialogStudent.value = false;
+  params.value.students = val;
+  paramsss.nuu = val.length;
+};
+const paramsss = reactive({
+  num: 0,
+  nuu: 0,
+  nnu: 0,
+});
+const deplenght = (val: any) => {
+  // console.log(val);
+  params.value.markteachers.length = val;
+  paramsss.num = val;
+};
+const teacherConfirm = (bool: any, val: any) => {
+  console.log(bool, val);
+  dialogyueTeacher.value = false;
+  params.value.markteachers = val;
+};
+// 可见学生
+let dialogVisible2 = ref(false);
+const isadd = (val: any) => {
+  dialogVisible2.value = val;
+};
+const teachClose = (done: () => void) => {
+  done();
+};
+// 老师可见穿梭框
+const limitss = (val: any) => {
+  // console.log(val);
+  params.value.limits.length = val;
+};
+const valuesss = (val: any) => {
+  console.log(val);
+  paramsss.nnu = val.length;
+  params.value.limits = val;
+};
+const sub = () => {
+  // console.log(1);
+  dialogTeacher.value = false;
+};
 const qi = () => {
+  console.log(v);
+
   Wrod.Wrodata.questions = v.value;
   console.log(Wrod.Wrodata.questions);
 
@@ -687,7 +706,11 @@ const getdata = (n: any) => {
   Wrod.Wrodata.questions.push(n);
 };
 const dataq = reactive({
-  zcc: [],
+  zcc: [
+    {
+      title: '',
+    },
+  ],
   //表格数据
   tableData: [],
   //列表参数
@@ -707,6 +730,15 @@ const dataq = reactive({
   //分页 总页数
   total: 0,
 });
+//清空
+const clear = () => {
+  Wrod.Wrodata.questions = [];
+  (dan.value = false),
+    (duo.value = false),
+    (pan.value = false),
+    (tian.value = false),
+    (wen.value = false);
+};
 const departmentList = async () => {
   const res: any = await departmentlist(null);
   console.log('部门级联', res);
@@ -733,6 +765,9 @@ const changePag = (val: number) => {
   console.log(fro.query.page);
 
   getlist();
+};
+const rep = (str: string) => {
+  return str.replace(/\[\]/g, `_______,`);
 };
 const changePageSiz = (val: number) => {
   fro.query.psize = val;
@@ -865,8 +900,9 @@ const changeTime = (e: any) => {
   const endtime = moment(e[1]).format('YYYY-MM-DD HH:mm:ss.0');
   data.arrTime.push(begintime);
   data.arrTime.push(endtime);
-  params.value.begintime = begintime;
-  params.value.endtime = endtime;
+  AddFrom.begintime = begintime;
+  AddFrom.endtime = endtime;
+  console.log(AddFrom.begintime, AddFrom.endtime);
 };
 const changePage = (val: number) => {
   from.query.page = val;
@@ -900,18 +936,6 @@ const tableHead = [
 ];
 const tableHeade = [
   {
-    prop: 'title',
-    label: '题库',
-    type: 'buttons',
-    buttons: [
-      {
-        type: 'primary',
-        text: '表头',
-        event: 'gopage',
-      },
-    ],
-  },
-  {
     prop: 'counts',
     label: '题量数目',
   },
@@ -925,10 +949,6 @@ const tableHeade = [
   },
 ];
 const tableHeader = [
-  {
-    prop: 'title',
-    label: '试卷名称',
-  },
   {
     prop: 'counts',
     label: '题量',
@@ -1026,12 +1046,12 @@ const AddFrom: any = reactive({
 });
 const TestAdd = async (num: number) => {
   if (route.query.type != '2') {
+    AddFrom.questions = Wrod.Wrodata.questions;
     AddFrom.state = num;
     AddFrom.id = id;
     if (AddFrom.id == 1) {
       AddFrom.id = '';
     }
-    console.log(AddFrom.id);
 
     const res: any = await testadd(AddFrom);
     console.log(res);
@@ -1176,6 +1196,82 @@ const {
   isTitle,
   index,
 }: any = toRefs(data);
+watchEffect(() => {
+  let num6 = 0;
+  let num7 = 0;
+  let num8 = 0;
+  let num9 = 0;
+  let num10 = 0;
+  Wrod.Wrodata.questions.forEach((item: any) => {
+    if (item.type === '单选题') {
+      data.dan = true;
+      num6 += 1;
+      // console.log(dan.value)
+    } else if (item.type === '多选题') {
+      duo.value = true;
+      num7 += 1;
+      // nums.value+1
+    } else if (item.type === '填空题') {
+      tian.value = true;
+      num8 += 1;
+      // nums.value+=1
+    } else if (item.type === '问答题') {
+      wen.value = true;
+      num9 += 1;
+      // nums.value+=1
+    } else if (item.type === '判断题') {
+      pan.value = true;
+      num10 += 1;
+    }
+  });
+  num11.value = num6;
+  num12.value = num7;
+  num13.value = num8;
+  num14.value = num9;
+  num15.value = num10;
+});
+watchEffect(() => {
+  var num = 0;
+  Wrod.Wrodata.questions.map((item: any, index: number) => {
+    num = Number(item.scores) + Number(num);
+  });
+  Total.value = num;
+});
+watch([num1], () => {
+  Wrod.Wrodata.questions.map((item: any) => {
+    if (item.type === '单选题') {
+      item.scores = num1.value;
+    }
+  });
+});
+watch([num2], () => {
+  Wrod.Wrodata.questions.map((item: any) => {
+    if (item.type === '多选题') {
+      item.scores = num2.value;
+    }
+  });
+});
+watch([num3], () => {
+  Wrod.Wrodata.questions.map((item: any) => {
+    if (item.type === '判断题') {
+      item.scores = num3.value;
+    }
+  });
+});
+watch([num4], () => {
+  Wrod.Wrodata.questions.map((item: any) => {
+    if (item.type === '填空题') {
+      item.scores = num4.value;
+    }
+  });
+});
+watch([num5], () => {
+  Wrod.Wrodata.questions.map((item: any) => {
+    if (item.type === '问答题') {
+      item.scores = num5.value;
+    }
+  });
+});
 const shortcuts = [
   {
     text: '上周',
@@ -1262,10 +1358,21 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
-/deep/ .el-transfer-panel {
+:deep(.el-transfer) {
+  display: flex;
+}
+:deep(.el-dialog) {
+  --el-dialog-margin-top: 10vh;
+}
+:deep(.el-table__inner-wrapper) {
+  // max-height: 600px;
+  height: 500px;
+}
+
+:deep(.el-transfer-panel) {
   margin-right: 200px;
 }
-/deep/ .el-transfer__buttons {
+:deep(.el-transfer__buttons) {
   display: none;
 }
 .ty {
@@ -1377,6 +1484,38 @@ onMounted(() => {
   align-items: center;
   color: #5acda6;
 }
+.testContent {
+  width: 120px;
+  position: absolute;
+  left: -130px;
+  font-size: 13px;
+  color: #848484;
+}
+.testContent .dan {
+  width: 100%;
+  border: solid 1px #ececec;
+  padding: 7px 0px;
+}
+.testContent .dan .mei {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+}
+.testContent .jian {
+  width: 100%;
+  border: solid 1px #ececec;
+  padding: 7px 0px;
+}
+.testContent .jian .mei {
+  display: flex;
+  align-items: center;
+}
+.testContent ::v-deep .el-input {
+  width: 55px;
+  height: 28px;
+  padding: 0px 5px;
+  font-size: 12px;
+}
 .hei {
   margin-top: 10px;
   height: 50px;
@@ -1389,6 +1528,7 @@ onMounted(() => {
   align-items: center;
   background-color: #f9faff;
   width: 100%;
+  margin-bottom: 20px;
   .ones {
     margin-right: 20px;
     font-size: 35px;
