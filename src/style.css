@@ -2,7 +2,14 @@
   list-style: none;
   margin: 0;
   padding: 0;
+ 
  }
+ /* .is-focus{
+  display: none;
+ } */
 .el-main {
   --el-main-padding: 10px !important;
+}
+.el-table{
+   font-size: 10px;
 }

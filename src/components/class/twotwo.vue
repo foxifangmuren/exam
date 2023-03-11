@@ -284,7 +284,7 @@ const submitForm = async () => {
       console.log(fromdata);
       emit('getdata',fromdata)
       //关闭弹框
-      // drawer.value=false
+      drawer.value=false
       
 }
 //保存并取消

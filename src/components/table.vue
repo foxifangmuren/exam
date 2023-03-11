@@ -13,10 +13,10 @@
         v-if="isTypeSelection"
         width="55"
       />
-      <el-table-column v-if="isshow">
+      <el-table-column label="题库名称"  v-if="isshow">
         <template #default="scope">
           <el-radio-group v-model="num" @click="ta(scope.row)" class="ml-4">
-            <el-radio :label="scope.row.id" size="large"></el-radio>
+            <el-radio :label="scope.row.id" size="large">{{scope.row.title}}</el-radio>
           </el-radio-group>
         </template>
       </el-table-column>
@@ -29,59 +29,59 @@
       >
         <!-- 建立插槽 -->
         <template #default="scope">
-          <!-- 按钮 按钮是个数组 -->
-          <div v-if="item.type === 'buttons'">
-            <!-- 循环按钮数组 -->
-            <span v-for="(btn, index) in item.buttons" :key="index">
-              <!-- 阅卷按钮，最后按钮判断 -->
-              <span v-if="btn.text == 'exam'">
-                <el-button
-                  link
-                  :type="btn.type"
-                  @click="$emit(btn.event, scope.row)"
-                  >{{ scope.row.incomplete > 0 ? '阅卷' : '查看' }}</el-button
-                >
-              </span>
-              <span v-if="btn.text == '表头'">
-                <el-button
-                  link
-                  :type="btn.type"
-                  @click="$emit(btn.event, scope.row)"
-                  >{{ scope.row.title }}</el-button
-                >
-              </span>
-              <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->
+        <!-- 按钮 按钮是个数组 -->
+        <div v-if="item.type === 'buttons'">
+          <!-- 循环按钮数组 -->
+          <span v-for="(btn, index) in item.buttons" :key="index">
+            <!-- 阅卷按钮，最后按钮判断 -->
+            <span v-if="btn.text == 'exam'">
               <el-button
-                v-else
                 link
                 :type="btn.type"
-                size="small"
                 @click="$emit(btn.event, scope.row)"
-                >{{ btn.text }}</el-button
-              >
+                >{{ scope.row.incomplete > 0 ? "阅卷" : "查看" }}</el-button >
+                
             </span>
-          </div>
-          <!-- 文本(阅卷未判人数) -->
-          <div v-if="item.label == '开放时间'">
-            <span>{{
-              scope.row.endtime == null
-                ? '不限'
-                : scope.row.addtime - scope.row.endtime
-            }}</span>
-          </div>
-          <!-- 阅卷详情之班级名称 -->
-          <!-- <div v-if="item.label=='班级名称'">
-            <span>
-              {{scope.row.classname==''? '暂无数据':scope.row.classname}}
+            <!-- 板块表头跳转 -->
+            <span v-else-if="btn.text == '表头'">
+              <el-button
+                link
+                :type="btn.type"
+                @click="$emit(btn.event, scope.row)"
+                >
+
+                <span v-html="htmlEncode(scope.row.title)"></span >
+
+              </el-button>
             </span>
-        </div> -->
-          <!-- 颜色更改(阅卷未判人数) -->
-          <div v-if="item.label == '未判人数'">
-            <span v-if="scope.row.incomplete > 0" style="color: red">
-              {{ scope.row.incomplete }}
-            </span>
-            <span v-else style="color: green"> 已经全部阅完 </span>
-          </div>
+            <!-- 利用子传递父亲，做按钮点击事件处理 text为按钮的文本 type是按钮的类型 -->
+            <el-button
+              v-else
+              link
+              :type="btn.type"
+              size="small"
+              @click="$emit(btn.event, scope.row)"
+              >{{ btn.text }}</el-button
+            >
+          </span>
+        </div>
+        <!-- 文本(阅卷未判人数) -->
+        <div v-if="item.label == '开放时间'">
+            <span v-if=" scope.row.endtime == null">不限</span>
+            <span v-else >{{ scope.row.addtime.slice(0,16) +"至"+scope.row.endtime.slice(0,16)}}</span>
+        </div>
+        <!-- 颜色更改(阅卷未判人数) -->
+        <div v-if="item.label == '未判人数'">
+          <span v-if="scope.row.incomplete > 0" style="color: red">
+            {{ scope.row.incomplete }}
+          </span>
+          <span v-else style="color: green"> 已经全部阅完 </span>
+        </div>
+        <!-- 阅卷状态行为 -->
+        <span v-if="item.label=='状态'">
+            <span v-if="scope.row.state=='已阅卷'" style="color:red;">{{scope.row.state}}</span>
+            <span v-if="scope.row.state=='未阅卷'" >{{scope.row.state}}</span>
+        </span>
           <!-- 如果没有值显示 TODO -->
         </template>
       </el-table-column>
@@ -99,7 +99,7 @@
 import { ref, defineEmits } from 'vue';
 const num = ref(0);
 const id = ref();
-const emit = defineEmits(['clickToFather',"delarrinfo"]);
+const emit = defineEmits(['clickToFather',"delarrinfo","delarrinf"]);
 const ta = (da: any) => {
   emit('clickToFather', da.id);
 };
@@ -124,10 +124,18 @@ const props = withDefaults(
 const handleSelectionChange = (val: any) => {
   const deldata: Array<any> = val.map((item: { id: any }) => item.id);
   emit('delarrinfo', deldata);
-  emit('delarrinfo', val);
+  emit('delarrinf', val);
   console.log(deldata,val);
   
 };
+const htmlEncode=(html:string)=>{
+  // console.log(html);
+  if(!html) return ""
+  html=html.replace(/</g,"&lt;")
+  html=html.replace(/>/g,"&gt;")
+  html=html.replace(/\n/g,"<br>")
+  return html
+}
 </script>
 <style scoped lang="less">
 // :deep(.el-table th.el-table__cell:nth-child(1) .cell) {

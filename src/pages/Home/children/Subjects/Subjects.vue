@@ -204,8 +204,11 @@ const del = (val: any) => {
 </script>
 
 
-<style scoped>
+<style lang="less" scoped>
 .title_header {
+  p{
+    font-size: 20px;
+  }
   display: flex;
   justify-content: space-between;
 }
