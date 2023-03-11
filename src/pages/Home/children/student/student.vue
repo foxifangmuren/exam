@@ -55,6 +55,7 @@
       <!-- 表格 -->
       <div>
         <el-table
+          v-loading="loading"
           ref="multipleTableRef"
           :data="data.tableData"
           style="width: 100%"
@@ -120,7 +121,7 @@ let studup = ref<any>(null)
 let studpass = ref<any>(null)
 let obj = ref({})
 //引入添加学生的对话框
-
+const loading = ref(true)
 const data = reactive({
   //表格数据
   tableData: [],
@@ -185,6 +186,7 @@ const changeClass = (e: any) => {
 };
 //学员列表
 const studentList = async () => {
+  loading.value = true
   const res: any = await studentlist({
     ...params.value,
     depid: data.value ? data.value[data.value.length - 1] : 0,
@@ -192,6 +194,7 @@ const studentList = async () => {
   });
   console.log('学员列表', res);
   if (res.errCode === 10000) {
+    loading.value = false
     data.tableData = res.data.list;
     data.total = res.data.counts;
   }

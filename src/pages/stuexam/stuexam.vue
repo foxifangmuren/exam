@@ -1,7 +1,7 @@
 <template>
    
   <div class="stu">
-    <div class="stubox">
+    <div class="stubox"  v-loading="loading">
       <div class="stuboxtop">
         {{ list.title}}
       </div>
@@ -110,9 +110,10 @@
 <script lang="ts" setup>
 import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
-import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect,onUnmounted} from 'vue'
+import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect,onUnmounted,ref} from 'vue'
 const route = useRoute()
 const router = useRouter()
+const loading = ref(true)
 const obj:any = reactive({
   list:[],
   isActive:false,
@@ -240,8 +241,10 @@ const changRadio=(type:String,item: any,index:any)=>{
     document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
   }
 const getList =async ()=>{
+  loading.value = true
   let res:any = await getteststart({testid:route.query.testid})
   console.log(res)
+  loading.value = false
   if(res.errCode===10000){
 
     obj.list = res.data
@@ -398,14 +401,16 @@ html{
         border: 1px solid #3d80eb;
         background-color: #f1f5fb;
         width: 1000px;
+        
   }
   .box7{
     background-color: #f0f8ff;
     color: #aab4fd;
   }
   .box9{
+    border-radius: 5px;
     font-size: 13px;
-  width: 60%;
+  width: 1000px;
   height: 40px;
   display: flex;
   align-items: center;
@@ -425,11 +430,13 @@ html{
   }
   .box5{
     background-color: #3d80eb;
+    color: #fff;
   }
   }
 .box2{
   font-size: 13px;
-  width: 60%;
+  width: 1000px;
+  border-radius: 5px;
   height: 40px;
   display: flex;
   align-items: center;
@@ -446,16 +453,18 @@ html{
     background-color: #fff;
     border-radius: 50%;
     text-align: center;
+    
     line-height: 35px;
   }
   .box5{
+    color: #fff;
     background-color: #3d80eb;
   }
 }
 .stu{
   width: 100%;
   height: 100%;
-  background-color:#eee;
+  background-color:#fafbfd;
   .conten{
     display: flex;
     margin-top: 25px;
@@ -491,7 +500,7 @@ html{
         margin-bottom: 10px;
         color: #666;
       }
-      /deep/button{
+      :deep(button){
         width: 100%;
       }
     }
@@ -513,7 +522,7 @@ html{
     }
   }
   .stubox{
-    background-color: #eee;
+    // background-color: #eee;
     padding-top:20px;
     .stuboxtop{
       font-size: 30px;
@@ -524,7 +533,7 @@ html{
     }
   }
   .concent{
-    background-color: #eee;
+    // background-color: #eee;
     margin:50px 30px 0;
     
     .concent_top{
@@ -564,7 +573,7 @@ html{
       }
     }
     .line{
-      width: 60%;
+      width: 1100px;
       height: 1px;
       background-color:#ccc;
       margin-top:60px;

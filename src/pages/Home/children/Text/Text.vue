@@ -76,6 +76,7 @@
       >
     </div>
     <el-table
+      v-loading="loading"
       :data="datas"
       style="width: 100%"
       @selection-change="handleSelectionChange"
@@ -341,9 +342,10 @@ const updata = (row: any) => {
     : router.push(`/testadd/${row.id}`);
 };
 let Refer = ref<any>(false);
-const open = () => {
-  Refer.value.dialogVisible = true;
-};
+const loading = ref(true)
+const open = ()=>{
+  Refer.value.dialogVisible = true
+}
 let checked: any = ref(false);
 const check = (done: () => void) => {
   if (checked.value == true) {
@@ -607,10 +609,10 @@ const unpublishe = (data: any, num: number) => {
 
 //考试列表
 const TexLis = async () => {
+  loading.value = true
   const res = await TextList(form.data);
   form.datas = res.data.list;
-  console.log(form.datas);
-
+  loading.value = false
   res.data.list.forEach((item: any) => {
     item.addtime = item.addtime.slice(0, 16);
     // console.log(item.addtime);

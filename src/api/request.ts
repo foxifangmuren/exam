@@ -24,6 +24,7 @@ instance.interceptors.request.use(async (config: any) => {
             tokenRetryCount: 0,
         };
     }
+    
     (config.headers as any)["Authorization"] = <string>sessionStorage.getItem("token");
     return config;
 });

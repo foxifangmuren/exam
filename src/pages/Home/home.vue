@@ -10,6 +10,7 @@
               class="el-menu-vertical-demo"
               @open="handleOpen"
               @close="handleClose"
+              text-color="#747e97"
               router
             >
               <el-menu-item index="">
@@ -48,7 +49,7 @@
               <!-- 姓名 -->
               <div class="name" >{{data.List.name}}</div>
               <div class="name" >部门:{{ data.List.depname }}</div>
-              <div class="name">班级:{{ data.List.classname }}</div>
+              <div class="name" v-show="type!=='teacher'">班级:{{ data.List.classname }}</div>
               <div class="butBox">
                 <el-button class="but" @click="goodbye">退出登录</el-button>
               </div>
@@ -120,6 +121,7 @@ const router = useRouter();
 const data = reactive({
   e: {},
   t: '',
+  type:sessionStorage.getItem("type"),
   isShowPersonal:false,
   List:{
     name:'',
@@ -143,6 +145,7 @@ const closureInfo=()=>{
   data.isShowPersonal=false
 }
 const goodbye=()=>{
+  sessionStorage.clear()
   router.push('/Login')
 }
 // 头像
@@ -177,7 +180,7 @@ onMounted(() => {
   data.e = w;
   // console.log(w);
 });
-const { e }: any = toRefs(data);
+const { e,type }: any = toRefs(data);
 </script>
 <style lang="less" scoped>
 .block {
@@ -201,6 +204,12 @@ const { e }: any = toRefs(data);
   span {
     margin-top: -30px;
   }
+
+}
+.icon{
+  font-size: 20px;
+  // color: red;
+
 }
 .common-layout {
   height: 100vh;

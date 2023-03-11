@@ -1368,6 +1368,7 @@ onMounted(() => {
   // max-height: 600px;
   height: 500px;
 }
+
 :deep(.el-transfer-panel) {
   margin-right: 200px;
 }

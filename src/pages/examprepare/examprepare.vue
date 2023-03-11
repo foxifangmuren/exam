@@ -1,12 +1,12 @@
 <template>
   <div class="examprepare">
-    <div class="box">
+    <div class="box"  v-loading="loading">
       <div class="box_top">
         <el-icon class="ico" @click="back"><Back /></el-icon>返回 <span>|</span> {{ data.title }}
       </div>
       <div class="box_time">
-        <div>开放时间</div>
-        <span>{{ data.begintime==null?'不限':data.begintime +'-'+ data.begintime }}</span>
+        <div>开放时间</div> 
+        <span>{{ data.begintime==null?'不限':moment(data.begintime).format("YYYY-MM-DD hh:mm") +'-'+ moment(data.endtime).format("YYYY-MM-DD hh:mm")  }}</span>
       </div>
       <div class="line"></div>
       <div class="concent">
@@ -57,8 +57,9 @@
 <script lang="ts" setup>
   import {getTest} from '../../api/stutest'
   import { useRoute,useRouter } from 'vue-router'
-  import { onMounted,reactive ,toRefs} from 'vue'
+  import { onMounted,reactive ,toRefs,ref} from 'vue'
   import {Back} from '@element-plus/icons-vue'
+  import moment from 'moment';
 import { da } from 'element-plus/es/locale';
   const route = useRoute()
   const router = useRouter()
@@ -66,11 +67,13 @@ import { da } from 'element-plus/es/locale';
     data:[],
     isShow:false
   })
+  const loading = ref(true)
   const GetTest1 =async ()=>{
+    loading.value = true
     let res:any = await getTest({id:route.query.id})
     console.log(res)
     if(res.errCode ===10000){
-   
+      loading.value = false
       
       obj.data = res.data
       if(res.data.begintime){
@@ -114,7 +117,7 @@ import { da } from 'element-plus/es/locale';
         width:300px;
         height: 50px;
         margin:80px auto 0;
-        /deep/button{
+        :deep(button){
           width: 100%;
           height: 100%;
         }

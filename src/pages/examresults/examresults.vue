@@ -1,6 +1,6 @@
 <template>
   <div class="examprepare">
-    <div class="box">
+    <div class="box"  v-loading="loading">
       <div class="box_top">
         <el-icon class="ico" @click="back"><Back /></el-icon>返回 <span>|</span> {{ data.title }}
       </div>
@@ -11,7 +11,7 @@
         <div class="wai" v-if="isShow">
           <div class="waibox">未通过 </div>
         </div>
-        <div class="wai1" v-else>
+        <div class="wai1" v-if="isShow2">
           <div class="waibox1">已通过 </div>
         </div>
       </div></div>
@@ -79,16 +79,19 @@
   import { useRoute,useRouter } from 'vue-router'
   import { onMounted,reactive ,toRefs,ref} from 'vue'
   import {Back} from '@element-plus/icons-vue'
-import { da } from 'element-plus/es/locale';
+import { da, fa } from 'element-plus/es/locale';
 import { error } from 'console';
 import moment from 'moment';
+import { is } from 'dom7';
   const route = useRoute()
   const router = useRouter()
+  const loading = ref(true)
   const obj:any = reactive({
     time:'',
     data:[],
-    isShow:true,
-    isShow1:true,
+    isShow:false,
+    isShow1:false,
+    isShow2:false,
     questionTypes:[{name:"单选题",counts:0},{name:"多选题",counts:0},{name:"判断题",counts:0},{name:"填空题",counts:0},{name:"问答题",counts:0}],
     correct:[{name:"单选题",counts:0},{name:"多选题",counts:0},{name:"判断题",counts:0}],
     error:[{name:"单选题",counts:0},{name:"多选题",counts:0},{name:"判断题",counts:0}],
@@ -97,11 +100,13 @@ import moment from 'moment';
     Scores:String
   }) 
   const GetTest1 =async ()=>{
+    loading.value = true
     let res:any = await getForResult({testid:route.query.id})
     console.log(res)
     // console.log()
     obj.time=moment(res.data.stuEndTime).diff(moment(res.data.studentStartTime), 'minutes')
     console.log(obj.time)
+    loading.value = false
     if(res.errCode ===10000){
       obj.questionTypes.forEach((item:any)=>{
         item.counts = res.data.questions.filter((ite:any)=>ite.type===item.name).length
@@ -123,8 +128,10 @@ import moment from 'moment';
       console.log(res.data.result)
       if(res.data.result=='未通过'){
         obj.isShow=true
-      }else{
+      }else if(res.data.result=='待阅卷'){
         obj.isShow = false
+      }else{
+        obj.isShow2 = true
       }
       obj.Scores = res.data.result
       obj.data = res.data
@@ -141,7 +148,7 @@ import moment from 'moment';
   onMounted(() => {
     GetTest1()
   })
-  const {data,isShow,questionTypes,correct,error,Scores,time,correct1,error1} = toRefs(obj)
+  const {data,isShow,questionTypes,correct,error,Scores,time,correct1,error1,isShow2} = toRefs(obj)
 </script>
 <style lang="less" scoped>
 table,
@@ -249,7 +256,7 @@ table td {
         width:300px;
         height: 50px;
         margin:20px auto 0;
-        /deep/button{
+        :deep(button){
           width: 100%;
           height: 100%;
         }

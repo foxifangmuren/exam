@@ -1,6 +1,6 @@
 <template>
   <div class="stu">
-    <div class="stubox">
+    <div class="stubox"  v-loading="loading">
       <div class="stuboxtop">
         {{ List.title }}
       </div>
@@ -29,22 +29,64 @@
             <div class="answersbox" v-if="item.type==='单选题'" v-for="(item1,index) in item.answers" :key="index1">
               <div class="answersbox1">
                  <div :class="item.studentanswer==item1.answerno?item.answer==item1.answerno?'box2 active':'box2 active1':'box2'">
-                  <div  :class="item.studentanswer==item1.answerno?'box3 box5':'box3'">
+                  <div  :class="item.studentanswer==item1.answerno?'box5':'box3'">
                     {{ item1.answerno }}
                   </div>
                   <div class="box4">
                     {{ item1.content }}
                   </div>
+                  <div class="right" style="color:#4cc0a4" v-show="item.studentanswer==item1.answerno?item.answer==item1.answerno?true:false:false">
+                回答正确
+              </div>
+              <div class="right" style="color: #e00;" v-show="item.studentanswer==item1.answerno?item.answer==item1.answerno?false:true:false">
+                回答错误
+              </div>
                  </div>
               </div>
             </div>
             <div class="answersbox" v-if="item.type==='判断题'">
               <div class="answersbox1">
-                 <div class="judge" :class="item.studentanswer=='正确'?'quan active':'quan'">
-                  <span class="quan"  ></span><span>正确</span>
+                <div class="">
+                 <div class="judge"
+                 :class="
+                 item.studentanswer
+                  ? item.answer === '正确'
+                    ? item.studentanswer === '错误'
+                      ? 'box2'
+                      : 'box2 active'
+                    : item.studentanswer === '正确'
+                    ? 'box2 active1'
+                    : 'box2'
+                  : 'box2'
+              "
+                 >
+                 <div><span class="quan"></span><span>正确</span></div>
+                <!-- <div> -->
+                  <span style="color:#4cc0a4" class="right" v-show="item.studentanswer!='正确'?false:item.studentanswer === item.answer?true:false">
+                回答正确
+                  </span>
+              <span style="color: #e00;" class="right" v-show="item.studentanswer!='正确'?false:item.studentanswer !== item.answer?true:false">
+                回答错误
+              <!-- </div> -->
+              </span>
+                </div>
                  </div>
-                 <div class="judge" :class="item.studentanswer=='错误'?'quan active':'quan'">
+                 <div class="judge"  :class="
+                item.answer === '错误'
+                  ? item.studentanswer === '正确'
+                    ? 'box2'
+                    : 'box2 active'
+                  : item.studentanswer === '错误'
+                  ? 'box2 active1'
+                  : 'box'
+              ">
                   <span class="quan"></span><span>错误</span>
+                  <div class="right" style="color:#4cc0a4"  v-show="item.studentanswer!='错误'?false:item.studentanswer === item.answer?true:false">
+                回答正确
+              </div>
+              <div class="right" style="color: #e00;" v-show="item.studentanswer!='错误'?false:item.studentanswer !== item.answer?true:false">
+                回答错误
+              </div>
                  </div>
               </div>
             </div>
@@ -57,18 +99,29 @@
             <div class="answersbox" v-if="item.type==='多选题'" v-for="(item1,index) in item.answers" :key="index1">
               <div class="answersbox1">
                  <div :class=" item.answer.includes(item1.answerno)?item.studentanswer.includes(item1.answerno)?'box2 active':'box2':item.studentanswer.includes(item1.answerno)?'box2 active1':'box2'">
-                  <div  :class="item.answer.includes(item1.answerno)?item.studentanswer.includes(item1.answerno)?'box3 box5':'box3':item.studentanswer.includes(item1.answerno)?'box3 box5':'box3'">
+                  <div  :class="item.answer.includes(item1.answerno)?item.studentanswer.includes(item1.answerno)?' box5':'box3':item.studentanswer.includes(item1.answerno)?'box3 box5':'box3'">
                     {{ item1.answerno }}
                   </div>
                   <div class="box4">
                     {{ item1.content }}
                   </div>
+                  <div class="right" style="color:#4cc0a4" v-show="item.answer.includes(item1.answerno)?item.studentanswer.includes(item1.answerno)?true:false:item.studentanswer.includes(item1.answerno)?false:false">
+                    回答正确
+                  </div>
+                  <div class="right" style="color: #e00;" v-show="item.answer.includes(item1.answerno)?item.studentanswer.includes(item1.answerno)?false:false:item.studentanswer.includes(item1.answerno)?true:false">
+                    回答错误
+                  </div>
                  </div>
               </div>
             </div>
-            <div style="margin-top: 20px; width: 60%; padding-left: 10px; height: 40px; line-height: 40px; background-color: #f7fbff;" > <span v-if="item.type!=='问答题'" style="color:#90adca">正确答案： </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
+            <div > 
+              
+              
+              
+              <div v-if="item.type!='问答题'" style="margin-top: 20px; width: 1000px; padding-left: 10px; height: 40px; line-height: 40px; background-color: #f7fbff;" > <span v-if="item.type!=='问答题'" style="color:#90adca">正确答案： </span><span v-if="item.type==='单选题'" class="correct">{{ item.answer }}</span> <span class="correct" v-if="item.type==='多选题'" v-for="(item1,index1) in item.answer" :key="index1">{{ item1 }}</span>
               <span v-if="item.type==='判断题'" class="correct1">{{ item.answer }}</span>
-              <span v-if="item.type==='填空题'" class="correct1">{{ item.answer }}</span>
+              <span v-if="item.type==='填空题'" class="correct1">{{ item.answer }}</span></div>
+             
               <br>
               <span v-if="item.type=='问答题'">答案解析</span><span v-if="item.type=='问答题'||item.type=='填空题'">{{item.explains}}</span>
             </div>
@@ -93,15 +146,17 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import {reactive,onMounted,toRefs,nextTick} from 'vue'
+  import {reactive,onMounted,toRefs,nextTick,ref} from 'vue'
   import {getForResult} from '../../api/stutest'
   import { useRoute,useRouter} from 'vue-router'
+import { tr } from 'element-plus/es/locale';
   const route = useRoute()
   const obj:any = reactive({
     List:[],
     index1:[],
     classs:String
   })
+  const loading = ref(true)
   // 替换方法
 const rep = (str: string, index: number) => {
   return str.replace(
@@ -111,8 +166,10 @@ const rep = (str: string, index: number) => {
 };
 
   const getList = async ()=>{
+    loading.value = true
     let res:any = await getForResult({testid:route.query.testid})
     console.log(res)
+    loading.value = false
     if(res.errCode===10000){
       obj.List = res.data
       obj.List.questions = obj.List.questions.map((item: any) => {
@@ -178,11 +235,37 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
 .answersbox3{
   margin-left: -20px;
 }
+.box5{
+  margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #d3d4d8;
+    background-color: #3d80eb;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    color: #3d80eb;
+    font-size: 12px;
+
+  color: #fff;
+}
+.right{
+  text-align: right;
+  position: absolute;
+  right: 10px;
+  font-size: 15px;
+  // color: #4cc0a4;
+}
 .judge{
   height: 40px;
+ 
   display: flex;
+  align-content: space-between;
   align-items: center;
+  width:1000px;
+    padding-left: 10px;
   .quan{
+
     display: inline-block;
     width: 15px;
     height: 15px;
@@ -226,7 +309,8 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
         background-color: #d30e0e30;
   }
   .box2{
-  width: 60%;
+    position: relative;
+  width:1000px;
   height: 40px;
   display: flex;
   padding-left: 10px;
@@ -238,19 +322,21 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
  
   .box3{
     margin-right: 10px;
-    width: 30px;
-    height: 30px;
-    background-color: #fff;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #d3d4d8;
+    // background-color: #fff;
     border-radius: 50%;
     text-align: center;
-    line-height: 35px;
+    line-height: 20px;
+    font-size: 12px;
   }
 
 }
 .stu{
   width: 100%;
   height: 100%;
-  background-color:#eee;
+  background-color:#fafbfd;
   .conten{
     display: flex;
     margin-top: 25px;
@@ -294,17 +380,17 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
     }
   }
   .stubox{
-    background-color: #eee;
+    // background-color: #eee;
     padding-top:20px;
     .stuboxtop{
-      width: 60%;
+      width: 1000px;
       height: 50px;
       margin-left: 50px;
       border-bottom:1px solid #ccc;
     }
   }
   .concent{
-    background-color: #eee;
+    // background-color: #eee;
     margin:50px 30px 0;
     
     .concent_top{
@@ -341,7 +427,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
       }
     }
     .line{
-      width: 60%;
+      width: 1000px;
       height: 1px;
       background-color:#ccc;
       margin-top:60px;
@@ -361,7 +447,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
         margin-bottom: 10px;
         color: #666;
       }
-      /deep/button{
+      :deep(button){
         width: 100%;
       }
     }
