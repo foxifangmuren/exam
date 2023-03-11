@@ -44,37 +44,37 @@
               </div>
             </div>
             <div class="testContent" v-show="Wrod.Wrodata.questions.length > 0">
-                <div class="dan" v-if="dan == true">
-                  <span style="margin-left: 10px">单选题{{ num11 }}道</span>
-                  <p style="margin-left: 10px" class="mei">
-                    每题<el-input type="number" v-model="num1" />分
-                  </p>
-                </div>
-                <div class="dan" v-if="duo">
-                  <span style="margin-left: 10px">多选题{{ num12 }}道</span>
-                  <p style="margin-left: 10px" class="mei">
-                    每题<el-input  type="number"  v-model="num2" />分
-                  </p>
-                </div>
-                <div class="dan" v-if="pan">
-                  <span style="margin-left: 10px">判断题{{ num15 }}道</span>
-                  <p style="margin-left: 10px" class="mei">
-                    每题<el-input  type="number"  v-model="num3" />分
-                  </p>
-                </div>
-                <div class="dan" v-if="tian">
-                  <span style="margin-left: 10px">填空题{{ num13 }}道</span>
-                  <p style="margin-left: 10px" class="mei">
-                    每题<el-input  type="number"  v-model="num4" />分
-                  </p>
-                </div>
-                <div class="jian" v-if="wen">
-                  <span style="margin-left: 10px">问答题{{ num14 }}道</span>
-                  <p style="margin-left: 10px" class="mei">
-                    每题<el-input  type="number"  v-model="num5" />分
-                  </p>
-                </div>
+              <div class="dan" v-if="dan == true">
+                <span style="margin-left: 10px">单选题{{ num11 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num1" />分
+                </p>
               </div>
+              <div class="dan" v-if="duo">
+                <span style="margin-left: 10px">多选题{{ num12 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num2" />分
+                </p>
+              </div>
+              <div class="dan" v-if="pan">
+                <span style="margin-left: 10px">判断题{{ num15 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num3" />分
+                </p>
+              </div>
+              <div class="dan" v-if="tian">
+                <span style="margin-left: 10px">填空题{{ num13 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num4" />分
+                </p>
+              </div>
+              <div class="jian" v-if="wen">
+                <span style="margin-left: 10px">问答题{{ num14 }}道</span>
+                <p style="margin-left: 10px" class="mei">
+                  每题<el-input type="number" v-model="num5" />分
+                </p>
+              </div>
+            </div>
             <div class="ty" v-if="Wrodata.questions">
               <div
                 class="yt"
@@ -104,10 +104,10 @@
                   :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
                   key="ite.id"
                 >
-                  <span
-                    > &nbsp;&nbsp; <el-radio :label=" ite.answerno " size="large"></el-radio>&nbsp;&nbsp;: &nbsp;{{
-                      ite.content
-                    }}</span
+                  <span>
+                    &nbsp;&nbsp;
+                    <el-radio :label="ite.answerno" size="large"></el-radio
+                    >&nbsp;&nbsp;: &nbsp;{{ ite.content }}</span
                   >
                 </div>
                 <div
@@ -540,7 +540,7 @@
 
 <script setup lang="ts">
 // import Drawer from '../../../../components/Drawer.vue';
-import { reactive, ref, watchEffect, onMounted, toRefs,watch } from 'vue';
+import { reactive, ref, watchEffect, onMounted, toRefs, watch } from 'vue';
 import { testadd } from '@/api/stutest';
 import { useRouter, useRoute } from 'vue-router';
 import { nextTick } from 'vue';
@@ -548,7 +548,7 @@ import moment from 'moment';
 import TascherList from '../../../../components/test/teacherList.vue';
 import studentList from '../../../../components/test/studentList.vue';
 import Testpaperlist from '../../../../components/test/testpaperlist.vue';
-import Forth from "../../../../components/test/Forth.vue";
+import Forth from '../../../../components/test/Forth.vue';
 import {
   questions,
   exportExcel,
@@ -589,12 +589,12 @@ const studentConfirm = (bool: any, val: any) => {
   console.log(bool, val);
   dialogStudent.value = false;
   params.value.students = val;
-  paramsss.nuu= val.length
+  paramsss.nuu = val.length;
 };
 const paramsss = reactive({
   num: 0,
-  nuu:0,
-  nnu:0
+  nuu: 0,
+  nnu: 0,
 });
 const deplenght = (val: any) => {
   // console.log(val);
@@ -621,7 +621,7 @@ const limitss = (val: any) => {
 };
 const valuesss = (val: any) => {
   console.log(val);
-paramsss.nnu=val.length
+  paramsss.nnu = val.length;
   params.value.limits = val;
 };
 const sub = () => {
@@ -706,7 +706,11 @@ const getdata = (n: any) => {
   Wrod.Wrodata.questions.push(n);
 };
 const dataq = reactive({
-  zcc: [],
+  zcc: [
+    {
+      title: '',
+    },
+  ],
   //表格数据
   tableData: [],
   //列表参数
@@ -727,14 +731,14 @@ const dataq = reactive({
   total: 0,
 });
 //清空
-const clear =()=>{
+const clear = () => {
   Wrod.Wrodata.questions = [];
-  dan.value = false,
-  duo.value = false,
-  pan.value = false,
-  tian.value = false,
-  wen.value = false
-}
+  (dan.value = false),
+    (duo.value = false),
+    (pan.value = false),
+    (tian.value = false),
+    (wen.value = false);
+};
 const departmentList = async () => {
   const res: any = await departmentlist(null);
   console.log('部门级联', res);
@@ -931,7 +935,6 @@ const tableHead = [
   },
 ];
 const tableHeade = [
-
   {
     prop: 'counts',
     label: '题量数目',
@@ -1200,23 +1203,23 @@ watchEffect(() => {
   let num9 = 0;
   let num10 = 0;
   Wrod.Wrodata.questions.forEach((item: any) => {
-    if (item.type === "单选题") {
+    if (item.type === '单选题') {
       data.dan = true;
       num6 += 1;
       // console.log(dan.value)
-    } else if (item.type === "多选题") {
+    } else if (item.type === '多选题') {
       duo.value = true;
       num7 += 1;
       // nums.value+1
-    } else if (item.type === "填空题") {
+    } else if (item.type === '填空题') {
       tian.value = true;
       num8 += 1;
       // nums.value+=1
-    } else if (item.type === "问答题") {
+    } else if (item.type === '问答题') {
       wen.value = true;
       num9 += 1;
       // nums.value+=1
-    } else if (item.type === "判断题") {
+    } else if (item.type === '判断题') {
       pan.value = true;
       num10 += 1;
     }
@@ -1236,35 +1239,35 @@ watchEffect(() => {
 });
 watch([num1], () => {
   Wrod.Wrodata.questions.map((item: any) => {
-    if (item.type === "单选题") {
+    if (item.type === '单选题') {
       item.scores = num1.value;
     }
   });
 });
 watch([num2], () => {
   Wrod.Wrodata.questions.map((item: any) => {
-    if (item.type === "多选题") {
+    if (item.type === '多选题') {
       item.scores = num2.value;
     }
   });
 });
 watch([num3], () => {
   Wrod.Wrodata.questions.map((item: any) => {
-    if (item.type === "判断题") {
+    if (item.type === '判断题') {
       item.scores = num3.value;
     }
   });
 });
 watch([num4], () => {
   Wrod.Wrodata.questions.map((item: any) => {
-    if (item.type === "填空题") {
+    if (item.type === '填空题') {
       item.scores = num4.value;
     }
   });
 });
 watch([num5], () => {
   Wrod.Wrodata.questions.map((item: any) => {
-    if (item.type === "问答题") {
+    if (item.type === '问答题') {
       item.scores = num5.value;
     }
   });
