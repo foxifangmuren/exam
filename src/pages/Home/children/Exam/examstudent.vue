@@ -51,7 +51,7 @@
         <!-- 流动布局 -->
         <el-form ref="ruleFormRef" :model="from" status-icon  class="demo_ruleForm">
           <!-- 有数据时 -->
-          {{Dlist}}
+          <!-- {{Dlist}} -->
           <div  v-for="(item, index) in Dlist" :key="index">
             <!-- 学生答卷详情 -->
             <!-- 标题 -->
@@ -70,7 +70,6 @@
                 <el-form-item class="item" label="打分" :rules="studentscores(item.scores)" :prop="'Dlist.' + index + '.studentscores'"   required>
                     <el-input  style="margin-bottom:20px; width:200px" v-model="item.studentscores" type="text" autocomplete="off"   />
                 </el-form-item>
-
               <!-- 备注 -->
               <el-form-item class="item"  style="margin-left:0px" label="批注">
                 <el-input  type="textarea" v-model="item.comments"/>

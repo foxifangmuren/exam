@@ -127,11 +127,15 @@ interface Props{
 }
 defineProps<Props>()
 const htmlEncode=(html:string)=>{
-  console.log(html);
   if(!html) return ""
   html=html.replace(/</g,"&lt;")
   html=html.replace(/>/g,"&gt;")
   html=html.replace(/\n/g,"<br>")
+  html = html.replace(/&lt;img/g,"<img");
+  html = html.replace(/\/&gt/g,"/>");
+  html = html.replace(/&lt;p&gt;/g,"");
+  html = html.replace(/\&lt;\/p&gt;/g,"");
+  console.log(html);
   return html
 }
 </script>

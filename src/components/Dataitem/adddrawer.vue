@@ -34,10 +34,12 @@
               <Toolbar
                 style="border-bottom: 1px solid #ccc"
                 :editor="editorRef"
+                :defaultConfig-="toolbarConfig"
               />
               <Editor
                 style="overflow-y: hidden"
-                v-model="html"
+                v-model="html" 
+                :defaultConfig="editorConfig"
                 @onCreated="handleCreated"
               />
             </div>
@@ -190,7 +192,94 @@ import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 // import { nextTick } from "process";
+//上传图片区域
+const toolbarConfig={
+  toolbarKeys:[
+    "bold",
+    "italic",
+    "underline",
+    "color",
+    "bgColor",
+    "bulletedList",
+    "numberedList",
+    "justifyLeft",
+    "justifyCenter",
+    "justifyRight",
+    "insertTable",
+   {
+    key:"group-image",
+    title:"图片",// 必填
+    menuKeys: ["uploadImage","insertImage"]
+   } 
+  ]
+}
+const editorConfig:any = { MENU_CONF: {} }
+    editorConfig.MENU_CONF['uploadImage'] = {
 
+      server: 'http://www.eshareedu.cn/exam/api/upload/editeradd', // 上传图片地址
+
+      timeout: 5 * 1000, // 5s
+ 
+      fieldName: 'files',
+      metaWithUrl: true, // 参数拼接到 url 上
+      headers: { Authorization:sessionStorage.getItem('token') },
+ 
+      maxFileSize: 10 * 1024 * 1024, // 10M
+ 
+      base64LimitSize: 5 * 1024, // 5kb 以下插入 base64
+ 
+      onBeforeUpload(files: any) {
+        console.log('onBeforeUpload', files)
+ 
+        return files // 返回哪些文件可以上传
+        // return false 会阻止上传
+      },
+      onProgress(progress: any) {
+        console.log('onProgress', progress)
+      },
+      onSuccess(file: any, res: any) {
+        console.log('onSuccess', file, res)
+      },
+      onFailed(file: any, res: { message: any; }) {
+        alert(res.message)
+        console.log('onFailed', file, res)
+      },
+      onError(file: any, err: { message: any; }, res: any) {
+        alert(err.message)
+        console.error('onError', file, err, res)
+      },
+ 
+      // // 用户自定义插入图片
+      customInsert(res:any, insertFn:any) {
+        const imgInfo = res.data[0].url.slice(1)
+        insertFn("http://www.eshareedu.cn/exam/upload/"+imgInfo)
+      },
+ 
+      // // 用户自定义上传图片
+      // customUpload(file, insertFn) {
+      //   console.log('customUpload', file)
+ 
+      //   return new Promise((resolve) => {
+      //     // 插入一张图片，模拟异步
+      //     setTimeout(() => {
+      //       const src = `https://www.baidu.com/img/flexible/logo/pc/result@2.png?r=${Math.random()}`
+      //       insertFn(src, '百度 logo', src)
+      //       resolve('ok')
+      //     }, 500)
+      //   })
+      // },
+ 
+      // // 自定义选择图片（如图床）
+      // customBrowseAndUpload(insertFn) {
+      //   alert('自定义选择图片，如弹出图床')
+ 
+      //   // 插入一张图片，模拟异步
+      //   setTimeout(() => {
+      //     const src = 'https://www.baidu.com/img/flexible/logo/pc/result@2.png'
+      //     insertFn(src, '百度 logo', src) // 插入图片
+      //   }, 500)
+      // },
+    }
 //选择题部分
 const removeDomain = (index: any) => {
   ruleForm.answers.splice(index, 1);
