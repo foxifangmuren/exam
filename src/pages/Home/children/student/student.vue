@@ -4,58 +4,12 @@
     <div class="header">
       <span class="head">学生管理</span>
       <div>
-        <el-button>批量添加</el-button>
-        <el-button type="primary" v-show="1" @click="dialogFormVisible = true"
+        <el-button @click="adds">批量添加</el-button>
+        <el-button type="primary" v-show="1" @click="add"
           >添加学生</el-button
         >
       </div>
     </div>
-    <!-- 添加 -->
-    <el-dialog v-model="dialogFormVisible" title="添加">
-      <el-form :model="form">
-        <el-form-item label="姓名" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="电话" :label-width="formLabelWidth">
-          <el-input v-model="form.photo" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="部门" :label-width="formLabelWidth">
-          <el-cascader
-            v-model="form.depid"
-            :options="data.options"
-            :props="props"
-            @change="handleChange"
-            clearable
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="班级" :label-width="formLabelWidth">
-          <el-cascader
-            v-model="form.classid"
-            :options="data.Class"
-            :props="props"
-            @change="handleChange"
-            clearable
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="备注" :label-width="formLabelWidth">
-          <el-input v-model="form.remarks" type="textarea" />
-        </el-form-item>
-        <el-form-item label="账号" :label-width="formLabelWidth">
-          <el-input v-model="form.username" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.pass" autocomplete="off" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="primary" @click="add">
-            添加
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
 
     <!-- 搜索框 -->
     <div class="content">
@@ -74,7 +28,6 @@
         </el-form-item>
         <el-form-item label="班级">
           <el-cascader
-            v-model="data.value"
             :options="data.Class"
             :props="props"
             @change="handleChange"
@@ -105,6 +58,7 @@
           ref="multipleTableRef"
           :data="data.tableData"
           style="width: 100%"
+          :header-cell-style="{ background: '#fafafa' }"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
@@ -113,7 +67,12 @@
           <el-table-column property="depname" label="所属部门" />
           <el-table-column property="classname" label="所在班级" />
           <el-table-column property="username" label="账号" />
-          <el-table-column property="addtime" label="添加时间" />
+          <el-table-column property="addtime" label="添加时间">
+            <template #default="scope">
+              <span>{{ scope.row.addtime.substr(0,16) }}</span>
+            </template>
+          </el-table-column>
+
           <el-table-column label="操作" width="150" #default="scope">
             <span class="zi" style="cursor: pointer" @click="pass(scope.row)">重置密码</span>
             <span class="zi" style="cursor: pointer" @click="update(scope.row)">修改</span>
@@ -135,12 +94,16 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <studentAdd ref="studadd"  @studentList="studentList"></studentAdd>
     <studentUp ref="studup" @studentList="studentList"></studentUp>
     <studentPass ref="studpass" @studentList="studentList"></studentPass>
+    <studentAdds @imports="imports" :isImport="isImport" @isImports="isImports"></studentAdds>
   </div>
 </template>
 
 <script setup lang="ts">
+import studentAdds from '../../../../components/student/studentAdds.vue'
+import studentAdd from '../../../../components/student/studentAdd.vue'
 import studentPass from '../../../../components/student/studentPass.vue'
 import studentUp from '../../../../components/student/studentUp.vue'
 import { onMounted, reactive, ref, toRefs } from 'vue';
@@ -150,14 +113,11 @@ import {
   classeslist,
   studentdel,
   studentdelall,
-  studentadd,
 } from '../../../../api/admin';
-import { ElMessageBox, ElMessage, Action } from 'element-plus';
-import { objectPick } from '@vueuse/shared';
+import { ElMessageBox, ElMessage } from 'element-plus';
+let studadd = ref<any>(null)
 let studup = ref<any>(null)
 let studpass = ref<any>(null)
-const dialogFormVisible = ref(false);
-const formLabelWidth = '140px';
 let obj = ref({})
 //引入添加学生的对话框
 
@@ -186,19 +146,10 @@ const data = reactive({
   ids: [],
   //添加学生
   isStu: false,
+  isImport:false,
 });
 // 解构数据
-const { params, ids, isStu, ClassOptions, Class } = toRefs(data);
-const form = reactive({
-  id: 0,
-  name: '',//学生姓名
-  classid: 3504,
-  username: '',//账号
-  pass: '', //密码
-  remarks:'',//备注
-  photo:'',  //手机号
-  depid:'', //部门
-});   
+const { params, ids,isImport } = toRefs(data);
 const props = {
   expandTrigger: 'hover',
   checkStrictly: true,
@@ -247,20 +198,25 @@ const studentList = async () => {
 };
 //添加
 const add = async () => {
-  // console.log(form.classid)
-  const res: any = await studentadd(form);
-  console.log('班级添加', res);
-  if (res.errCode === 10000) {
-    ElMessage.success('添加成功');
-    dialogFormVisible.value = false
-    studentList();
-  }
+  studadd.value.dialogVisible = true
+
 };
+//弹出学生批量添加
+const adds = ()=>{
+  isImport.value = true
+}
+const imports = (e:any) => {
+  console.log('父组件',e);
+}
+const isImports = (e:any) => {
+  isImport.value = e
+}
+
 //修改
 const update = (data:any) => {
   studup.value.dialogVisible = true
   console.log(studup.value)
-  studup.value.form.list = data
+  studup.value.ruleForm.list = data
   obj.value = data
 }
 //点击修改密码
@@ -316,9 +272,6 @@ const dels = async () => {
   });
   if (conf) dells();
 };
-
-//添加
-
 //查询
 const onSubmit = () => {
   console.log('hello');

@@ -12,12 +12,12 @@
               @close="handleClose"
               router
             >
-              <el-menu-item>
+              <el-menu-item index="">
                 <template #default="scope">
                   <div
                     class="block"
                     ref="buttonRef"
-                    @click="personal"
+                    @click="persona"
                   >
                     <img
                       src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
@@ -46,9 +46,9 @@
                 </div>
               </div>
               <!-- 姓名 -->
-              <div class="name" >1111</div>
-              <div class="name" >部门:2222</div>
-              <div class="name">班级:3333</div>
+              <div class="name" >{{data.List.name}}</div>
+              <div class="name" >部门:{{ data.List.depname }}</div>
+              <div class="name">班级:{{ data.List.classname }}</div>
               <div class="butBox">
                 <el-button class="but" @click="goodbye">退出登录</el-button>
               </div>
@@ -62,7 +62,7 @@
                   ></el-avatar>
                   <span class="title">账号</span>
                 </div>
-                <div class="accountName">1223242</div>
+                <div class="accountName">{{ data.List.username }}</div>
               </div>
               <!-- 密码 -->
               <div class="accountBox">
@@ -120,7 +120,13 @@ const router = useRouter();
 const data = reactive({
   e: {},
   t: '',
-  isShowPersonal:false
+  isShowPersonal:false,
+  List:{
+    name:'',
+    depname:'',
+    classname:"",
+    username:""
+  }
 });
 const { isShowPersonal }: any = toRefs(data);
 const buttonRef = ref()
@@ -146,13 +152,9 @@ const state = reactive({
   sizeList: [""] as const,
 });
 const { circleUrl, sizeList } = toRefs(state);
-// const tiao=()=>{
-//   console.log(data.t);
-
-//   router.push(data.t)
-//   console.log(1);
-
-// }
+const persona=()=>{
+  data.isShowPersonal = !isShowPersonal.value;
+}
 const handleOpen = (key: string, keyPath: any) => {
   // console.log(key, keyPath);
   // data.t=keyPath
@@ -164,6 +166,8 @@ const zhu = () => {
   alert(111);
 };
 onMounted(() => {
+  data.List= JSON.parse(sessionStorage.getItem('model') as any)
+  console.log(data.List)
   const q: any = sessionStorage.getItem('data');
   // console.log(JSON.parse(q));
   const e = JSON.parse(q);

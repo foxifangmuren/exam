@@ -1,34 +1,45 @@
 <template>
-  <div>
-    <el-form ref="ruleFormRef" :model="form.list">
-      <el-dialog v-model="dialogVisible" title="修改">
-      <el-form :model="form">
-        <el-form-item label="姓名" :label-width="formLabelWidth">
-          <el-input v-model="form.list.name" autocomplete="off" />
+  <el-form
+    ref="ruleFormRef"
+    :model="list"
+    :rules="rules"
+    label-width="120px"
+    class="demo-ruleForm"
+    :size="formSize"
+    status-icon
+  >
+    <el-dialog
+      v-model="dialogVisible"
+      title="修改"
+      width="35%"
+    >
+      <span class="box">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="list.name" />
         </el-form-item>
-        <el-form-item label="电话" :label-width="formLabelWidth">
-          <el-input v-model="form.list.photo" autocomplete="off" />
+        <el-form-item label="电话" prop="tel">
+          <el-input v-model="list.tel" />
         </el-form-item>
-        <el-form-item label="部门" :label-width="formLabelWidth">
+        <el-form-item label="部门" prop="depid">
           <el-cascader
-            v-model="form.list.depid"
-            :options="form.options"
-            :props="porps"
-            clearable
-          ></el-cascader>
+            placeholder="请选择部门"
+            v-model="list.depid"
+            :props="props"
+            :options="depList"
+            @change="handleChange"
+          />
         </el-form-item>
-        <el-form-item label="班级" :label-width="formLabelWidth">
-          <el-cascader
-            v-model="form.list.classid"
-            :options="form.Class"
-            :props="porps"
-            clearable
-          ></el-cascader>
+        <el-form-item label="班级" prop="classid">
+          <el-select v-model="list.classid" placeholder="请选择班级">
+            <el-option
+              v-for="item in classlist1"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="备注" :label-width="formLabelWidth">
-          <el-input v-model="form.list.remarks" type="textarea" />
-        </el-form-item>
-      </el-form>
+
+      </span>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="qu(ruleFormRef)">取消</el-button>
@@ -38,69 +49,113 @@
         </span>
       </template>
     </el-dialog>
-    </el-form>
-    
-  </div>
+  </el-form>
 </template>
+<script lang="ts" setup>
+import type { FormInstance, FormRules } from 'element-plus';
+import {
+  ref,
+  defineExpose,
+  reactive,
+  toRefs,
+  onMounted,
+  watch,
+  toRaw,
+} from 'vue';
+import { departmentlist, classeslist, studentadd } from '../../api/admin';
+import { ElMessage } from 'element-plus';
+const dialogVisible = ref(false);
 
-<script setup lang="ts">
-import { onMounted, reactive, ref, toRefs,watch } from 'vue';
-import {departmentlist,classeslist,studentadd} from '../../api/admin'
-import {ElMessage} from 'element-plus'
-const dialogVisible=ref(false)
-const formLabelWidth = '140px'
+const emits = defineEmits(['studentList']);
+
+const formSize = ref('default');
 const ruleFormRef = ref<any>();
-const form = reactive({
-  list:{
-    id:0,
-    photo:'',
-    name:'',
+const ruleForm: any = reactive({
+  depid1: [],
+  list: {
+    id: 0,
+    username:'',
+    pass:'',
+    name: '' ,
+    tel:'',
+    depid: '',
     classid:'',
-    depid:'',
-    remarks:'', //备注
   },
-  params: {
-    classid: 0,
+  depList: [],
+  classlist1: [],
+});
+
+console.log(ruleForm.list.id);
+const data: any = reactive({
+  list1: {
+    id: 0,
+    username: '',
+    pass: '',
     name: '',
-    depname: '',
-    page: 1,
-    psize: 10,
-    
+    tel: '',
+    depid: '',
+    classid: '',
   },
-  Class:[],
-  options:[]
-})
+});
 defineExpose({
   dialogVisible,
-  form,
+  ruleForm,
 });
-const porps = {
+const props = {
   value: 'id',
   label: 'name',
-}
+};
 
-//部门级联调接口
-const departmentList = async () => {
-  const res: any = await departmentlist(form.params);
-  console.log('部门级联', res);
+
+const handleChange = (value: any) => {
+  // console.log(value)
+  ruleForm.list.depid = value[toRaw(value).length - 1];
+};
+//请求部门列表接口
+const getdepartmentlist = async () => {
+  let res: any = await departmentlist(null);
   if (res.errCode === 10000) {
-    form.options = res.data.list;
+    ruleForm.depList = res.data.list;
   }
 };
-// 班级级联列表
-const getclasseslist = async () => {
-  const res: any = await classeslist(form.params);
-  console.log('班级列表', res);
+// 请求班级部门列表接口
+const getclasslist = async () => {
+  let res: any = await classeslist(null);
   if (res.errCode === 10000) {
-    form.Class = res.data.list;
+    ruleForm.classlist1 = res.data.list;
   }
 };
-const emits = defineEmits(['studentList']);
+onMounted(() => {
+  //调用部门列表接口
+  getdepartmentlist();
+  //调用班级列表接口
+  getclasslist();
+});
+const rules = reactive<any>({
+  name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
+  depid: [
+    {
+      required: true,
+      message: '部门不能为空',
+      trigger: 'change',
+    },
+  ],
+  classid: [
+    {
+      required: true,
+      message: '班级不能为空',
+      trigger: 'change',
+    },
+  ],
+  username: [{ required: true, message: '账号不能为空', trigger: 'blur' }],
+  pass: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
+});
+
 const submitForm = async (formEl: any | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid: any, fields: any) => {
     if (valid) {
-      let res: any = await studentadd(form.list);
+      let res: any = await studentadd(ruleForm.list);
       // console.log(ruleForm.list)
       console.log(res);
       if (res.errCode === 10000) {
@@ -119,7 +174,9 @@ const submitForm = async (formEl: any | undefined) => {
           { immediate: true }
         );
         dialogVisible.value = false;
-       
+        ruleForm.depid1 = '';
+        ruleForm.list.classid = '';
+        // ruleForm.list = data.list1
         emits('studentList');
       } else {
         ElMessage(res.errMsg);
@@ -141,20 +198,21 @@ const qu = (formEl: any | undefined) => {
     { immediate: true }
   );
   dialogVisible.value = false;
-  form.list.photo = '';
-  form.list.id = 0;
-  form.list.name = '';
-  form.list.classid = '';
-  form.list.depid = '';
-  form.list.remarks = '';
+  // ruleForm.list = data.list1
+  ruleForm.depid1 = '';
+  ruleForm.list.classid = '';
+  ruleForm.list.id = 0;
+  ruleForm.list.username = '';
+  ruleForm.list.tel = '';
+  ruleForm.list.pass = '';
+  ruleForm.list.name = '';
   emits('studentList');
 };
-onMounted(()=>{
-  departmentList();
-  getclasseslist();
-})
+const { list, depList, classlist1, depid1 } = toRefs(ruleForm);
 </script>
-
-<style scoped>
-
+<style lang="less" scoped>
+.box {
+  display: block;
+  width: 400px;
+}
 </style>

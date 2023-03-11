@@ -36,7 +36,6 @@
   </el-form>
 </template>
 <script lang="ts" setup>
-import type { FormInstance, FormRules } from 'element-plus';
 import {
   ref,
   defineExpose,
@@ -45,7 +44,7 @@ import {
   watch,
 } from 'vue';
 import { ElMessage } from 'element-plus';
-import {changepass} from '../../api/admin'
+import {studentadd} from '../../api/admin'
 const dialogVisible = ref(false);
 const data = ref();
 const emits = defineEmits(['studentList']);
@@ -99,7 +98,7 @@ const submitForm = async (formEl: any | undefined) => {
         "depid": data.value.depid,
         "roleid": data.value.classid
       }
-     let res:any = await changepass(params)
+     let res:any = await studentadd(params)
      console.log(res)
       if (res.errCode===10000) {
         ElMessage({

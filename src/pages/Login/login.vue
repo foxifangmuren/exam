@@ -40,9 +40,9 @@
 
 <script setup lang="ts">
 import { login } from '../../api/admin';
-import { reactive, toRefs, ref } from 'vue';
+import { reactive, toRefs, ref, } from 'vue';
 import { useRouter } from 'vue-router';
-import type { FormInstance, FormRules } from 'element-plus';
+import { ElMessage } from 'element-plus';
 const router = useRouter();
 const obj = reactive({
   form: {
@@ -65,6 +65,14 @@ const log = async (formEl: any) => {
   if (!formEl) return;
   await formEl.validate(async (valid: any, fields: any) => {
     if (valid) {
+  //     ElMessage({
+  //   message: 'Congrats, this is a success message.',
+  //   type: 'success',
+  // })
+    ElMessage({
+      message:'登录成功',
+      type:'success'
+    })
       // console.log('submit!')
       const res: any = await login(obj.form.usename, obj.form.pass);
       console.log(res);

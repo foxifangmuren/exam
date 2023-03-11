@@ -163,8 +163,8 @@ const title = ref(route.query.title);
 const testid = ref(route.query.id);
 //表格数据
 const from = reactive({
-  dep: [],
-  classList: [],
+  dep:[],
+  classList:[{name:"",id:0,type:"",title:""}],
   query: {
     testid: 0,
     page: 1,
@@ -178,7 +178,7 @@ const from = reactive({
   //表格数据
   tableData: [],
   //题库数据
-  Dlist: [],
+  Dlist:[{answer:"",scores:0,comments:"",type:"",title:"",studentscores:""}],
   // 侧边是否显示
   drawer: false,
   //总条数

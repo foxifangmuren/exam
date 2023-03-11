@@ -133,6 +133,7 @@ const rep = (str: string, index: number) => {
       const boxDom: any = document.querySelectorAll(".boxs");
       boxDom.forEach((item: any) => {
         var _index = item.getAttribute("data-index");
+        console.log(_index)
         document
           .querySelectorAll(".boxs" + _index)
           .forEach((ite: any, index: number) => {

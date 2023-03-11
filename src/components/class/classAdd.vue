@@ -10,7 +10,7 @@
   >
     <el-dialog
       v-model="dialogVisible"
-      title="修改"
+      title="添加"
       width="35%"
     >
       <span class="box">
@@ -39,7 +39,6 @@
   </el-form>
 </template>
 <script lang="ts" setup>
-import type { FormInstance, FormRules } from 'element-plus';
 import {
   ref,
   defineExpose,
@@ -50,15 +49,11 @@ import {
   watch,
   toRaw,
 } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { departmentlist, classesadd } from '../../api/admin';
 import { ElMessage } from 'element-plus';
-import { fa } from 'element-plus/es/locale';
-import {defineProps} from "vue"
 const dialogVisible = ref(false);
 
 const emits = defineEmits(['getclasseslist']);
-
 const formSize = ref('default');
 const ruleFormRef = ref<any>();
 const ruleForm: any = reactive({
@@ -69,6 +64,7 @@ const ruleForm: any = reactive({
     depid: '',
   },
   depList: [],
+  classlist1: [],
 });
 
 console.log(ruleForm.list.id);
@@ -104,6 +100,7 @@ const getdepartmentlist = async () => {
 onMounted(() => {
   //调用部门列表接口
   getdepartmentlist();
+  
 });
 const rules = reactive<any>({
   name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
@@ -125,7 +122,7 @@ const submitForm = async (formEl: any | undefined) => {
       console.log(res);
       if (res.errCode === 10000) {
         ElMessage({
-          message: '修改成功',
+          message: '添加成功',
           type: 'success',
         });
         watch(
@@ -140,6 +137,7 @@ const submitForm = async (formEl: any | undefined) => {
         );
         dialogVisible.value = false;
         ruleForm.depid1 = '';
+        ruleForm.list.classid = '';
         // ruleForm.list = data.list1
         emits('getclasseslist');
       } else {
@@ -152,15 +150,11 @@ const submitForm = async (formEl: any | undefined) => {
 };
 
 const handleClose = (formEl: any | undefined) => {
-  // console.log(dialogVisible.value)
-  //   watch(()=>dialogVisible,(newValue, oldValue)=>{
-  //   console.log(newValue.value,oldValue,124653)
-
-  // },{immediate:true})
 
   emits('getclasseslist');
   // console.log(data.list1)
   ruleForm.depid1 = '';
+  ruleForm.list.classid = '';
   ruleForm.list.id = 0;
   ruleForm.list.name = '';
 };
@@ -178,11 +172,12 @@ const qu = (formEl: any | undefined) => {
   dialogVisible.value = false;
   // ruleForm.list = data.list1
   ruleForm.depid1 = '';
+  ruleForm.list.classid = '';
   ruleForm.list.id = 0;
   ruleForm.list.name = '';
   emits('getclasseslist');
 };
-const { list, depList, depid1 } = toRefs(ruleForm);
+const { list, depList, classlist1, depid1 } = toRefs(ruleForm);
 </script>
 <style lang="less" scoped>
 .box {
