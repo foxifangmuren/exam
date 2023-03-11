@@ -1,23 +1,10 @@
 <template>
   <div>
-    <el-drawer
-      v-model="drawer"
-      :title="title"
-      direction="rtl"
-      size="45%"
-      @close="clear"
-    >
+    <el-drawer  v-model="drawer" :title="title" direction="rtl" size="45%" @close="clear">
       <!-- 内容区域 -->
       <div>
         <!-- 题干 -->
-        <el-form
-          ref="ruleFormRef"
-          :model="ruleForm"
-          :rules="rules"
-          label-width="120px"
-          class="demo-ruleForm"
-          status-icon
-        >
+        <el-form ref="ruleFormRef" :model="ruleForm" label-width="120px" class="demo-ruleForm" status-icon >
           <!-- 题型选择 -->
           <div>
             <el-radio-group v-model="ruleForm.type">
@@ -46,77 +33,34 @@
           </el-form-item>
           <!-- 选择 -->
           <div>
-            <!-- 选择题单选  -->
-            <div v-if="ruleForm.type == '单选题'">
+            <!-- 选择题  -->
+            <div v-if="ruleForm.type == '单选题' || ruleForm.type == '多选题'">
               <!-- 选择项 -->
               <el-form-item label="选项">
                 <!-- 选项  -->
-                <el-form-item
-                  v-for="(domain, index) in ruleForm.answers"
-                  :key="index"
-                  :label="data.letter[index]"
-                >
+                <el-form-item v-for="(domain, index) in ruleForm.answers" :key="index" :label="data.letter[index]" >
                   <!-- 输入框的值 -->
                   <el-input v-model="domain.content"  />
                   <!-- 删除图标 -->
-                  <el-icon style="font-size: 22px; color: #f56c6c"
-                    ><CircleClose @click.prevent="removeDomain(index)"
-                  /></el-icon>
+                  <el-icon style="font-size: 22px; color: #f56c6c" ><CircleClose @click.prevent="removeDomain(index)" /></el-icon>
                 </el-form-item>
                 <!--按钮区域-->
                 <el-form-item>
-                  <el-icon
-                    style="margin-left: 50px; font-size: 22px; color: #48a2ff"
-                    ><CirclePlus @click="addDomain"
-                  /></el-icon>
+                  <el-icon style="margin-left: 50px; font-size: 22px; color: #48a2ff" ><CirclePlus @click="addDomain" /></el-icon>
                 </el-form-item>
               </el-form-item>
-              <!-- 答案 -->
-              <el-form-item label="答案">
+              <!-- 答案（单选） -->
+              <el-form-item label="答案" v-if="ruleForm.type == '单选题'">
                 <el-radio-group v-model="ruleForm.answer">
-                  <el-radio
-                    :label="data.letter[index]"
-                    v-for="(item, index) in ruleForm.answers"
-                    :key="index"
-                  >
+                  <el-radio :label="data.letter[index]"  v-for="(item, index) in ruleForm.answers" :key="index">
                     {{ data.letter[index] }}
                   </el-radio>
                 </el-radio-group>
               </el-form-item>
-            </div>
-            <!-- 多选题  -->
-            <div v-if="ruleForm.type == '多选题'">
-              <!-- 选择项 -->
-              <el-form-item label="选项">
-                <!-- 选项  -->
-                <el-form-item
-                  v-for="(domain, index) in ruleForm.answers"
-                  :key="index"
-                  :label="data.letter[index]"
-                >
-                  <!-- 输入框的值 -->
-                  <el-input v-model="domain.content"   />
-                  <!-- 删除图标 -->
-                  <el-icon style="font-size: 22px; color: #f56c6c"
-                    ><CircleClose @click.prevent="removeDomain(index)"
-                  /></el-icon>
-                </el-form-item>
-                <!--按钮区域-->
-                <el-form-item>
-                  <el-icon
-                    style="margin-left: 50px; font-size: 22px; color: #48a2ff"
-                    ><CirclePlus @click="addDomain"
-                  /></el-icon>
-                </el-form-item>
-              </el-form-item>
-              <!-- 答案 -->
-              <el-form-item label="答案">
+              <!-- 答案（多选） -->
+              <el-form-item label="答案" v-if="ruleForm.type == '多选题'">
                 <el-checkbox-group v-model="check" @change="changeCheckbox">
-                  <el-checkbox
-                    :label="data.letter[index]"
-                    v-for="(item, index) in ruleForm.answers"
-                    :key="index"
-                  />
+                  <el-checkbox :label="data.letter[index]" v-for="(item, index) in ruleForm.answers" :key="index" />
                 </el-checkbox-group>
               </el-form-item>
             </div>
@@ -130,30 +74,17 @@
               </el-form-item>
             </div>
             <!-- 填空问答 -->
-            <div
-              v-if="
-                ruleForm.type == '填空题'
-                  ? true
-                  : ruleForm.type == '问答题'
-                  ? true
-                  : false
-              "
-            >
+            <div v-if="ruleForm.type == '填空题' ? true : ruleForm.type == '问答题' ? true : false ">
               <el-form-item  label="正确答案" v-show="answerdata.length>0"  v-if="ruleForm.type == '填空题' ">
                 <div v-for="(item,index) in answerdata" :key="index">
                     <el-input v-model="item.contetn" class='ti' @change="gogogo(item)" />
                 </div>
               </el-form-item>
-
               <el-form-item label="解析">
-                <el-input
-                  rows="5"
-                  style="width: 300px"
-                  v-model="ruleForm.explains"
-                  type="textarea"
-                />
+                <el-input rows="5" style="width: 300px" v-model="ruleForm.explains" type="textarea" />
               </el-form-item>
             </div>
+
           </div>
           <!-- 分值 -->
           <el-form-item label="分值：">
@@ -176,22 +107,13 @@
   </div>
 </template>
 <script lang='ts' setup>
-/**
- * 添加和修改同时使用的该面
- * 功能
- *    Tab切换
- *    标题判断
- *    试题添加
- *    刷新列表
- *    传值父级
- */
 import { ElMessage } from "element-plus";
 import { onBeforeUnmount, onUpdated, reactive, ref, shallowRef, watch ,nextTick} from "vue";
 import { addDataitem } from "@/api/databaselist";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
-// import { nextTick } from "process";
+import { el } from "element-plus/es/locale";
+
 //上传图片区域
 const toolbarConfig={
   toolbarKeys:[
@@ -214,78 +136,43 @@ const toolbarConfig={
   ]
 }
 const editorConfig:any = { MENU_CONF: {} }
-    editorConfig.MENU_CONF['uploadImage'] = {
-
+editorConfig.MENU_CONF['uploadImage'] = {
       server: 'http://www.eshareedu.cn/exam/api/upload/editeradd', // 上传图片地址
-
-      timeout: 5 * 1000, // 5s
- 
+      timeout: 5 * 1000,
       fieldName: 'files',
       metaWithUrl: true, // 参数拼接到 url 上
       headers: { Authorization:sessionStorage.getItem('token') },
- 
       maxFileSize: 10 * 1024 * 1024, // 10M
- 
       base64LimitSize: 5 * 1024, // 5kb 以下插入 base64
- 
       onBeforeUpload(files: any) {
-        console.log('onBeforeUpload', files)
- 
+        // console.log('onBeforeUpload', files)
         return files // 返回哪些文件可以上传
-        // return false 会阻止上传
       },
       onProgress(progress: any) {
-        console.log('onProgress', progress)
+        // console.log('onProgress', progress)
       },
       onSuccess(file: any, res: any) {
-        console.log('onSuccess', file, res)
+        // console.log('onSuccess', file, res)
       },
       onFailed(file: any, res: { message: any; }) {
         alert(res.message)
-        console.log('onFailed', file, res)
+        // console.log('onFailed', file, res)/
       },
       onError(file: any, err: { message: any; }, res: any) {
         alert(err.message)
         console.error('onError', file, err, res)
       },
- 
-      // // 用户自定义插入图片
+       // 用户自定义插入图片
       customInsert(res:any, insertFn:any) {
         const imgInfo = res.data[0].url.slice(1)
         insertFn("http://www.eshareedu.cn/exam/upload/"+imgInfo)
       },
- 
-      // // 用户自定义上传图片
-      // customUpload(file, insertFn) {
-      //   console.log('customUpload', file)
- 
-      //   return new Promise((resolve) => {
-      //     // 插入一张图片，模拟异步
-      //     setTimeout(() => {
-      //       const src = `https://www.baidu.com/img/flexible/logo/pc/result@2.png?r=${Math.random()}`
-      //       insertFn(src, '百度 logo', src)
-      //       resolve('ok')
-      //     }, 500)
-      //   })
-      // },
- 
-      // // 自定义选择图片（如图床）
-      // customBrowseAndUpload(insertFn) {
-      //   alert('自定义选择图片，如弹出图床')
- 
-      //   // 插入一张图片，模拟异步
-      //   setTimeout(() => {
-      //     const src = 'https://www.baidu.com/img/flexible/logo/pc/result@2.png'
-      //     insertFn(src, '百度 logo', src) // 插入图片
-      //   }, 500)
-      // },
-    }
-//选择题部分
+}
+//选择题部分（删除）
 const removeDomain = (index: any) => {
   ruleForm.answers.splice(index, 1);
 };
 const addDomain = () => {
-  console.log(ruleForm.answers);
   if (ruleForm.answers.length == 26) {
     ElMessage({
       message: "只能添加这些选项",
@@ -300,12 +187,9 @@ const addDomain = () => {
     content: "",
   });
 };
-let check = ref([]); //复选框正确答案的值
-// 多选框内容改变
-const changeCheckbox = (e: any) => {
-  console.log(e);
-  ruleForm.answer = e.join("|");
-};
+let check = ref([]);
+const changeCheckbox = (e: any) => { ruleForm.answer = e.join("|"); };
+
 //暴露属性显示隐藏
 const drawer = ref(false);
 defineExpose({ drawer });
@@ -321,31 +205,25 @@ const props: any = defineProps({
   },
 });
 watch(props, (nweProps, oldProps) => {
-  console.log(props.questionsdata);
+  html.value=props.questionsdata.title
   for (let item in ruleForm) {
     ruleForm[item] = props.questionsdata[item];
   }
 });
-//标题更改
+//富文本
 const title = ref("添加试题");
-//刷新列表
 const emit = defineEmits(["getlist"]);
-//富文本编辑器
 const editorRef = shallowRef();
-// 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
   const editor = editorRef.value;
   if (editor == null) return;
-  editor.destroy();
+    editor.destroy();
 });
 
 const handleCreated = (editor: any) => {
-  // console.log("记录 editor 实例，重要！",editor);
   editorRef.value = editor; // 记录 editor 实例，重要！
 };
-//表单数据对象
-const ruleFormRef = ref<any>({});
-//数据存放
+//表单数据
 const ruleForm: any = reactive({
   id: 0,
   databaseid: 0,
@@ -386,7 +264,6 @@ const ruleForm: any = reactive({
 const html:any=ref('')
 const answerdata:any=ref<any>([])
 const abc:any=ref<any>([])
-
 watch(html,(newValue)=>{
      answerdata.value=[]
      let res=newValue.match(/\[\]/g);
@@ -398,51 +275,45 @@ watch(html,(newValue)=>{
       }
 })
 const gogogo=(val:any)=>{
-  abc.value.push(val.contetn)
-  ruleForm.answer=abc.value.join('|')
-  // console.log( ruleForm.answer);
+  ruleForm.answer=abc.value.push(val.contetn).join('|')
 }
-// 正则校验
-const rules = reactive<any>({
-  desc: [
-    { required: true, message: "Please input activity form", trigger: "blur" },
-  ],
-});
-//成功时候的按钮
+//添加方法
+const add=async ()=>{
+    if(ruleForm.answer==""){
+        ElMessage({
+          message: '请填写答案',
+          type: 'warning',
+        })
+    }else{
+          ruleForm.databaseid = props.id;
+          ruleForm.title=html
+          if (ruleForm.type == "问答题") {
+            ruleForm.answer = "：略";
+          }
+          //发送请求
+          const src = await addDataitem(ruleForm).then((src: any) => {
+            ElMessage({
+              message: "添加成功",
+              type: "success",
+            });
+          });
+          //关闭弹框
+          drawer.value = false;
+    }
+   
+}
+//添加按钮
 const submitForm = async () => {
-  //拿去id
-  ruleForm.databaseid = props.id;
-  ruleForm.title=html
-  if (ruleForm.type == "问答题") {
-    ruleForm.answer = "：略";
-  }
-  //发送请求
-  const src = await addDataitem(ruleForm).then((src: any) => {
-    ElMessage({
-      message: "添加成功",
-      type: "success",
-    });
-  });
-  //关闭弹框
-  drawer.value = false;
+  add()
   //刷新列表
   emit("getlist");
 };
 //保存并取消
 const save = async () => {
   //拿去id
-  ruleForm.databaseid = props.id;
-   ruleForm.title=html
-  if (ruleForm.type == "问答题") {
-    ruleForm.answer = "：略";
-  }
-  //发送请求
-  const src = await addDataitem(ruleForm).then((src: any) => {
-    ElMessage({
-      message: "添加成功",
-      type: "success",
-    });
-  });
+  add()
+  //关闭弹框
+  drawer.value = true;
   //刷新列表
   emit("getlist");
   //刷新列表
@@ -457,8 +328,8 @@ const cancel = () => {
 };
 //失败时候的按钮
 const resetForm = (formEl: any | undefined) => {
-  if (!formEl) return;
-  formEl.resetFields();
+  drawer.value = false;
+  clear();
 };
 //关闭回调
 const clear = () => {
@@ -530,6 +401,7 @@ const data = reactive({
   leng: [],
 });
 </script>
+
 <style scoped>
 /* 富文本编辑器 */
 .box {

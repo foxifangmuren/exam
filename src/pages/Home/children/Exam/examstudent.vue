@@ -68,7 +68,7 @@
             <el-form-item  class="margin_top"   >
               <!-- 评分 -->
                 <el-form-item class="item" label="打分" :rules="studentscores(item.scores)" :prop="'Dlist.' + index + '.studentscores'"   required>
-                    <el-input  style="margin-bottom:20px; width:200px" v-model="item.studentscores" type="text" autocomplete="off"   />
+                    <el-input  style="margin-bottom:20px; width:200px" v-model="item.studentscores" type="number"  autocomplete="off"   />
                 </el-form-item>
               <!-- 备注 -->
               <el-form-item class="item"  style="margin-left:0px" label="批注">
@@ -144,7 +144,6 @@ getlist(testid);
 //请求部门列表
 const getdeplist= async ()=>{
   const src=await departmentlist({})
-  console.log(src);
   from.deplist=src.data.list
 }
 getdeplist()
@@ -163,7 +162,6 @@ const depinfo=async (val:any)=>{
     let res = val.length-1
     depid.value=val[res]
     const src=await classeslist({depid:depid.value})
-    console.log(src);
     from.classList=src.data.list
   }
 };
@@ -213,10 +211,7 @@ const changePageSize = (val: number) => {
 //返回
 const goBack = () =>router.go(-1);
 //查询
-const onSubmit = () => {
-  console.log(from.query);
-  getlist(testid)
-};
+const onSubmit = () => { getlist(testid) };
 //侧边弹框
 const go = (val: any) => {
   console.log(val);
@@ -239,7 +234,6 @@ const go = (val: any) => {
 //获取学生答卷详情
 const getstdent = async (testid: number | any, studentid: number) => {
   const src = await studentinfo({ testid: testid, studentid: studentid });
-  console.log(src);
   from.Dlist=src.data.list
 };
 //侧边栏叉号
@@ -248,10 +242,8 @@ const handleClose = (done: () => void) => done();
 const ruleFormRef = ref<any>()
   //域解析
   const {Dlist}=toRefs(from);
-  console.log(Dlist)
   const scoresValidator = (rule: any, value: any, callback: any) => {
   console.log(rule, value, callback)
-
       let max=parseInt(rule.maxScores);
       let _value=parseInt(value);
       if( isNaN(_value)){
@@ -275,20 +267,18 @@ const submitForm =(formEl: FormInstance | undefined) => {
  if (!formEl) return
     formEl.validate(async (valid) => {
       if (valid) {
-          
-                  let _list=toRaw(from.Dlist)
-                  let _menus:Array<any>=[]
-                  _list.forEach((element:any)=> _menus.push({scores:element.studentscores,answerid:element.answerid,comments:element.comments}) )
-                  const src:any=await stydenupdata(_menus)
-                  if(src.errCode=="10000"){
-                    //关闭弹框
-                    from.drawer=false
-                    //提示信息
-                    ElMessage({ message: '完成阅卷', type: "success", })
-                    getlist(testid)
-                  } 
+        let _list=toRaw(from.Dlist)
+        let _menus:Array<any>=[]
+        _list.forEach((element:any)=> _menus.push({scores:element.studentscores,answerid:element.answerid,comments:element.comments}) )
+        const src:any=await stydenupdata(_menus)
+        if(src.errCode=="10000"){
+        //关闭弹框
+        from.drawer=false
+        //提示信息
+        ElMessage({ message: '完成阅卷', type: "success", })
+        getlist(testid)
+        } 
       } else {
-        console.log('error submit!')
         return false
       }
     })
@@ -302,15 +292,12 @@ const submitForm =(formEl: FormInstance | undefined) => {
   }
 //替换[]
 const replace=(Str:any, character:any, turnInto:any)=> {
-    while (Str.indexOf(character) !== -1) {//利用indexOf函数查询特定字符串下标
-        Str = Str.replace(character, turnInto);// 替换
+    while (Str.indexOf(character) !== -1) {
+      //利用indexOf函数查询特定字符串下标
+      Str = Str.replace(character, turnInto);// 替换
     }
-    console.log("替换后的字符串为:" + Str);
     return Str;
 }
-const rep = (str: string) => {
- return str.replace(/\|/g, `,`);
-};
 </script>
 
 <style scoped>
@@ -339,10 +326,11 @@ const rep = (str: string) => {
 }
 .margin_top{
   margin-top: 30px;
-  /* background-color: rgba(255, 202, 202, 0.596); */
   padding: 30px 20px;
 }
-
+:deep(.el-input__suffix){
+  display:none ;
+}
 
 </style>
 
