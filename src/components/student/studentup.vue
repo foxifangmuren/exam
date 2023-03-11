@@ -29,7 +29,7 @@
             @change="handleChange"
           />
         </el-form-item>
-        <el-form-item label="班级列表" prop="classid">
+        <el-form-item label="班级" prop="classid">
           <el-select v-model="list.classid" placeholder="请选择班级">
             <el-option
               v-for="item in classlist1"
