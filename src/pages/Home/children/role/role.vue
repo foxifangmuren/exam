@@ -124,9 +124,7 @@ import {menuList} from "../../../../api/role"
 // 引入vue样式
 import { ref, reactive, toRefs, onMounted } from "vue";
 // 引入element ui样式
-import { ElMessage, ElMessageBox,FormInstance } from "element-plus";
-// 权限控制按钮是否隐藏方法导入
-// import { isButton } from "../../utils/isButton";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 // 定义的数据
 const Data: any = reactive({
@@ -172,8 +170,6 @@ const handleClose = () => {
 const formRef = ref<any>();
 // 多选框
 const handleCheckAllChange = (index: number) => {
-  // console.log(11,index);
-  // console.log('123',Data.addData[index])
   if (Data.addData[index].checked) {
     console.log(Data.addData[index].checked);
     Data.addData[index].checkeds = [...Data.addData[index].children].map(
@@ -183,13 +179,11 @@ const handleCheckAllChange = (index: number) => {
     Data.addData[index].checkeds = [];
   }
   Data.objData = Data.addData[index].checkeds;
-  // console.log(22,Data.addData[index].checkeds);
 };
 const handleCheckedCitiesChange = (value: string[], index: number) => {
   console.log(value)
   Data.addData[index].checked = value.length === Data.addData[index].children.length;
   objData.value = [...Data.addData[index].checkeds];
-  // console.log([...objData.value]);
 };
 // 添加请求接口
 const add = async () => {
@@ -289,7 +283,6 @@ const del = (ids: number) => {
 // 删除请求接口
 const delInfo = async (ids: number) => {
   const res: any = await roledel({ id: ids });
-  // console.log(res);
   if (res.errCode === 10000) {
     ElMessage.success("删除成功");
     List();
@@ -301,7 +294,6 @@ const delInfo = async (ids: number) => {
 const List = async () => {
   loading.value = true
   const res: any = await rolelist({ ...Data.paging });
-  // console.log(res);
   if (res.errCode === 10000) {
     loading.value = false
     Data.tableData = res.data.list;

@@ -39,22 +39,17 @@
   </el-form>
 </template>
 <script lang="ts" setup>
-import type { FormInstance, FormRules } from 'element-plus';
 import {
   ref,
   defineExpose,
   reactive,
   toRefs,
   onMounted,
-  nextTick,
   watch,
   toRaw,
 } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { departmentlist, classesadd } from '../../api/admin';
 import { ElMessage } from 'element-plus';
-import { fa } from 'element-plus/es/locale';
-import {defineProps} from "vue"
 const dialogVisible = ref(false);
 
 const emits = defineEmits(['getclasseslist']);
@@ -90,7 +85,6 @@ const props = {
 
 
 const handleChange = (value: any) => {
-  // console.log(value)
   ruleForm.list.depid = value[toRaw(value).length - 1];
 };
 //请求部门列表接口
@@ -121,7 +115,6 @@ const submitForm = async (formEl: any | undefined) => {
   await formEl.validate(async (valid: any, fields: any) => {
     if (valid) {
       let res: any = await classesadd(ruleForm.list);
-      // console.log(ruleForm.list)
       console.log(res);
       if (res.errCode === 10000) {
         ElMessage({
@@ -140,7 +133,6 @@ const submitForm = async (formEl: any | undefined) => {
         );
         dialogVisible.value = false;
         ruleForm.depid1 = '';
-        // ruleForm.list = data.list1
         emits('getclasseslist');
       } else {
         ElMessage(res.errMsg);
@@ -151,19 +143,7 @@ const submitForm = async (formEl: any | undefined) => {
   });
 };
 
-const handleClose = (formEl: any | undefined) => {
-  // console.log(dialogVisible.value)
-  //   watch(()=>dialogVisible,(newValue, oldValue)=>{
-  //   console.log(newValue.value,oldValue,124653)
 
-  // },{immediate:true})
-
-  emits('getclasseslist');
-  // console.log(data.list1)
-  ruleForm.depid1 = '';
-  ruleForm.list.id = 0;
-  ruleForm.list.name = '';
-};
 const qu = (formEl: any | undefined) => {
   watch(
     () => dialogVisible,
@@ -176,7 +156,6 @@ const qu = (formEl: any | undefined) => {
     { immediate: true }
   );
   dialogVisible.value = false;
-  // ruleForm.list = data.list1
   ruleForm.depid1 = '';
   ruleForm.list.id = 0;
   ruleForm.list.name = '';

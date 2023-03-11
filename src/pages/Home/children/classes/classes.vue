@@ -82,17 +82,6 @@ import { ElMessageBox, ElMessage, Action } from 'element-plus';
 let up = ref<any>(null)
 let classadd = ref<any>(null)
 const loading = ref(true)
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
-const handleClose = (done: () => void) => {
-  ElMessageBox.confirm('Are you sure to close this dialog?')
-    .then(() => {
-      done();
-    })
-    .catch(() => {
-      // catch error
-    });
-};
 const form = reactive({
   id: 0,
   name: '',
@@ -144,7 +133,6 @@ const value: any = ref('');
 //级联调接口
 const departmentList = async () => {
   const res: any = await departmentlist(data.params);
-  console.log('级联', res);
   if (res.errCode === 10000) {
     data.options = res.data.list;
   }
@@ -157,7 +145,6 @@ const getclasseslist = async () => {
     depid: data.value ? data.value[data.value.length - 1] : 0,
     key: data.key,
   });
-  console.log('班级列表', res);
   if (res.errCode === 10000) {
     loading.value = false
     data.tableData = res.data.list;
@@ -176,14 +163,12 @@ const add = async () => {
 //修改
 const update =(data:any)=>{
   up.value.dialogVisible = true
-  console.log(up.value)
   up.value.ruleForm.list = JSON.parse(JSON.stringify(data))
   obj.value = data
 }
 //请求删除接口
 const delinfo = async (ids: number) => {
   const res: any = await classesdel({ id: ids });
-  // console.log('删除',res)
   if (res.errCode === 10000) {
     ElMessage.success('删除成功');
     getclasseslist();
@@ -208,7 +193,6 @@ const del = (ids: number) => {
 // 批量删除
 const dells =async ()=>{
     const res:any = await delAll({ids:ids.value})
-    console.log(res);
     if(res.errCode === 10000){
         ElMessage.success("删除成功")
         getclasseslist()

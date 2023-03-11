@@ -86,7 +86,6 @@ const props = {
 
 
 const handleChange = (value: any) => {
-  // console.log(value)
   ruleForm.list.depid = value[toRaw(value).length - 1];
 };
 //请求部门列表接口
@@ -118,7 +117,6 @@ const submitForm = async (formEl: any | undefined) => {
   await formEl.validate(async (valid: any, fields: any) => {
     if (valid) {
       let res: any = await classesadd(ruleForm.list);
-      // console.log(ruleForm.list)
       console.log(res);
       if (res.errCode === 10000) {
         ElMessage({
@@ -138,7 +136,6 @@ const submitForm = async (formEl: any | undefined) => {
         dialogVisible.value = false;
         ruleForm.depid1 = '';
         ruleForm.list.classid = '';
-        // ruleForm.list = data.list1
         emits('getclasseslist');
       } else {
         ElMessage(res.errMsg);
@@ -149,15 +146,7 @@ const submitForm = async (formEl: any | undefined) => {
   });
 };
 
-const handleClose = (formEl: any | undefined) => {
 
-  emits('getclasseslist');
-  // console.log(data.list1)
-  ruleForm.depid1 = '';
-  ruleForm.list.classid = '';
-  ruleForm.list.id = 0;
-  ruleForm.list.name = '';
-};
 const qu = (formEl: any | undefined) => {
   watch(
     () => dialogVisible,
@@ -170,7 +159,6 @@ const qu = (formEl: any | undefined) => {
     { immediate: true }
   );
   dialogVisible.value = false;
-  // ruleForm.list = data.list1
   ruleForm.depid1 = '';
   ruleForm.list.classid = '';
   ruleForm.list.id = 0;

@@ -68,9 +68,7 @@ let repeatValidate = (rule:any, value:any, callback:any) => {
         callback()
       }
     }
-
 const rules = reactive<any>({
-  
   pass: [
     { required: true, message: '密码不能为空', trigger: 'blur' },
     { min: 6, max: 12, message: '请输入6~12位密码', trigger: 'blur' },
@@ -78,9 +76,7 @@ const rules = reactive<any>({
   pass1:[
     { required: true, message: '密码不能为空', trigger: 'blur' },
     { validator: repeatValidate, trigger: 'blur' }
-
   ]
-
 });
 
 const submitForm = async (formEl: any | undefined) => {
@@ -89,7 +85,6 @@ const submitForm = async (formEl: any | undefined) => {
     if (valid) {
       console.log({oldpass:data.value.pass,pass:ruleForm.list.pass})
       let params = {
-        
         "id": data.value.id,
         "username": data.value.username,
         "pass": ruleForm.list.pass,
@@ -123,7 +118,6 @@ const submitForm = async (formEl: any | undefined) => {
     } 
   });
 };
-
 const qu = (formEl: any | undefined) => {
   watch(
     () => dialogVisible,

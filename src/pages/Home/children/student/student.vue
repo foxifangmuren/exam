@@ -34,18 +34,6 @@
             @change="handleChange"
             clearable
           ></el-cascader>
-          <!-- <el-select
-            v-model=""
-            placeholder="请选ClassOptions择"
-            @change="changeClass"
-          >
-            <el-option
-              v-for="item in classlist"
-              :label="item.name"
-              :value="item.classid"
-              :key="item.classid"
-            ></el-option>
-          </el-select> -->
           
         </el-form-item>
         <el-form-item>
@@ -168,7 +156,6 @@ const value: any = ref('');
 //部门级联调接口
 const departmentList = async () => {
   const res: any = await departmentlist(data.params);
-  console.log('部门级联', res);
   if (res.errCode === 10000) {
     data.options = res.data.list;
   }
@@ -176,7 +163,6 @@ const departmentList = async () => {
 // 班级级联列表
 const getclasseslist = async () => {
   const res: any = await classeslist(data.params);
-  console.log('班级列表', res);
   if (res.errCode === 10000) {
     data.classlist = res.data.list;
   }
@@ -190,7 +176,6 @@ const studentList = async () => {
     key: data.key,
     classid: data.value ? data.value[data.value.length - 1] : 0,
   });
-  console.log('学员列表', res);
   if (res.errCode === 10000) {
     data.tableData = res.data.list;
     data.total = res.data.counts;
@@ -215,7 +200,6 @@ const isImports = (e:any) => {
 //修改
 const update = (data:any) => {
   studup.value.dialogVisible = true
-  console.log(studup.value)
   studup.value.ruleForm.list = data
   obj.value = data
 }
@@ -227,7 +211,6 @@ const pass = (data:any)=>{
 //删除接口
 const dell = async (ids: number) => {
   const res: any = await studentdel({ id: ids });
-  // console.log('学生删除',res)
   if (res.errCode === 10000) {
     ElMessage.success('删除成功');
     studentList();
@@ -252,7 +235,6 @@ const del = (ids: number) => {
 //批量删除接口
 const dells = async () => {
   const res: any = await studentdelall({ ids: ids.value });
-  // console.log('批量删除',res)
   if (res.errCode === 10000) {
     ElMessage.success('删除成功');
     studentList();

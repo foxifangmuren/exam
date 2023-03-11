@@ -44,14 +44,12 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button style="font-size:12px" @click="(dialogVisible = false), emit('isImports', false)"
-          >取消</el-button
-        >
+          >取消</el-button>
         <el-button style="font-size:12px" type="primary" @click="determine">确定</el-button>
       </span>
     </template>
   </el-dialog>
 </template>
-
 <script lang="ts" setup>
 import { inject, reactive, toRefs, watch } from "vue";
 // 引入封装接口
@@ -71,14 +69,11 @@ const props = defineProps({
 watch([props], () => {
   dialogVisible.value = props.isImport;
 });
-
 const emit = defineEmits(["isImports",'imports']);
-
 // 关闭触发事件
 const handleClose = (done: () => void) => {
   done();
   emit("isImports", false);
-  
 };
 // 确定
 const determine = () => {

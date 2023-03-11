@@ -52,7 +52,6 @@
   </el-form>
 </template>
 <script lang="ts" setup>
-import type { FormInstance, FormRules } from 'element-plus';
 import {
   ref,
   defineExpose,
@@ -108,7 +107,6 @@ const props = {
 
 
 const handleChange = (value: any) => {
-  // console.log(value)
   ruleForm.list.depid = value[toRaw(value).length - 1];
 };
 //请求部门列表接口
@@ -156,7 +154,6 @@ const submitForm = async (formEl: any | undefined) => {
   await formEl.validate(async (valid: any, fields: any) => {
     if (valid) {
       let res: any = await studentadd(ruleForm.list);
-      // console.log(ruleForm.list)
       console.log(res);
       if (res.errCode === 10000) {
         ElMessage({
@@ -176,7 +173,6 @@ const submitForm = async (formEl: any | undefined) => {
         dialogVisible.value = false;
         ruleForm.depid1 = '';
         ruleForm.list.classid = '';
-        // ruleForm.list = data.list1
         emits('studentList');
       } else {
         ElMessage(res.errMsg);
@@ -198,7 +194,6 @@ const qu = (formEl: any | undefined) => {
     { immediate: true }
   );
   dialogVisible.value = false;
-  // ruleForm.list = data.list1
   ruleForm.depid1 = '';
   ruleForm.list.classid = '';
   ruleForm.list.id = 0;

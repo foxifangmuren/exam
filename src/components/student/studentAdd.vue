@@ -115,7 +115,6 @@ const props = {
 
 
 const handleChange = (value: any) => {
-  // console.log(value)
   ruleForm.list.depid = value[toRaw(value).length - 1];
 };
 //请求部门列表接口
@@ -196,17 +195,6 @@ const submitForm = async (formEl: any | undefined) => {
     }
   });
 };
-
-const handleClose = (formEl: any | undefined) => {
-  emits('studentList');
-  ruleForm.depid1 = '';
-  ruleForm.list.classid = '';
-  ruleForm.list.id = 0;
-  ruleForm.list.username = '';
-  ruleForm.list.tel = '';
-  ruleForm.list.pass = '';
-  ruleForm.list.name = '';
-};
 const qu = (formEl: any | undefined) => {
   watch(
     () => dialogVisible,
@@ -219,7 +207,6 @@ const qu = (formEl: any | undefined) => {
     { immediate: true }
   );
   dialogVisible.value = false;
-  // ruleForm.list = data.list1
   ruleForm.depid1 = '';
   ruleForm.list.classid = '';
   ruleForm.list.id = 0;
