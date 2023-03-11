@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#F7FBFE', color: '#000' }">
+  <el-table :data="tableData" style="width: 100%" :header-cell-style="{ background: '#fafafa' }">
     <!-- 复选框 -->
     <el-table-column type="selection" v-if="isTypeSelection" width="55" />
     <!-- 表格行 -->
