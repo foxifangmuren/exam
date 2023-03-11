@@ -6,10 +6,10 @@
         <el-aside width="70px" style="background-color: aqua">
           <el-col>
             <el-menu
-              default-active="2"
               class="el-menu-vertical-demo"
               @open="handleOpen"
               @close="handleClose"
+              :default-active="$route.path"
               text-color="#747e97"
               router
             >

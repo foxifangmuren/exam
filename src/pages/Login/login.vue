@@ -68,18 +68,8 @@ const log = async (formEl: any) => {
   if (!formEl) return;
   await formEl.validate(async (valid: any, fields: any) => {
     if (valid) {
-  //     ElMessage({
-  //   message: 'Congrats, this is a success message.',
-  //   type: 'success',
-  // })
-    ElMessage({
-      message:'登录成功',
-      type:'success'
-    })
-      // console.log('submit!')
       loading.value = true
       const res: any = await login(obj.form.usename, obj.form.pass);
-      console.log(res);
       if(res.errCode===10000){
         sessionStorage.setItem('token', res.data.token);
         sessionStorage.setItem('data', JSON.stringify(res.data.menu));
@@ -101,7 +91,6 @@ const log = async (formEl: any) => {
       }
      
     } else {
-      console.log('error submit!', fields);
     }
   });
 };

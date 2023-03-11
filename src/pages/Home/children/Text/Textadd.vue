@@ -241,14 +241,14 @@
           />
         </el-form-item>
         <el-form-item label="考试时长:">
-          <el-radio-group v-model="AddFrom.limittime" class="num">
+          <el-radio-group v-model="xianzhitime" class="num">
             <el-radio :label="1">不限时时长</el-radio>
             <el-radio :label="2">限时时长</el-radio>
             <el-input
               type="number"
               style="width: 90px"
               v-model="AddFrom.limittime"
-              v-if="AddFrom.isshow == 2"
+              v-if="xianzhitime == 2"
             />
           </el-radio-group>
         </el-form-item>
@@ -573,6 +573,7 @@ const goinfo = (vla: any) => {
   f.data = vla;
   mycdatadrawer.value.drawer = true;
 };
+const xianzhitime = ref(1)
 const datac = ref();
 const updataz = (zccc: any) => {
   datac.value = zccc;
@@ -596,6 +597,8 @@ const studentConfirm = (bool: any, val: any) => {
   dialogStudent.value = false;
   params.value.students = val;
   paramsss.nuu = val.length;
+  AddFrom.students = val
+  
 };
 const paramsss = reactive({
   num: 0,
@@ -610,6 +613,7 @@ const deplenght = (val: any) => {
 const teacherConfirm = (bool: any, val: any) => {
   console.log(bool, val);
   dialogyueTeacher.value = false;
+  AddFrom.markteachers = val
   params.value.markteachers = val;
 };
 // 可见学生
@@ -626,9 +630,9 @@ const limitss = (val: any) => {
   params.value.limits.length = val;
 };
 const valuesss = (val: any) => {
-  console.log(val);
   paramsss.nnu = val.length;
   params.value.limits = val;
+  AddFrom.limits = val
 };
 const sub = () => {
   // console.log(1);
@@ -1032,31 +1036,44 @@ const AddFrom: any = reactive({
   admin: 'ldq',
   begintime: '2021-12-07 15:33:59.0',
   endtime: '2021-12-02 15:34:03.0',
-  limittime: '',
-  scores: '',
+  limittime: 0,
+  scores: 0,
   pastscores: 60,
   qorder: 0,
   aorder: 0,
-  answershow: 2,
-  isshow: 1,
-  databaseid: 20,
-  state: 1,
-  limits: [{ id: 1 }, { id: 2 }],
-  markteachers: [{ id: 3 }, { id: 4 }],
-  students: [{ studentid: 5 }, { studentid: 6 }],
-  questions: [],
+  answershow: 0,
+  isshow: 0,
+  databaseid: 0,
+  state: 0,
+  limits: '',
+  markteachers: '',
+  students: '',
+  questions: '',
   num: '',
 });
 const TestAdd = async (num: number) => {
-  if (route.query.type != '2') {
-    AddFrom.scores=Wrod.Total
+  if(AddFrom.title==''){
+    ElMessage.error('请填写考试名称')
+  }else if(AddFrom.info==''){
+    ElMessage.error('请填写考试说明')
+  }else if(AddFrom.questions==''){
+    ElMessage.error('请添加题目')
+  }else if(AddFrom.limits==''){
+    ElMessage.error('请选择可见老师')
+  }else if(AddFrom.markteachers==''){
+    ElMessage.error('请选择考生范围')
+  }else if(AddFrom.students==''){
+    ElMessage.error('请选择阅卷老师')
+  }else{
+    if (route.query.type != '2') {
+    AddFrom.scores = Wrod.Total
     AddFrom.questions = Wrod.Wrodata.questions;
     AddFrom.state = num;
     AddFrom.id = id;
     if (AddFrom.id == 1) {
       AddFrom.id = '';
     }
-
+    console.log(AddFrom)
     const res: any = await testadd(AddFrom);
     console.log(res);
     if (res.errCode == '10000') {
@@ -1086,6 +1103,8 @@ const TestAdd = async (num: number) => {
       router.push('/subjects');
     }
   }
+  }
+  
 };
 const data: any = reactive({
   params: {

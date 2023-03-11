@@ -167,7 +167,6 @@ watchEffect(() => {
 const hand= async()=>{
 
   let model =   JSON.parse(sessionStorage.getItem('model') as any)
-  console.log(model)
   const studentAnswerModel = obj.list.questions.map((item: any) => {
     let correctNum: number = 0;
     if (item.studentanswer && item.type === "多选题") {
@@ -175,7 +174,6 @@ const hand= async()=>{
       const answerArr = item.answer.split("|");
       // 学生答案
       const studentanswerArr = item.studentanswer.split("|").filter((ite:any)=>(ite!=''));
-      console.log(answerArr,studentanswerArr);
       answerArr.forEach((itemAnswer: any, index: number) => {
         studentanswerArr.forEach((itemStudentAnswer: any, index2: number) => {
           if (itemAnswer === itemStudentAnswer&&answerArr.length===studentanswerArr.length) {
@@ -203,9 +201,7 @@ const hand= async()=>{
           : 0,
     };
   });
-  // console.log(studentAnswerModel
   let res:any = await studentansweradd(studentAnswerModel)
-  console.log(res)
   if(res.errCode===10000){
     router.push({path:'examresults',query:{id:obj.list.id}})
   }
@@ -233,17 +229,14 @@ const changRadio=(type:String,item: any,index:any)=>{
         obj.list.questions[index].studentanswer + "|" + item.answerno;
       }
     }
-    console.log(obj.list)
   }
   }
   const tiao=(index:any)=>{
-    // console.log(index)
     document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
   }
 const getList =async ()=>{
   loading.value = true
   let res:any = await getteststart({testid:route.query.testid})
-  console.log(res)
   loading.value = false
   if(res.errCode===10000){
 
@@ -310,7 +303,6 @@ const getList =async ()=>{
       }, 1000);
     }
   }
-  console.log(obj.list)
 }
 getList()
 onBeforeMount(() => {
@@ -322,7 +314,6 @@ onUpdated(()=>{
           let _index = this.getAttribute("data-index");
           let vals: any = [];
           document.querySelectorAll(".input" + _index).forEach((itm: any) => {
-            console.log(itm.value)
             if (itm.value) vals.push(itm.value);
           });
           obj.list.questions[_index].studentanswer =
@@ -331,7 +322,6 @@ onUpdated(()=>{
       });
 })
 
-console.log(obj.list)
 const setItem=()=>{
   localStorage.setItem(
     "examInfo" + obj.list.id,
