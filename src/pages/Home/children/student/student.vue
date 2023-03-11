@@ -127,12 +127,11 @@ const data = reactive({
   tableData: [],
   //列表参数
   params: {
-    classid: '',
+    classname: '',
     name: '',
     depname: '',
     page: 1,
     psize: 10,
-    
   },
   key: '',
   //搜索
@@ -180,9 +179,6 @@ const getclasseslist = async () => {
   if (res.errCode === 10000) {
     data.classlist = res.data.list;
   }
-};
-const changeClass = (e: any) => {
-  params.value.classid = e;
 };
 //学员列表
 const studentList = async () => {
