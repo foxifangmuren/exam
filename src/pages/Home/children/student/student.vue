@@ -28,7 +28,6 @@
         </el-form-item>
         <el-form-item label="班级">
           <el-cascader
-            v-model="data.value"
             :options="data.Class"
             :props="props"
             @change="handleChange"
@@ -151,16 +150,6 @@ const data = reactive({
 });
 // 解构数据
 const { params, ids,isImport } = toRefs(data);
-const form = reactive({
-  id: 0,
-  name: '',//学生姓名
-  classid: 3504,
-  username: '',//账号
-  pass: '', //密码
-  remarks:'',//备注
-  photo:'',  //手机号
-  depid:3069, //部门
-});   
 const props = {
   expandTrigger: 'hover',
   checkStrictly: true,
