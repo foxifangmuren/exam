@@ -21,7 +21,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="1">
-            <el-checkbox v-model="checked" @change="check" name="type">
+            <el-checkbox class="ass" v-model="checked" @change="check" name="type">
               我创建的</el-checkbox
             >
           </el-col>
@@ -178,7 +178,8 @@
       <div class="juan">
         <div v-for="(item, index) in Wrodata.questions" :key="item.id">
           <div class="titl">
-            {{ index + 1 }}&nbsp;.&nbsp;&nbsp;{{ item.type }} <span>分值</span>&nbsp;{{ item.scores }}
+            {{ index + 1 }}&nbsp;.&nbsp;&nbsp;{{ item.type }}
+            <span>分值</span>&nbsp;{{ item.scores }}
           </div>
           <div>
             {{ item.title }}
@@ -222,7 +223,7 @@
     <!-- 可见弹出框 -->
     <!-- 阅卷老师弹出框 -->
     <!-- 学生列表 -->
-    <el-dialog title="可见学生" v-model="dialogstudent" width="50%">
+    <el-dialog title="可见学生" v-model="dialogstudent" width="60%">
       <Students
         :dialogstudent="dialogstudent"
         v-if="dialogstudent == true"
@@ -233,7 +234,7 @@
     </el-dialog>
 
     <!-- 可见老师 -->
-    <el-dialog title="可见老师" v-model="dialogTeacher" width="50%">
+    <el-dialog title="可见老师" v-model="dialogTeacher" width="60%">
       <Teacher
         :dialogTeacher="dialogTeacher"
         v-if="dialogTeacher == true"
@@ -242,7 +243,7 @@
       ></Teacher>
     </el-dialog>
     <!-- 阅卷老师 -->
-    <el-dialog title="阅卷老师" v-model="dialogyueTeacher" width="50%">
+    <el-dialog title="阅卷老师" v-model="dialogyueTeacher" width="60%">
       <TascherList
         :dialogyueTeacher="dialogyueTeacher"
         v-if="dialogyueTeacher == true"
@@ -342,12 +343,10 @@ const updata = (row: any) => {
     : router.push(`/testadd/${row.id}`);
 };
 let Refer = ref<any>(false);
-const loading = ref(true)
-const open = ()=>{
-  Refer.value.dialogVisible = true
-}
+const loading = ref(true);
 let checked: any = ref(false);
 const check = (done: () => void) => {
+  form.data.admin = '';
   if (checked.value == true) {
     ElMessageBox.confirm(`确定要切换本人创建的吗?`)
       .then(() => {
@@ -376,15 +375,6 @@ const down = async () => {
     downLoadBlob(src, vald.value.title);
   });
 };
-
-const studentTan = ref(false);
-const keJianTan = ref(false);
-//阅卷老师弹出框
-const yueJuanTan = ref(false);
-const value1 = ref<[Date, Date]>([
-  new Date(2016, 9, 10, 8, 40),
-  new Date(2016, 9, 10, 9, 40),
-]);
 const show: any = ref(false);
 const anse = (row: any) => {
   console.log(row);
@@ -609,10 +599,10 @@ const unpublishe = (data: any, num: number) => {
 
 //考试列表
 const TexLis = async () => {
-  loading.value = true
+  loading.value = true;
   const res = await TextList(form.data);
   form.datas = res.data.list;
-  loading.value = false
+  loading.value = false;
   res.data.list.forEach((item: any) => {
     item.addtime = item.addtime.slice(0, 16);
     // console.log(item.addtime);
@@ -635,12 +625,19 @@ const { datas, data, Wrodata } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
+:deep(.el-transfer){
+  --el-transfer-panel-body-height:400px;
+  overflow: auto;
+}
+:deep(.el-dialog){
+  height: 700px;
+}
 :deep(.el-transfer-panel) {
   margin-right: 200px;
 }
-:deep(.el-transfer__buttons) {
-  display: none;
-}
+// :deep(.el-transfer__buttons) {
+//   display: none;
+// }
 .liang {
   background-color: #eefaf6;
   margin-top: 10px;
@@ -674,6 +671,17 @@ const { datas, data, Wrodata } = toRefs(form);
     width: 80px;
   }
 }
+:deep(.topbranch) {
+  svg{
+    display: none;
+  }
+  span:nth-child(1) {
+    margin-right: 20px;
+  }
+}
+:deep(.el-form-item__label) {
+  margin-left: 20px;
+}
 .hei {
   margin-top: 10px;
   height: 50px;
@@ -687,6 +695,12 @@ const { datas, data, Wrodata } = toRefs(form);
     justify-content: space-between;
   }
   display: flex;
+}
+:deep(.ass) {
+  margin-left: 10px;
+}
+:deep(.el-form-item__label) {
+  padding: 0 10px 0 0;
 }
 .transfer-footer {
   margin-left: 15px;

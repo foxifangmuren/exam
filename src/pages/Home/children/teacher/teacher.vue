@@ -23,8 +23,10 @@
         <el-form-item label="角色">
           <el-select v-model="value" class="m-2">
             <el-option
-              v-for="(item,index) in options1" :key="index" 
-              :label="item.name" :value="item.id"
+              v-for="(item, index) in options1"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -47,8 +49,12 @@
           <el-table-column property="rolename" label="角色" />
           <el-table-column property="username" label="账号" />
           <el-table-column label="操作" width="150" #default="scope">
-            <span class="zi" style="cursor: pointer" @click="pass(scope.row)">重置密码</span>
-            <span class="zi" style="cursor: pointer" @click="updata(scope.row)">修改</span>
+            <span class="zi" style="cursor: pointer" @click="pass(scope.row)"
+              >重置密码</span
+            >
+            <span class="zi" style="cursor: pointer" @click="updata(scope.row)"
+              >修改</span
+            >
             <span class="zi" style="cursor: pointer" @click="del(scope.row.id)"
               >删除</span
             >
@@ -67,7 +73,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <teacherAdd ref="Refer"  @teacherList="teacherList" ></teacherAdd>
+    <teacherAdd ref="Refer" @teacherList="teacherList"></teacherAdd>
     <taacherEdit ref="Refer1" @teacherList="teacherList"></taacherEdit>
     <teapassEdit ref="Refer2"></teapassEdit>
   </div>
@@ -111,10 +117,11 @@ const data = reactive({
   //部门
   options: [],
   //角色
-  options1:{
-    id:'',
+  options1:[{
+     id:'',
     name:''
-  },
+  }],
+
   //分页 总页数
   total: 0,
 });
@@ -169,7 +176,7 @@ const getclasseslist = async ()=>{
   console.log('角色列表',res)
   if(res.errCode === 10000){
     data.options1 = res.data.list
-    console.log(data.options1) 
+    console.log(data.options1)
   }
 }
 //师资列表

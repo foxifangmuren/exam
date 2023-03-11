@@ -98,8 +98,14 @@
                     /></el-icon>
                   </div>
                 </div>
-                <div style="padding: 7px 0px" v-html="rep(item.title)"></div>
                 <div
+                  style="padding: 7px 0px"
+                  v-html="htmlEncode(item.title)"
+                ></div>
+                <div
+                  v-if="
+                    item.type == '多选题'? true: item.type == '单选题'? true: false
+                  "
                   v-for="ite in item.answers"
                   :class="item.answer.includes(ite.answerno) ? 'liang' : 'hei'"
                   key="ite.id"
@@ -497,7 +503,7 @@
       title="可见老师"
       v-model="dialogTeacher"
       v-if="dialogTeacher"
-      width="50%"
+      width="60%"
     >
       <Forth
         v-model="dialogTeacher"
@@ -511,7 +517,7 @@
       title="可见学生"
       v-model="dialogStudent"
       v-if="dialogStudent"
-      width="50%"
+      width="60%"
     >
       <studentList
         v-model="dialogStudent"
@@ -524,7 +530,7 @@
       title="阅卷老师"
       v-model="dialogyueTeacher"
       v-if="dialogyueTeacher"
-      width="50%"
+      width="60%"
     >
       <TascherList
         v-model="dialogyueTeacher"
@@ -765,9 +771,6 @@ const changePag = (val: number) => {
   console.log(fro.query.page);
 
   getlist();
-};
-const rep = (str: string) => {
-  return str.replace(/\[\]/g, `_______,`);
 };
 const changePageSiz = (val: number) => {
   fro.query.psize = val;
@@ -1046,6 +1049,7 @@ const AddFrom: any = reactive({
 });
 const TestAdd = async (num: number) => {
   if (route.query.type != '2') {
+    AddFrom.scores=Wrod.Total
     AddFrom.questions = Wrod.Wrodata.questions;
     AddFrom.state = num;
     AddFrom.id = id;
@@ -1355,9 +1359,38 @@ onMounted(() => {
   departmentList();
   getlist();
 });
+const htmlEncode = (html: string) => {
+  // console.log(html);
+  if (!html) return '';
+  html = html.replace(/</g, '&lt;');
+  html = html.replace(/>/g, '&gt;');
+  html = html.replace(/\n/g, '<br>'); // html = html.replace(/&lt;/g,"<"); // html = html.replace(/&gt;/g,">");
+  return html.replace(/\[\]/g, `_______,`);
+};
 </script>
 
 <style scoped lang="less">
+:deep(.el-dialog){
+  height: 700px;
+}
+:deep(.el-transfer){
+  --el-transfer-panel-body-height:400px;
+  overflow: auto;
+}
+:deep(.el-transfer-panel) {
+  margin-right: 200px;
+}
+:deep(.topbranch) {
+  svg{
+    display: none;
+  }
+  span:nth-child(1) {
+    margin-right: 20px;
+  }
+}
+:deep(.el-form-item__label) {
+  margin-left: 20px;
+}
 :deep(.el-transfer) {
   display: flex;
 }

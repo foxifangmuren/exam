@@ -112,6 +112,9 @@ const data = ref<Option[]>(generateData());
 </script>
 
 <style scoped>
+:deep(.el-transfer){
+  margin-left: 100px;
+}
 .head {
   margin-left: 40px;
   margin-top: -20px;
@@ -124,13 +127,28 @@ dialog-footer button:first-child {
 :deep(.el-transfer__buttons) {
   display: none;
 }
+.topbranch{
+  margin-left: 60px;
+}
+
 :deep( .el-transfer-panel){
   width: 270px;
   margin-left: 40px;
   margin-top: 25px;
 }
 .tom{
+  position: absolute;
+  top: 580px;
+  right: 220px;
+    float: right;
+    padding-bottom: 220px;
+}
+.tom{
   margin-left: 500px;
   margin-top: 20px;
+}
+.head {
+    width: 700px;
+    margin-left: 100px;
 }
 </style>

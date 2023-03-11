@@ -93,6 +93,17 @@ const rightchange=(val:any)=>{
 </script>
 
 <style scoped lang="less">
+.topbranch{
+  margin-left: 90px;
+}
+:deep(.el-transfer){
+  margin-left: 100px;
+}
+.dialog-footer{
+  position: absolute;
+  top: 630px;
+  right: 220px;
+}
 .top {
     display: flex;
     width: 700px;

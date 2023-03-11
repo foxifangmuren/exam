@@ -118,6 +118,13 @@ const rightcheckChange=(val:any)=>{//已选
 </script>
 
 <style scoped lang="less">
+.el-transfer{
+  margin-left: 50px;
+}
+.topbranch{
+  margin-left: 60px;
+}
+
 .top {
     display: flex;
     width: 700px;
@@ -132,10 +139,16 @@ const rightcheckChange=(val:any)=>{//已选
   margin-top: 25px;
 }
 .dialog-footer{
+  position: absolute;
+  top: 640px;
+  right: 225px;
     float: right;
     padding-bottom: 220px;
 }
-/deep/.el-dialog__body{
+:deep(.el-dialog__body){
     height: 600px;
+}
+:deep(.top){
+  width: 880px;
 }
 </style>
