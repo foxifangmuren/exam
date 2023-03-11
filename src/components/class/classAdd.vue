@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item label="部门" prop="depid">
           <el-cascader
-            placeholder="请选择角色"
+            placeholder="请选择部门"
             v-model="list.depid"
             :props="props"
             :options="depList"
@@ -150,11 +150,6 @@ const submitForm = async (formEl: any | undefined) => {
 };
 
 const handleClose = (formEl: any | undefined) => {
-  // console.log(dialogVisible.value)
-  //   watch(()=>dialogVisible,(newValue, oldValue)=>{
-  //   console.log(newValue.value,oldValue,124653)
-
-  // },{immediate:true})
 
   emits('getclasseslist');
   // console.log(data.list1)
