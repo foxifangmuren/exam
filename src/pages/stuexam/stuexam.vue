@@ -1,7 +1,7 @@
 <template>
    
   <div class="stu">
-    <div class="stubox">
+    <div class="stubox"  v-loading="loading">
       <div class="stuboxtop">
         {{ list.title}}
       </div>
@@ -110,9 +110,10 @@
 <script lang="ts" setup>
 import {getteststart,studentansweradd} from '../../api/stutest'
 import { useRoute,useRouter} from 'vue-router'
-import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect,onUnmounted} from 'vue'
+import{onMounted,reactive,toRefs,nextTick,watch,onUpdated,onBeforeMount,watchEffect,onUnmounted,ref} from 'vue'
 const route = useRoute()
 const router = useRouter()
+const loading = ref(true)
 const obj:any = reactive({
   list:[],
   isActive:false,
@@ -240,8 +241,10 @@ const changRadio=(type:String,item: any,index:any)=>{
     document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smooth'})
   }
 const getList =async ()=>{
+  loading.value = true
   let res:any = await getteststart({testid:route.query.testid})
   console.log(res)
+  loading.value = false
   if(res.errCode===10000){
 
     obj.list = res.data
@@ -519,7 +522,7 @@ html{
     }
   }
   .stubox{
-    background-color: #eee;
+    // background-color: #eee;
     padding-top:20px;
     .stuboxtop{
       font-size: 30px;
@@ -530,7 +533,7 @@ html{
     }
   }
   .concent{
-    background-color: #eee;
+    // background-color: #eee;
     margin:50px 30px 0;
     
     .concent_top{

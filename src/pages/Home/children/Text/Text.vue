@@ -76,6 +76,7 @@
       >
     </div>
     <el-table
+      v-loading="loading"
       :data="datas"
       style="width: 100%"
       @selection-change="handleSelectionChange"
@@ -215,6 +216,7 @@ const updata = (row: any) => {
     ? ElMessage.error('本场考试已有学生参加，不可编辑')
     : router.push(`/testadd/${row.id}`);
 };
+const loading = ref(true)
 let Refer = ref<any>(false)
 const open = ()=>{
   Refer.value.dialogVisible = true
@@ -482,8 +484,10 @@ const unpublishe = (data: any, num: number) => {
 
 //考试列表
 const TexLis = async () => {
+  loading.value = true
   const res = await TextList(form.data);
   form.datas = res.data.list;
+  loading.value = false
   res.data.list.forEach((item: any) => {
     item.addtime = item.addtime.slice(0, 16);
     // console.log(item.addtime);

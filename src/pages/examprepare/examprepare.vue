@@ -1,6 +1,6 @@
 <template>
   <div class="examprepare">
-    <div class="box">
+    <div class="box"  v-loading="loading">
       <div class="box_top">
         <el-icon class="ico" @click="back"><Back /></el-icon>返回 <span>|</span> {{ data.title }}
       </div>
@@ -57,7 +57,7 @@
 <script lang="ts" setup>
   import {getTest} from '../../api/stutest'
   import { useRoute,useRouter } from 'vue-router'
-  import { onMounted,reactive ,toRefs} from 'vue'
+  import { onMounted,reactive ,toRefs,ref} from 'vue'
   import {Back} from '@element-plus/icons-vue'
   import moment from 'moment';
 import { da } from 'element-plus/es/locale';
@@ -67,11 +67,13 @@ import { da } from 'element-plus/es/locale';
     data:[],
     isShow:false
   })
+  const loading = ref(true)
   const GetTest1 =async ()=>{
+    loading.value = true
     let res:any = await getTest({id:route.query.id})
     console.log(res)
     if(res.errCode ===10000){
-   
+      loading.value = false
       
       obj.data = res.data
       if(res.data.begintime){

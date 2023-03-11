@@ -1,6 +1,6 @@
 <template>
   <div class="stu">
-    <div class="stubox">
+    <div class="stubox"  v-loading="loading">
       <div class="stuboxtop">
         {{ List.title }}
       </div>
@@ -146,7 +146,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import {reactive,onMounted,toRefs,nextTick} from 'vue'
+  import {reactive,onMounted,toRefs,nextTick,ref} from 'vue'
   import {getForResult} from '../../api/stutest'
   import { useRoute,useRouter} from 'vue-router'
 import { tr } from 'element-plus/es/locale';
@@ -156,6 +156,7 @@ import { tr } from 'element-plus/es/locale';
     index1:[],
     classs:String
   })
+  const loading = ref(true)
   // 替换方法
 const rep = (str: string, index: number) => {
   return str.replace(
@@ -165,8 +166,10 @@ const rep = (str: string, index: number) => {
 };
 
   const getList = async ()=>{
+    loading.value = true
     let res:any = await getForResult({testid:route.query.testid})
     console.log(res)
+    loading.value = false
     if(res.errCode===10000){
       obj.List = res.data
       obj.List.questions = obj.List.questions.map((item: any) => {
@@ -377,7 +380,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
     }
   }
   .stubox{
-    background-color: #eee;
+    // background-color: #eee;
     padding-top:20px;
     .stuboxtop{
       width: 1000px;
@@ -387,7 +390,7 @@ document.getElementsByClassName('concent')[index].scrollIntoView({behavior:'smoo
     }
   }
   .concent{
-    background-color: #eee;
+    // background-color: #eee;
     margin:50px 30px 0;
     
     .concent_top{

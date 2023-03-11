@@ -1,6 +1,6 @@
 <template>
   <div class="examprepare">
-    <div class="box">
+    <div class="box"  v-loading="loading">
       <div class="box_top">
         <el-icon class="ico" @click="back"><Back /></el-icon>返回 <span>|</span> {{ data.title }}
       </div>
@@ -85,6 +85,7 @@ import moment from 'moment';
 import { is } from 'dom7';
   const route = useRoute()
   const router = useRouter()
+  const loading = ref(true)
   const obj:any = reactive({
     time:'',
     data:[],
@@ -99,11 +100,13 @@ import { is } from 'dom7';
     Scores:String
   }) 
   const GetTest1 =async ()=>{
+    loading.value = true
     let res:any = await getForResult({testid:route.query.id})
     console.log(res)
     // console.log()
     obj.time=moment(res.data.stuEndTime).diff(moment(res.data.studentStartTime), 'minutes')
     console.log(obj.time)
+    loading.value = false
     if(res.errCode ===10000){
       obj.questionTypes.forEach((item:any)=>{
         item.counts = res.data.questions.filter((ite:any)=>ite.type===item.name).length

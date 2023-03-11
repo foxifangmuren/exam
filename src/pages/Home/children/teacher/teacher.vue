@@ -21,9 +21,10 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="角色">
-          <el-select v-model="value" class="m-2" placeholder="Select">
+          <el-select v-model="value" class="m-2">
             <el-option
-              v-for="item in options1"
+              v-for="(item,index) in options1" :key="index" 
+              :label="item.name" :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -33,6 +34,7 @@
       </el-form>
       <div>
         <el-table
+          v-loading="loading"
           ref="multipleTableRef"
           :data="data.tableData"
           style="width: 100%"
@@ -90,7 +92,7 @@ const add = ()=>{
   console.log(123)
 }
 
-      
+const loading = ref(true)
 let obj = ref({})
 const data = reactive({
   //表格数据
@@ -108,7 +110,10 @@ const data = reactive({
   //部门
   options: [],
   //角色
-  options1:[],
+  options1:{
+    id:'',
+    name:''
+  },
   //分页 总页数
   total: 0,
 });
@@ -160,19 +165,22 @@ const departmentList = async () => {
 // 角色级联列表
 const getclasseslist = async ()=>{
   const res:any = await rolelist(null)
-  console.log('班级列表',res)
+  console.log('角色列表',res)
   if(res.errCode === 10000){
-    
+    data.options1 = res.data.list
+    console.log(data.options1) 
   }
 }
 //师资列表
 const teacherList = async () => {
+  loading.value = true
   const res: any = await teacherlist({
     ...params.value,
     depid: data.value ? data.value[data.value.length - 1] : 0,
     key: data.key,
   });
   console.log('班级列表', res);
+  loading.value = false
   if (res.errCode === 10000) {
     data.tableData = res.data.list;
     data.total = res.data.counts;

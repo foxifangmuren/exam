@@ -37,6 +37,7 @@
     </el-form>
     <!-- 表格 -->
     <MyTable
+    v-loading="loading"
       :isTypeSelection="true"
       :tableHeader="tableHeader"
       :tableData="from.tableData"
@@ -81,6 +82,8 @@ const popout = (val?: any) => {
   Refer.value.dialogVisible = true;
 };
 
+
+const loading = ref(true)
 
 //只看我创建的
 let checked: any = ref(false);
@@ -172,9 +175,14 @@ const dell=async()=>{
 }
 //请求列表
 const getlist = async () => {
-  const src = await databaseList(from.query);
-  from.tableData = src.data.list;
-  from.total = src.data.counts;
+  loading.value = true
+  const src:any = await databaseList(from.query);
+  if(src.errCode===10000){
+    loading.value = false
+    from.tableData = src.data.list;
+    from.total = src.data.counts;
+  }
+
 };
 getlist();
 //删除

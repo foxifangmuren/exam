@@ -150,6 +150,7 @@ const Data: any = reactive({
   // 提示
   tips: "添加",
 });
+const loading = ref(true)
 // 解构数据
 const {
   loadinged,
@@ -158,7 +159,6 @@ const {
   objData,
   paging,
   tableData,
-  loading,
   tips,
 } = toRefs(Data);
 
@@ -299,9 +299,11 @@ const delInfo = async (ids: number) => {
 };
 // 列表
 const List = async () => {
+  loading.value = true
   const res: any = await rolelist({ ...Data.paging });
   // console.log(res);
   if (res.errCode === 10000) {
+    loading.value = false
     Data.tableData = res.data.list;
     Data.counts = res.data.counts;
   }

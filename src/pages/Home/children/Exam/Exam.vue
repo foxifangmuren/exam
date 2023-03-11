@@ -10,7 +10,7 @@
       </div>
     </div>
     <!-- 表格 接受：表格数据（tableData）表格头部（tableHeader） 是否有复选框（isTypeSelection） -->
-    <MyTable :tableData="form.tableData" :tableHeader="tableHeader" :isTypeSelection="false"
+    <MyTable v-loading="loading" :tableData="form.tableData" :tableHeader="tableHeader" :isTypeSelection="false"
       @go="goStudent"
     ></MyTable>
     <!--  分页 接受：总条数（total） 页数（page） 条数（psize） 方法（changPageSize）（changPage） -->
@@ -36,6 +36,8 @@ import { ElMessage } from "element-plus";
  *    不进行跳转页面
  */
 
+ const loading = ref(true)
+
 //查询功能--由于只有一个输入框，不需要监听输入查询
 const query = () => {
   if (!form.query.key) {
@@ -60,7 +62,9 @@ const form = reactive({
 });
 // 请求列表并调用
 const getlist = async () => {
+  loading.value = true
   const sre = await examList(form.query);
+  loading.value = false
   form.tableData = sre.data.list;
   form.total = sre.data.counts;
 };
