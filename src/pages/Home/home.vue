@@ -94,7 +94,7 @@
                 v-for="(item, index) in e"
                 :key="index"
               >
-                <p :class="'icon iconfont ' + item.ico"></p>
+                <p :class="'icon iconfont ' + item.ico" style="font-size: 20px;"></p>
                 <span>{{ item.name }}</span>
               </el-menu-item>
             </el-menu>
