@@ -17,36 +17,52 @@
           </el-col>
           <el-col :span="3">
             <el-form-item label="创建人">
-              <el-input v-model="data.admin" placeholder="创建人" />
+              <el-input
+                @input="wee"
+                v-model="data.admin"
+                placeholder="创建人"
+              />
             </el-form-item>
           </el-col>
-          <el-col :span="1">
-            <el-checkbox class="ass" v-model="checked" @change="check" name="type">
+          <el-col :span="2">
+            <el-checkbox
+              class="ass"
+              v-model="checked"
+              @change="check"
+              name="type"
+            >
               我创建的</el-checkbox
             >
           </el-col>
-          <el-col :span="4">
-            <el-form-item label="开放时间" label-width="70px" class="o">
-              <el-radio-group v-model="data.opentime">
-                <el-radio label="永久开放" />
-                <el-radio label="部分时段" />
+          <el-col :span="4.5">
+            <el-form-item label="开放时间" label-width="70px" class="o" >
+              <el-radio-group v-model="radio">
+                <el-radio :label="1" value="1">永久开放</el-radio>
+                <el-radio :label="2" value="2">部分时段</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
-            <div class="demo-range">
-              <el-time-picker
-                v-model="data.begindate"
-                is-range
-                range-separator="To"
+          <el-col class="qwww" :span="3.5">
+            <div>
+              <el-date-picker
+                v-model="value1"
+                type="datetimerange"
+                :shortcuts="shortcuts"
+                range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :readonly="flag == false"
+                :disabled="radio == 2 ? false : true"
+                style="width: 250px"
+                format="YYYY-MM-DD"
+                @change="changeRi"
               />
             </div>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="2.5" class="werr">
             <el-form-item label="状态">
               <el-select
+              
                 v-model="region"
                 placeholder="请选择"
                 @change="selectDoctor"
@@ -84,14 +100,14 @@
       ref="multipleTableRef"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column label="考试名称" width="180">
+      <el-table-column label="考试名称" width="150">
         <template #default="scope">
           <el-link type="primary" prop="title" @click="tit(scope.row.id)">
             {{ scope.row.title }}</el-link
           >
         </template>
       </el-table-column>
-      <el-table-column prop="state" label="状态" width="180">
+      <el-table-column prop="state" label="状态" width="150">
         <template #default="scope">
           <el-link type="primary" :underline="false" v-if="scope.row.state == 1"
             >已发布</el-link
@@ -108,7 +124,7 @@
       <el-table-column prop="pastscores" label="通过分数" />
       <el-table-column prop="studentcounts" label="考试人数" />
       <el-table-column prop="studentScores" label="通过人数" />
-      <el-table-column label="开放时间">
+      <el-table-column label="开放时间" width="160">
         <template #default="scope">
           {{
             scope.row.begintime == null
@@ -122,11 +138,9 @@
 
       <el-table-column prop="admin" label="创建人" />
       <el-table-column prop="addtime" label="更新时间" />
-      <el-table-column class="op" label="操作">
+      <el-table-column class="op" label="操作" width="180">
         <template #default="scope">
-          <el-link type="primary" @click="getstudent(scope.row.id)"
-            >学生</el-link
-          >
+          <el-link type="primary" @click="getstudent(scope.row)">学生</el-link>
           <el-divider direction="vertical" />
           <el-link type="primary" @click="getTeacher(scope.row.id)"
             >可见</el-link
@@ -223,10 +237,11 @@
     <!-- 可见弹出框 -->
     <!-- 阅卷老师弹出框 -->
     <!-- 学生列表 -->
-    <el-dialog title="可见学生" v-model="dialogstudent" width="60%">
+    <el-dialog class="cv" title="可见学生" v-model="dialogstudent" width="60%">
       <Students
         :dialogstudent="dialogstudent"
         v-if="dialogstudent == true"
+        ref="abc"
         @studentCancel="studentCancel"
         @studentConfirm="studentConfirm"
         @studentClose="studentClose"
@@ -234,20 +249,22 @@
     </el-dialog>
 
     <!-- 可见老师 -->
-    <el-dialog title="可见老师" v-model="dialogTeacher" width="60%">
+    <el-dialog class="cv" title="可见老师" v-model="dialogTeacher" width="60%">
       <Teacher
         :dialogTeacher="dialogTeacher"
         v-if="dialogTeacher == true"
         @teacherConfirm="teacherConfirm"
+        @teacherCancel="teacherCancel"
         @teacherClose="teacherClose"
       ></Teacher>
     </el-dialog>
     <!-- 阅卷老师 -->
-    <el-dialog title="阅卷老师" v-model="dialogyueTeacher" width="60%">
+    <el-dialog class="cv" title="阅卷老师" v-model="dialogyueTeacher" width="60%">
       <TascherList
         :dialogyueTeacher="dialogyueTeacher"
         v-if="dialogyueTeacher == true"
         @teacherCancel="teacherCancel"
+        @teacherClose="teacherClose"
         @teacherConfirm="yueteacherConfirm"
       ></TascherList>
     </el-dialog>
@@ -264,8 +281,13 @@ import TascherList from '../../../../components/test/teacherList.vue'; //阅卷�
 import { ElTable } from 'element-plus';
 import { reactive } from 'vue';
 import { TextList } from '../../../../api/admin';
-import { departmentlist } from '../../../../api/admin';
-import { ref, onMounted, toRefs } from 'vue';
+import {
+  departmentlist,
+  getstudents,
+  getmarkteachers,
+  getlimit,
+} from '../../../../api/admin';
+import { ref, onMounted, toRefs, watchEffect } from 'vue';
 import { updateState, deleteall, del, testget } from '../../../../api/stutest';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { exportExcel } from '@/api/Subjects';
@@ -275,10 +297,16 @@ import router from '@/router';
 const bialogVue = ref<any>();
 let testid = ref(0);
 const dialogstudent = ref(false);
+const abc: any = ref(null);
 // 学生弹框
-const getstudent = (id: any) => {
+const getstudent = async (data: any) => {
+  let res = await getstudents({ testid: data.id });
+  console.log(res);
+  let data1 = res.data;
+  abc.value = data1;
   dialogstudent.value = true;
-  testid.value = id;
+  testid.value = data.id;
+  console.log(data);
 };
 // 点击关闭弹框
 const studentClose = (val: any) => {
@@ -312,9 +340,51 @@ const teacherClose = (val: any) => {
 };
 // 老师点击取消
 const teacherCancel = (val: any) => {
+  console.log(val);
+  dialogyueTeacher.value=val
   dialogTeacher.value = val;
 };
-
+const radio = ref(1);
+const flag = ref(false);
+watchEffect(() => {
+  radio.value === 2 ? (flag.value = true) : (flag.value = false);
+});
+const value1 = ref('');
+const shortcuts = [
+  {
+    text: '今天',
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      return [start, end];
+    },
+  },
+  {
+    text: '最近一周',
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      return [start, end];
+    },
+  },
+  {
+    text: '最近一个月',
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+      return [start, end];
+    },
+  },
+];
+const changeRi = (e: any) => {
+  // console.log(e)
+  form.data.begindate = moment(e[0]).format('YYYY-MM-DD');
+  form.data.enddate = moment(e[1]).format('YYYY-MM-DD');
+  console.log(form.data);
+};
 // 阅卷老师弹框
 const dialogyueTeacher = ref(false);
 //穿梭框
@@ -393,15 +463,8 @@ const anse = (row: any) => {
     router.push({ path: '/analyse', query: { data: row.id } });
   }
 };
-const props = {
-  expandTrigger: 'hover', //次级菜单展开方式
-  checkStrictly: true, //是否严格的遵守父子节点不相互关联
-  value: 'id',
-  label: 'name',
-};
 const vald = ref();
 const tit = async (val: any) => {
-  console.log(val);
   vald.value = val;
   show.value = true;
   const res = await testget({ id: val });
@@ -410,7 +473,6 @@ const tit = async (val: any) => {
   form.tidata = res.data;
 };
 const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`);
   TexLis();
 };
 const region = ref('');
@@ -425,8 +487,6 @@ const testadd = () => {
 
 const handleCurrentChange = (val: number) => {
   TexLis();
-
-  console.log(`current page: ${val}`);
 };
 const form: any = reactive({
   data: {
@@ -452,6 +512,9 @@ const form: any = reactive({
     isshow: 0,
   },
 });
+const wee = () => {
+  checked.value = false;
+};
 //发布状态
 const va: any = ref('');
 let i: any = ref([]);
@@ -495,9 +558,6 @@ const dataq = reactive({
   //分页 总页数
   total: 0,
 });
-const handleChange = (e: any) => {
-  data.value = e;
-};
 const unpublished = (data: any, num: any) => {
   if (i.value == '') {
     console.log(1);
@@ -516,14 +576,11 @@ const unpublished = (data: any, num: any) => {
 
     .then(async () => {
       if (num === 1) {
-        console.log(111);
-
         const params = {
           ids,
           state: 1,
         };
         const res = await updateState(params);
-        console.log(111111111111111111, params, res);
       }
       if (num === 2) {
         const params = {
@@ -531,14 +588,12 @@ const unpublished = (data: any, num: any) => {
           state: 2,
         };
         const res = await updateState(params);
-        console.log(2222222222222222, params, res);
       }
       if (num === 3) {
         const params = {
           ids,
         };
         const res = await deleteall(params);
-        console.log(333333333333333, params, res);
       }
       if (num === 3) {
         e.value = '删除';
@@ -605,17 +660,10 @@ const TexLis = async () => {
   loading.value = false;
   res.data.list.forEach((item: any) => {
     item.addtime = item.addtime.slice(0, 16);
-    // console.log(item.addtime);
     form.datas.addtime = item.addtime;
   });
-  // console.log(form.datas);
   form.total = res.data.counts;
-  // console.log(res);
-  // TexLis();
-};
 
-const onSubmit = () => {
-  console.log('submit!');
 };
 onMounted(() => {
   TexLis();
@@ -625,19 +673,16 @@ const { datas, data, Wrodata } = toRefs(form);
 </script>
 
 <style lang="less" scoped>
-:deep(.el-transfer){
-  --el-transfer-panel-body-height:400px;
+:deep(.el-transfer) {
+  --el-transfer-panel-body-height: 400px;
   overflow: auto;
 }
-:deep(.el-dialog){
+:deep(.el-dialog) {
   height: 700px;
 }
 :deep(.el-transfer-panel) {
   margin-right: 200px;
 }
-// :deep(.el-transfer__buttons) {
-//   display: none;
-// }
 .liang {
   background-color: #eefaf6;
   margin-top: 10px;
@@ -648,7 +693,13 @@ const { datas, data, Wrodata } = toRefs(form);
 :deep(.el-dialog) {
   // width: 100%;
   // height: 100%;
-  margin-top: 50px;
+  margin-top: 20px;
+}
+.el-col-6{
+  flex: 0.7;
+}
+.el-col-2{
+  flex: 0;
 }
 .daan {
   background-color: #f5faff;
@@ -672,7 +723,7 @@ const { datas, data, Wrodata } = toRefs(form);
   }
 }
 :deep(.topbranch) {
-  svg{
+  svg {
     display: none;
   }
   span:nth-child(1) {
@@ -687,6 +738,9 @@ const { datas, data, Wrodata } = toRefs(form);
   height: 50px;
   display: flex;
   align-items: center;
+}
+.qwww{
+  margin-left: 20px;
 }
 .ceshi {
   div {
@@ -737,12 +791,6 @@ span {
   justify-content: space-between;
   display: flex;
 }
-.o {
-  margin-left: 20px;
-}
-.p {
-  margin: 0 10px;
-}
 .el-button {
   margin-left: 10px;
 }
@@ -758,5 +806,14 @@ span {
 .kao {
   font-size: 20px;
   margin-bottom: 15px;
+}
+:deep(.top) {
+  width: 700px;
+}
+:deep(.el-transfer-panel){
+  margin-right: 100px;
+}
+:deep(.el-overlay-dialog){
+  overflow: hidden;
 }
 </style>

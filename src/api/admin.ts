@@ -105,3 +105,13 @@ export const SeleList = (params: any) => {
 export const ForList = (params: any) => {
   return get('/teacher/list', params)
 }
+export const getlimit = (params: any): Promise<AxiosResponse<any>> => {
+  return get('/test/getlimit',params)
+}
+export const getmarkteachers = (params: any) => {
+  return get('/test/getmarkteachers', params)
+}
+// 获取试卷穿梭框数据
+export const getstudents = (params: any) => {
+  return get('/test/getstudents', params)
+}

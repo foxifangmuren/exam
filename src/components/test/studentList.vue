@@ -115,6 +115,9 @@ const rightcheckChange=(val:any)=>{//已选
     }
     
 }
+defineExpose({
+  id
+})
 </script>
 
 <style scoped lang="less">

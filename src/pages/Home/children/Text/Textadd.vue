@@ -90,9 +90,6 @@
                   </div>
 
                   <div>
-                    <el-icon :size="20" @click="updataz(item)"
-                      ><EditPen
-                    /></el-icon>
                     <el-icon :size="20" @click="delti(index)"
                       ><DeleteFilled
                     /></el-icon>
@@ -501,6 +498,7 @@
     <!-- 可见老师 -->
     <el-dialog
       title="可见老师"
+      class="cv"
       v-model="dialogTeacher"
       v-if="dialogTeacher"
       width="60%"
@@ -514,12 +512,14 @@
     </el-dialog>
     <!-- 学生范围 -->
     <el-dialog
+    class="cv"
       title="可见学生"
       v-model="dialogStudent"
       v-if="dialogStudent"
       width="60%"
     >
       <studentList
+      @studentCancel="studentCancel"
         v-model="dialogStudent"
         @studentConfirm="studentConfirm"
       ></studentList>
@@ -527,6 +527,7 @@
 
     <!-- 阅卷老师 -->
     <el-dialog
+    class="cv"
       title="阅卷老师"
       v-model="dialogyueTeacher"
       v-if="dialogyueTeacher"
@@ -535,6 +536,7 @@
       <TascherList
         v-model="dialogyueTeacher"
         @deplenght="deplenght"
+        @teacherCancel="teacherCancel"
         @teacherConfirm="teacherConfirm"
       ></TascherList>
     </el-dialog>
@@ -553,7 +555,6 @@ import { nextTick } from 'vue';
 import moment from 'moment';
 import TascherList from '../../../../components/test/teacherList.vue';
 import studentList from '../../../../components/test/studentList.vue';
-import Testpaperlist from '../../../../components/test/testpaperlist.vue';
 import Forth from '../../../../components/test/Forth.vue';
 import {
   questions,
@@ -567,7 +568,6 @@ import { departmentlist } from '../../../../api/admin';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getList, getTest, subjectsinfo } from '@/api/Subjects';
 import { wy, databaseList } from '@/api/databaselist';
-import Adddrawer from '@/components/Dataitem/adddrawer.vue';
 const mycdatadrawer = ref<any>();
 const goinfo = (vla: any) => {
   f.data = vla;
@@ -600,11 +600,17 @@ const studentConfirm = (bool: any, val: any) => {
   AddFrom.students = val
   
 };
+const studentCancel=()=>{
+  dialogStudent.value = false;
+}
 const paramsss = reactive({
   num: 0,
   nuu: 0,
   nnu: 0,
 });
+const teacherCancel =()=>{
+  dialogyueTeacher.value=false
+}
 const deplenght = (val: any) => {
   // console.log(val);
   params.value.markteachers.length = val;
@@ -620,9 +626,6 @@ const teacherConfirm = (bool: any, val: any) => {
 let dialogVisible2 = ref(false);
 const isadd = (val: any) => {
   dialogVisible2.value = val;
-};
-const teachClose = (done: () => void) => {
-  done();
 };
 // 老师可见穿梭框
 const limitss = (val: any) => {
@@ -660,13 +663,7 @@ const can = (x: any) => {
 const numberValidateForm = reactive({
   limits: [],
 });
-const valuessss = (val: any) => {
-  numberValidateForm.limits = val;
-};
 const dialogVisible1 = ref(false);
-const isshoww = (val: any) => {
-  dialogVisible1.value = false;
-};
 const delarrinf = (val: any) => {
   v.value = val;
   console.log(v);
@@ -681,14 +678,7 @@ let id = route.params['id'];
 console.log(id);
 console.log(route.query);
 
-// const goadd = () => {
-//   isTitle.value = true;
-//   // data.index = -1;
-//   // data.obj ={};
-// };
-// const isF = (e: any) => {
-//   isTitle.value = e;
-// };
+
 const studentTan = ref(false);
 const keJianTan = ref(false);
 //阅卷老师弹出框
@@ -792,7 +782,6 @@ const getlist = async () => {
 const form = reactive({
   name: '',
 });
-const value2 = ref('');
 const va = ref();
 
 //单选获取到的id
@@ -1189,8 +1178,6 @@ const data: any = reactive({
   isImport: false,
 });
 const {
-  isImport,
-  obj,
   arrTime,
   num11,
   num12,
@@ -1209,15 +1196,6 @@ const {
   num5,
   Total,
   params,
-  region,
-  is,
-  stus,
-  regions,
-  state,
-  name,
-  Addis,
-  isTitle,
-  index,
 }: any = toRefs(data);
 watchEffect(() => {
   let num6 = 0;
@@ -1389,7 +1367,7 @@ const htmlEncode = (html: string) => {
 </script>
 
 <style scoped lang="less">
-:deep(.el-dialog){
+:deep(.cv){
   height: 700px;
 }
 :deep(.el-transfer){
@@ -1413,8 +1391,8 @@ const htmlEncode = (html: string) => {
 :deep(.el-transfer) {
   display: flex;
 }
-:deep(.el-dialog) {
-  --el-dialog-margin-top: 10vh;
+:deep(.cv) {
+  --el-dialog-margin-top: 3vh;
 }
 :deep(.el-table__inner-wrapper) {
   // max-height: 600px;
@@ -1588,6 +1566,9 @@ const htmlEncode = (html: string) => {
     color: #c7e5ff;
   }
 }
+.shi{
+  margin-top: -50px;
+}
 .setup {
   width: 100%;
   height: 100%;
@@ -1606,5 +1587,14 @@ const htmlEncode = (html: string) => {
       width: 70px;
     }
   }
+}
+:deep(.el-transfer-panel){
+  margin-right: 100px;
+}
+:deep(.el-dialog){
+  margin-bottom:50px;
+}
+:deep(.el-overlay-dialog){
+  overflow: hidden;
 }
 </style>

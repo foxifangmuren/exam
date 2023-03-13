@@ -124,7 +124,7 @@ const from = reactive({
   //表格数据
   tableData: [],
   //题库数据
-  Dlist:[{answer:"",scores:0,comments:"",type:"",title:"",studentscores:"",studentanswer:''}],
+  Dlist:[{answer:"",scores:0,comments:"",type:"",title:"",studentscores:"",studentanswer:""}],
   // 侧边是否显示
   drawer: false,
   //总条数

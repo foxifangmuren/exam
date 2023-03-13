@@ -213,7 +213,7 @@ onMounted(() => {
 }
 .left {
   width: 30%;
-  height: 780px;
+  height: 80vh;
   overflow: auto;
 }
 .kao {
